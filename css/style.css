@@ -1,0 +1,260 @@
+/* ==========================================================
+   BELOW DREAMS — BASES CSS GLOBALES
+   - Design system : Oswald (titres), Inter (texte)
+   - Palette : noir / blanc + gris
+   - Objectif : base clean + scalable
+   ========================================================== */
+
+   /* ==========================================================
+   Fonts — local hosting (performance + RGPD)
+   ========================================================== */
+
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/inter/Inter-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/inter/Inter-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/inter/Inter-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Oswald";
+  src: url("../assets/fonts/oswald/Oswald-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Oswald";
+  src: url("../assets/fonts/oswald/Oswald-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Oswald";
+  src: url("../assets/fonts/oswald/Oswald-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Oswald";
+  src: url("../assets/fonts/oswald/Oswald-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+    /* =====================
+        Colors — Design System
+    ===================== */
+
+    --c-black: #0A0A0A;
+    --c-white: #FFFFFF;
+
+    --c-grey-900: #1A1A1A;
+    --c-grey-700: #2A2A2A;
+    --c-grey-400: #9A9A9A;
+
+    --c-accent: #BDBDBD;
+ 
+  
+    /* =====================
+        Typography — Figma
+    ===================== */
+
+    --ff-title: "Oswald", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --ff-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+    /* Font sizes */
+    --fs-h1: 48px;
+    --fs-h2: 36px;
+    --fs-h3: 24px;
+    --fs-body: 16px;
+    --fs-small: 14px;
+
+    /* Line heights */
+    --lh-title: 1.15;
+    --lh-body: 1.6;
+
+
+    --container: 1200px;
+    --gutter: 24px;
+
+}
+
+/* --------------------------
+   3) Reset moderne (minimal)
+   -------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: var(--fs-body);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--ff-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--c-white);
+  background: var(--c-black);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+p {
+  margin: 0;
+}
+
+/* --------------------------
+   4) Titres (application tokens)
+   -------------------------- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--ff-title);
+  line-height: var(--lh-title);
+  margin: 0;
+  letter-spacing: 0.4px;
+}
+
+h1 { font-size: var(--fs-h1); }
+h2 { font-size: var(--fs-h2); }
+h3 { font-size: var(--fs-h3); }
+
+small,
+.text-small {
+  font-size: var(--fs-small);
+}
+
+.text-muted {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* --------------------------
+   5) Layout global
+   -------------------------- */
+.container {
+  width: min(var(--container, 1200px), calc(100% - (var(--gutter, 24px) * 2)));
+  margin: 0 auto;
+}
+
+.section {
+  padding: 72px 0;
+}
+
+/* --------------------------
+   6) Accessibilité : masquage SEO
+   -------------------------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------
+   7) UI de base : bouton / badge
+   -------------------------- */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 14px 22px;
+  border-radius: 12px;
+
+  background: var(--c-white);
+  color: var(--c-black);
+
+  font-weight: 600;
+  font-size: var(--fs-small);
+
+  border: 1px solid transparent;
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+
+.btn-primary:hover { opacity: 0.92; }
+.btn-primary:active { transform: translateY(1px); }
+
+.badge {
+  display: inline-flex;
+  width: fit-content;
+
+  padding: 8px 12px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.03);
+
+  color: rgba(255, 255, 255, 0.60);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* --------------------------
+   8) Focus clavier (pro)
+   -------------------------- */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+}
