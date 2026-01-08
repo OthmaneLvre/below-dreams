@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Below Dreams | Accueil</title>
     <meta name="description" content="Below Dreams — pièces fortes, éditions limitées, précommande.">
 
     <!-- CSS -->
-     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+
 </head>
 
 <body>
     
     <!-- HEADER : Logo + Nav + Panier -->
-     <header class="site-header">
+    <header class="site-header">
         <div class="container header-inner">
 
             <!-- Logo à gauche -->
@@ -22,33 +25,47 @@
             </a>
 
             <nav class="nav" aria-label="Navigation principale">
-                <a href="boutique.html" class="nav-link">Boutique</a>
-                <a href="contact.html" class="nav-link">Contact</a>
-                <a href="compte.html" class="nav-link">Mon Compte</a>
 
-            <a href="#" class="nav-cart" aria-label="Panier">
-            <svg
-                class="icon-cart"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-            >
-                <path
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9M9 22a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                />
-            </svg>
-            </a>
+                <!-- Bouton burger (mobile) -->
+                <button class="nav-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu">
+                    <span class="nav-toggle-bar" aria-hidden="true"></span>
+                    <span class="nav-toggle-bar" aria-hidden="true"></span>
+                    <span class="nav-toggle-bar" aria-hidden="true"></span>
+                </button>
+
+                <!-- Menu -->
+                <div class="nav-menu" id="nav-menu">
+                    <a href="boutique.html" class="nav-link">Boutique</a>
+                    <a href="contact.html" class="nav-link">Contact</a>
+                    <a href="compte.html" class="nav-link">Mon Compte</a>
+                </div>
+
+                
+                <!-- Panier (reste visible) -->
+                <a href="#" class="nav-cart" aria-label="Panier">
+                    <svg
+                        class="icon-cart"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9M9 22a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        />
+                    </svg>
+                </a>
             </nav>
         </div>
 
     </header>
+    
     <main>
         <!-- HERO -->
         <section aria-label="Présentation de la marque" class="hero">
@@ -121,7 +138,7 @@
             <div class="container preorder-inner">
 
                 <div class="preorder-card">
-                    <h2>Fonctionnement en précommande</h2>
+                    <h2 class="section-title">Fonctionnement en précommande</h2>
                     <p>
                         Les articles Below Dreams sont proposés en précommande. <br>
                         Expédition sous 2 à 3 semaines après validation de la commande.
@@ -174,5 +191,6 @@
         </div>
     </footer>
 
+    <script src="js/main.js" defer></script>
 </body>
 </html>

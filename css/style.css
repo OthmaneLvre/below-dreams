@@ -345,6 +345,12 @@ small,
   transform: translateY(-1px);
 }
 
+/* Accessibilité clavier */
+.nav-link:focus-visible {
+  box-shadow: none;
+  text-decoration: underline;
+}
+
 /* ---------- Panier ---------- */
 
 .nav-cart {
