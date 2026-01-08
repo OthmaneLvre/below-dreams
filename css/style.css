@@ -511,3 +511,68 @@ small,
   display: flex;
   justify-content: center;
 }
+
+/* ==========================================================
+   FOOTER
+   ========================================================== */
+
+.site-footer {
+  background: var(--c-grey-900);
+  padding: 48px 0 28px;
+}
+
+.footer-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ---------- Ligne haute ---------- */
+
+.footer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footer-logo {
+  width: 120px;
+  height: auto;
+}
+
+.footer-nav {
+  display: flex;
+  gap: 22px;
+}
+
+.footer-nav a {
+  font-size: var(--fs-small);
+  color: rgba(255, 255, 255, 0.75);
+  transition: opacity 200ms ease;
+}
+
+.footer-nav a:hover {
+  opacity: 0.6;
+}
+
+/* ---------- Ligne basse ---------- */
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: var(--fs-small);
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.footer-bottom a {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.footer-bottom a:hover {
+  opacity: 0.7;
+}
