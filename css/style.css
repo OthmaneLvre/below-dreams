@@ -232,7 +232,10 @@ small,
   transition: transform 200ms ease, opacity 200ms ease;
 }
 
-.btn-primary:hover { opacity: 0.92; }
+.btn-primary:hover { 
+  opacity: 0.92; 
+  background: var(--c-grey-400);
+}
 .btn-primary:active { transform: translateY(1px); }
 
 .badge {
@@ -307,12 +310,13 @@ small,
   font-size: var(--fs-small);
   font-weight: 400;
 
-  color: rgba(255, 255, 255, 0.85);
-  transition: opacity 200ms ease;
+  color: var(--c-white);
+  transition: opacity 200ms ease, transform 200ms ease;
 }
 
 .nav-link:hover {
-  opacity: 0.7;
+  opacity: 0.75;
+  transform: translateY(-1px);
 }
 
 /* ---------- Panier ---------- */
@@ -334,6 +338,7 @@ small,
 
 .nav-cart:hover {
   opacity: 0.85;
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .nav-cart:active {
@@ -358,6 +363,7 @@ small,
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding-top: 72px;
 
   text-align: center;
   gap: 24px;
