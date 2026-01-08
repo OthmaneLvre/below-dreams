@@ -499,3 +499,15 @@ small,
   line-height: 1.7;
   margin: 0;
 }
+
+/* ==========================================================
+   SECTION — CTA
+   ========================================================== */
+
+.section-cta {
+  padding: 72px 0;
+  background: var(--c-black);
+
+  display: flex;
+  justify-content: center;
+}
