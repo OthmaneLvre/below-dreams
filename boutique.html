@@ -122,52 +122,125 @@
                     <div class="shop-toolbar">
                         <p class="shop-count"><span>4</span> articles</p>
 
-                        <label class="shop-sort">
+                        <!-- Bouton toggle : Mis en avant -->
+                        <button
+                            class="sort-btn"
+                            id="sort-featured"
+                            type="button"
+                            aria-pressed="false"
+                        >
+                            Mis en avant
+                        </button>
+
+                    <!-- Select : tri prix -->
+                    <label class="shop-sort">
                         <span class="sr-only">Trier</span>
-                        <select>
-                            <option value="featured">Mis en avant</option>
+                        <select id="sort-select" aria-label="Trier les produits">
+                            <option value="default">Tri</option>
                             <option value="price-asc">Prix croissant</option>
                             <option value="price-desc">Prix décroissant</option>
                         </select>
-                        </label>
+                    </label>
                     </div>
 
                     <div class="shop-grid">
-                        <article class="product-card">
-                        <a href="produit.html" class="product-link">
-                            <div class="product-image" aria-hidden="true"></div>
-                            <h3 class="product-title">Nom du produit</h3>
-                            <p class="product-price">49 €</p>
-                            <span class="badge">Précommande</span>
-                        </a>
+                        <!-- PRODUCT CARD -->
+                        <article class="product-card" data-featured="true" data-preorder="true" data-price="49">
+                            <!-- Lien couvrant la carte pour focus clavier + accessibilité -->
+                            <a class="product-card__link" href="produit.html" aria-label="Voir le produit : Nom du produit">
+                                
+                                <!-- Visuel produit -->
+                                <div class="product-card__media" aria-hidden="true">
+                                <!-- Remplace par ton image -->
+                                <div class="product-card__img"></div>
+
+                                <!-- Badge (précommande) : sémantique + lisible -->
+                                <span class="badge badge--preorder" aria-label="Produit disponible en précommande">
+                                    Précommande
+                                </span>
+                                </div>
+
+                                <!-- Contenu -->
+                                <div class="product-card__body">
+                                <h3 class="product-card__title">Nom du produit</h3>
+                                <p class="product-card__price">49 €</p>
+                                </div>
+
+                            </a>
                         </article>
 
-                        <article class="product-card">
-                        <a href="produit.html" class="product-link">
-                            <div class="product-image" aria-hidden="true"></div>
-                            <h3 class="product-title">Nom du produit</h3>
-                            <p class="product-price">49 €</p>
-                            <span class="badge">Précommande</span>
-                        </a>
+                        <article class="product-card" data-featured="true" data-preorder="true" data-price="49">
+                            <!-- Lien couvrant la carte pour focus clavier + accessibilité -->
+                            <a class="product-card__link" href="produit.html" aria-label="Voir le produit : Nom du produit">
+                                
+                                <!-- Visuel produit -->
+                                <div class="product-card__media" aria-hidden="true">
+                                <!-- Remplace par ton image -->
+                                <div class="product-card__img"></div>
+
+                                <!-- Badge (précommande) : sémantique + lisible -->
+                                <span class="badge badge--preorder" aria-label="Produit disponible en précommande">
+                                    Précommande
+                                </span>
+                                </div>
+
+                                <!-- Contenu -->
+                                <div class="product-card__body">
+                                <h3 class="product-card__title">Nom du produit</h3>
+                                <p class="product-card__price">49 €</p>
+                                </div>
+
+                            </a>
                         </article>
 
-                        <article class="product-card">
-                        <a href="produit.html" class="product-link">
-                            <div class="product-image" aria-hidden="true"></div>
-                            <h3 class="product-title">Nom du produit</h3>
-                            <p class="product-price">49 €</p>
-                            <span class="badge">Précommande</span>
-                        </a>
+                        <article class="product-card" data-featured="true" data-preorder="true" data-price="49">
+                            <!-- Lien couvrant la carte pour focus clavier + accessibilité -->
+                            <a class="product-card__link" href="produit.html" aria-label="Voir le produit : Nom du produit">
+                                
+                                <!-- Visuel produit -->
+                                <div class="product-card__media" aria-hidden="true">
+                                <!-- Remplace par ton image -->
+                                <div class="product-card__img"></div>
+
+                                <!-- Badge (précommande) : sémantique + lisible -->
+                                <span class="badge badge--preorder" aria-label="Produit disponible en précommande">
+                                    Précommande
+                                </span>
+                                </div>
+
+                                <!-- Contenu -->
+                                <div class="product-card__body">
+                                <h3 class="product-card__title">Nom du produit</h3>
+                                <p class="product-card__price">49 €</p>
+                                </div>
+
+                            </a>
                         </article>
 
-                        <article class="product-card">
-                        <a href="produit.html" class="product-link">
-                            <div class="product-image" aria-hidden="true"></div>
-                            <h3 class="product-title">Nom du produit</h3>
-                            <p class="product-price">49 €</p>
-                            <span class="badge">Précommande</span>
-                        </a>
+                        <article class="product-card" data-featured="true" data-preorder="true" data-price="49">
+                            <!-- Lien couvrant la carte pour focus clavier + accessibilité -->
+                            <a class="product-card__link" href="produit.html" aria-label="Voir le produit : Nom du produit">
+                                
+                                <!-- Visuel produit -->
+                                <div class="product-card__media" aria-hidden="true">
+                                <!-- Remplace par ton image -->
+                                <div class="product-card__img"></div>
+
+                                <!-- Badge (précommande) : sémantique + lisible -->
+                                <span class="badge badge--preorder" aria-label="Produit disponible en précommande">
+                                    Précommande
+                                </span>
+                                </div>
+
+                                <!-- Contenu -->
+                                <div class="product-card__body">
+                                <h3 class="product-card__title">Nom du produit</h3>
+                                <p class="product-card__price">49 €</p>
+                                </div>
+
+                            </a>
                         </article>
+
                     </div>
 
                 </section>
