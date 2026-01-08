@@ -95,7 +95,7 @@
 
     --ui-text-muted: rgba(255, 255, 255, 0.72);
     --ui-text-soft: rgba(255, 255, 255, 0.75);
-    --ui-text-faint: rgba(255, 255, 255, 0.55);
+    --ui-text-faint: rgba(255, 255, 255, 0.65);
 
     --ui-shadow-1: 0 18px 40px rgba(0, 0, 0, 0.35);
     --ui-shadow-2: 0 22px 55px rgba(0, 0, 0, 0.45);
@@ -271,10 +271,14 @@ small,
   padding: 8px 12px;
   border-radius: 999px;
 
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 
-  color: rgba(255, 255, 255, 0.60);
+  /* Fond sombre explicite = Sonar OK + rendu premium */
+  background: rgba(10, 10, 10, 0.70);
+
+  /* Texte plus lisible */
+  color: rgba(255, 255, 255, 0.85);
+
   font-size: 12px;
   font-weight: 500;
 }
@@ -718,10 +722,168 @@ small,
   gap: 22px;
 }
 
-.product-link {
-  display: block;
+/* ==========================================================
+   BOUTIQUE — CARTES PRODUITS (SCOPED)
+   Objectif : ne pas impacter les cards de la Home
+   ========================================================== */
+
+/* On scope : uniquement les cartes dans la grille boutique */
+.shop-grid .product-card {
+  padding: 0; /* la carte est cliquable via le lien interne */
+  overflow: hidden;
+  border-radius: 18px;
+
+  background: var(--ui-surface-2);
+  border: 1px solid var(--ui-border-soft);
+  box-shadow: var(--ui-shadow-1);
+
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
 }
 
+/* Hover global sur la carte (souris) */
+.shop-grid .product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--ui-shadow-2);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Lien couvrant (focus clavier + zone cliquable) */
+.product-card__link {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Focus clavier sur le lien : visible et propre */
+.product-card__link:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.22);
+  border-radius: 16px;
+}
+
+/* Media */
+.product-card__media {
+  position: relative;
+  height: 160px;
+  border-radius: 14px;
+
+  background: var(--ui-surface-1);
+  border: 1px solid var(--ui-border-soft);
+
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+/* Placeholder image (à remplacer par <img>) */
+.product-card__img {
+  width: 74px;
+  height: 74px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Badge en overlay (précommande) */
+.badge--preorder {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* Contenu */
+.product-card__body {
+  text-align: center;
+  display: grid;
+  gap: 6px;
+}
+
+.product-card__title {
+  font-size: 22px; /* cohérent avec --fs-h3 (24px) sans être énorme */
+  line-height: 1.15;
+  font-weight: 700;
+}
+
+.product-card__price {
+  font-size: var(--fs-small);
+  color: var(--ui-text-soft);
+}
+
+/* ==========================================================
+   BOUTIQUE — TOOLBAR (FINITIONS)
+   ========================================================== */
+
+/* ajout seulement le shadow sans re-déclarer le bloc principal */
+.shop-results .shop-toolbar {
+  box-shadow: var(--ui-shadow-1);
+}
+
+/* Finitions du select (on évite de redéclarer .shop-sort select “base”) */
+.shop-results .shop-sort select {
+  padding-right: 40px;
+  cursor: pointer;
+  transition: border-color 200ms ease, background 200ms ease, transform 200ms ease;
+}
+
+.shop-results .shop-sort select:hover {
+  background: var(--ui-surface-3);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+/* Flèche custom (sans image) */
+.shop-results .shop-sort {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.shop-results .shop-sort::after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid rgba(255, 255, 255, 0.60);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.60);
+  transform: translateY(-60%) rotate(45deg);
+  pointer-events: none;
+}
+/* ==========================================================
+   BOUTIQUE — FILTRES (CHIPS : ÉTAT CHECKED VISIBLE)
+   ========================================================== */
+
+/* Sur chips : on rend le check visible */
+.filter-chip input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+/* Quand la checkbox est cochée, on “active” la chip */
+.filter-chip:has(input:checked) {
+  /* Fond sombre explicite (au lieu de blanc transparent) */
+  background: rgba(10, 10, 10, 0.70);
+
+  border-color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* Même logique pour les items classiques */
+.filter-item:has(input:checked) {
+  color: rgba(255, 255, 255, 0.90);
+}
+
+/* Force le texte du label même si le navigateur ne “propage” pas la couleur */
+.filter-chip:has(input:checked) * {
+  color: inherit;
+}
 
 /* ==========================================================
    FOOTER
