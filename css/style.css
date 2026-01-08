@@ -260,6 +260,95 @@ small,
 }
 
 /* ==========================================================
+   HEADER / NAVIGATION
+   ========================================================== */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(10px);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 72px;
+}
+
+/* ---------- Logo ---------- */
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+}
+
+.brand-logo {
+  width: 110px; /* ajustable selon la maquette */
+  height: auto;
+}
+
+/* ---------- Nav ---------- */
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-link {
+  font-family: var(--ff-body);
+  font-size: var(--fs-small);
+  font-weight: 400;
+
+  color: rgba(255, 255, 255, 0.85);
+  transition: opacity 200ms ease;
+}
+
+.nav-link:hover {
+  opacity: 0.7;
+}
+
+/* ---------- Panier ---------- */
+
+.nav-cart {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.nav-cart:hover {
+  opacity: 0.85;
+}
+
+.nav-cart:active {
+  transform: translateY(1px);
+}
+
+/* SVG panier */
+.icon-cart {
+  width: 18px;
+  height: 18px;
+  color: var(--c-white);
+}
+
+
+/* ==========================================================
    HERO
    ========================================================== */
 
@@ -292,3 +381,4 @@ small,
   line-height: var(--lh-body);
   max-width: 420px;
 }
+
