@@ -325,6 +325,20 @@ small,
 
 /* ---------- Nav ---------- */
 
+/* ---------- Desktop-first : burger OFF + menu ON ---------- */
+
+.nav-toggle {
+  display: none; /* Important : caché en desktop */
+}
+
+.nav-menu {
+  display: flex;              /* Important : menu en ligne */
+  align-items: center;
+  gap: 24px;
+
+  border: 0;                  /* Évite tout trait/left border */
+}
+
 .nav {
   display: flex;
   align-items: center;
@@ -399,7 +413,7 @@ small,
 
   text-align: center;
   gap: 24px;
-  border-bottom: 1px solid var(--ui-border-faint);
+  border-bottom: 1px solid var(--ui-border-soft);
 
   background: linear-gradient(
     180deg,
