@@ -18,6 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleBtn.setAttribute("aria-expanded", String(open));
     toggleBtn.classList.toggle("is-open", open);
     menu.classList.toggle("is-open", open);
+
+    // UX : bloquer le scroll + état global
+    document.body.classList.toggle("nav-open", open);
   };
 
   /**
@@ -37,8 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Fermer au clic sur un lien du menu
   menu.addEventListener("click", (e) => {
-    const target = e.target;
-    if (target && target.classList && target.classList.contains("nav-link")) {
+    if (e.target?.classList?.contains("nav-link")) {
       setMenuState(false);
     }
   });
