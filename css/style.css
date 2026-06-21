@@ -1042,6 +1042,136 @@ small,
 }
 
 /* ==========================================================
+   PANIER
+   ========================================================== */
+
+.cart-page {
+  padding: 80px 0;
+}
+
+.cart-page-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.cart-header {
+  text-align: center;
+}
+
+.cart-header p {
+  color: var(--ui-text-muted);
+}
+
+.cart-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 100px 1fr auto auto auto;
+  gap: 20px;
+  align-items: center;
+
+  padding: 20px;
+  border-radius: 18px;
+
+  background: var(--ui-surface-1);
+  border: 1px solid var(--ui-border-soft);
+}
+
+.cart-item-img {
+  width: 120px;
+  height: 120px;
+
+  border-radius: 12px;
+  background: var(--ui-surface-2);
+}
+
+.cart-item-info h2 {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.cart-item-info p {
+  color: var(--ui-text-muted);
+}
+
+.cart-item-quantity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cart-item-quantity button {
+  background: var(--c-white);
+  color: var(--c-black);
+  font-weight: 700;
+  transition: opacity 200ms ease;
+  width: 32px;
+  height: 32px;
+
+  border: none;
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+.cart-item-quantity button:hover {
+  opacity: 0.85;
+}
+
+.cart-item-price {
+  font-weight: 600;
+}
+
+.cart-remove {
+  background: transparent;
+  border: none;
+  color: #ff6b6b;
+  cursor: pointer;
+}
+
+.cart-summary {
+  padding: 24px;
+
+  border-radius: 18px;
+  background: var(--ui-surface-1);
+  border: 1px solid var(--ui-border-soft);
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.cart-summary-line,
+.cart-summary-total {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cart-summary-total {
+  padding-top: 16px;
+  border-top: 1px solid var(--ui-border-soft);
+
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.cart-checkout {
+  width: 100%;
+}
+
+/* ==========================================================
    FOOTER
    ========================================================== */
 
