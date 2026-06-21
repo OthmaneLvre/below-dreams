@@ -744,6 +744,10 @@ small,
   gap: 22px;
 }
 
+.shop-grid .product-card[hidden] {
+  display: none !important;
+}
+
 /* ==========================================================
    BOUTIQUE — BOUTON "MIS EN AVANT"
    ========================================================== */

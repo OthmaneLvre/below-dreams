@@ -28,6 +28,10 @@
 
 @media (max-width: 900px) {
 
+  html,
+  body {
+    overflow-x: hidden;
+  }
 
   /* ---------- Header ---------- */
 
@@ -193,6 +197,44 @@
     margin-bottom: 28px;
   }
 
+  /*  ====================
+      BOUTIQUE MOBILE
+      ==================== */
+
+    .shop,
+    .shop-inner,
+    .shop-results,
+    .shop-grid,
+    .shop-toolbar,
+    .shop-filters {
+      max-width: 100%;
+    }
+
+    .shop-inner {
+      grid-template-columns: 1fr;
+    }
+
+    .shop-filters {
+      position: static;
+      width: 100%;
+    }
+
+    .shop-toolbar {
+      overflow: hidden;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .shop-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .shop-sort select,
+    .sort-btn,
+    .shop-reset {
+      max-width: 100%;
+    }
+
   /* ---------- Footer ---------- */
 
   .footer-top {
@@ -241,6 +283,44 @@
   /* Précommande */
   .preorder-card {
     padding: 28px 18px;
+  }
+
+  /*  ====================
+      BOUTIQUE MOBILE
+      ==================== */
+  
+  .shop {
+    overflow-x: hidden;
+  } 
+
+  .shop-inner {
+    width: 100%;
+  }
+
+  .shop-filters {
+    padding: 20px 16px;
+  }
+
+  .filter-sizes {
+    max-width: 100%;
+  }
+
+  .shop-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shop-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .shop-sort, 
+  .sort-btn {
+    width: 100%;
+  }
+
+  .shop-sort select {
+    width: 100%;
   }
 
   /* Footer : liens plus compacts */
