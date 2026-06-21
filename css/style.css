@@ -705,14 +705,36 @@ small,
 
 .shop-sort select {
   appearance: none;
-  padding: 10px 12px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-color: var(--ui-surface-2);
+  color: var(--c-white);
 
   border-radius: 12px;
   border: 1px solid var(--ui-border-soft);
-  background: var(--ui-surface-2);
 
-  color: var(--c-white);
+  padding: 10px 40px 10px 12px;
   font-size: var(--fs-small);
+  cursor: pointer;
+
+  /* petite flèche custom */
+  background-image: none;
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+}
+
+/* Options de la liste */
+.shop-sort option {
+  background-color: var(--c-black);
+  color: var(--c-white);
+}
+
+/* Focus clavier */ 
+.shop-sort select:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 /* Grille produits boutique */
@@ -720,6 +742,58 @@ small,
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 22px;
+}
+
+.shop-grid .product-card[hidden] {
+  display: none !important;
+}
+
+/* ==========================================================
+   BOUTIQUE — BOUTON "MIS EN AVANT"
+   ========================================================== */
+
+.sort-btn {
+  appearance: none;
+  border: 1px solid var(--ui-border-soft);
+  background: var(--ui-surface-2);
+  color: var(--ui-text-soft);
+
+  padding: 10px 14px;
+  border-radius: 12px;
+
+  font-size: var(--fs-small);
+  font-weight: 500;
+  cursor: pointer;
+
+  transition:
+    background 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease,
+    transform 150ms ease;
+}
+
+/* Hover */
+.sort-btn:hover {
+  background: var(--ui-surface-3);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Active (mis en avant ON) */
+.sort-btn[aria-pressed="true"] {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: var(--c-white);
+}
+
+/* Feedback clic */
+.sort-btn:active {
+  transform: translateY(1px);
+}
+
+/* Focus clavier */
+.sort-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
 }
 
 /* ==========================================================
