@@ -42,7 +42,7 @@
 
                 
                 <!-- Panier (reste visible) -->
-                <a href="#" class="nav-cart" aria-label="Panier">
+                <a href="panier.html" class="nav-cart" aria-label="Panier">
                     <svg
                         class="icon-cart"
                         width="20"
@@ -89,28 +89,28 @@
                 <div class="filter-block">
                     <h3 class="filter-title">Catégorie</h3>
                     <ul class="filter-list">
-                    <li><label class="filter-item"><input type="checkbox"> T-shirts</label></li>
-                    <li><label class="filter-item"><input type="checkbox"> Hoodies</label></li>
-                    <li><label class="filter-item"><input type="checkbox"> Accessoires</label></li>
+                    <li><label class="filter-item"><input type="checkbox" name="category" value="tshirts"> T-shirts</label></li>
+                    <li><label class="filter-item"><input type="checkbox" name="category" value="hoodies"> Hoodies</label></li>
+                    <li><label class="filter-item"><input type="checkbox" name="category" value="accessoires"> Accessoires</label></li>
                     </ul>
                 </div>
 
                 <div class="filter-block">
                     <h3 class="filter-title">Disponibilité</h3>
                     <ul class="filter-list">
-                    <li><label class="filter-item"><input type="checkbox"> Précommande</label></li>
-                    <li><label class="filter-item"><input type="checkbox"> Stock</label></li>
+                    <li><label class="filter-item"><input type="checkbox" name="availability" value="preorder"> Précommande</label></li>
+                    <li><label class="filter-item"><input type="checkbox" name="availability" value="stock"> Stock</label></li>
                     </ul>
                 </div>
 
                 <div class="filter-block">
                     <h3 class="filter-title">Taille</h3>
                     <ul class="filter-list filter-sizes">
-                    <li><label class="filter-chip"><input type="checkbox"> XS</label></li>
-                    <li><label class="filter-chip"><input type="checkbox"> S</label></li>
-                    <li><label class="filter-chip"><input type="checkbox"> M</label></li>
-                    <li><label class="filter-chip"><input type="checkbox"> L</label></li>
-                    <li><label class="filter-chip"><input type="checkbox"> XL</label></li>
+                    <li><label class="filter-chip"><input type="checkbox" name="size" value="xs"> XS</label></li>
+                    <li><label class="filter-chip"><input type="checkbox" name="size" value="s"> S</label></li>
+                    <li><label class="filter-chip"><input type="checkbox" name="size" value="m"> M</label></li>
+                    <li><label class="filter-chip"><input type="checkbox" name="size" value="l"> L</label></li>
+                    <li><label class="filter-chip"><input type="checkbox" name="size" value="xl"> XL</label></li>
                     </ul>
                 </div>
 
@@ -145,7 +145,73 @@
 
                     <div class="shop-grid">
                         <!-- PRODUCT CARD -->
-                        <article class="product-card" data-featured="true" data-preorder="true" data-price="49">
+                        <article class="product-card"
+                            data-featured="true"
+                            data-price="79"
+                            data-category="tshirts"
+                            data-availability="stock"
+                            data-sizes="xs,s,m,l,xl"
+                        >
+                            <!-- Lien couvrant la carte pour focus clavier + accessibilité -->
+                            <a class="product-card__link" href="produit.html" aria-label="Voir le produit : Nom du produit">
+                                
+                                <!-- Visuel produit -->
+                                <div class="product-card__media" aria-hidden="true">
+                                <!-- Remplace par ton image -->
+                                <div class="product-card__img"></div>
+
+                                <!-- Badge (précommande) : sémantique + lisible -->
+                                <span class="badge badge--preorder" aria-label="Produit disponible en précommande">
+                                    Précommande
+                                </span>
+                                </div>
+
+                                <!-- Contenu -->
+                                <div class="product-card__body">
+                                <h3 class="product-card__title">Nom du produit</h3>
+                                <p class="product-card__price">79 €</p>
+                                </div>
+
+                            </a>
+                        </article>
+
+                        <article class="product-card"
+                            data-featured="false"
+                            data-price="39"
+                            data-category="tshirts|hoodies|accessoires"
+                            data-availability="preorder"
+                            data-sizes="xs,s,m,l,xl"
+                        >
+                            <!-- Lien couvrant la carte pour focus clavier + accessibilité -->
+                            <a class="product-card__link" href="produit.html" aria-label="Voir le produit : Nom du produit">
+                                
+                                <!-- Visuel produit -->
+                                <div class="product-card__media" aria-hidden="true">
+                                <!-- Remplace par ton image -->
+                                <div class="product-card__img"></div>
+
+                                <!-- Badge (précommande) : sémantique + lisible -->
+                                <span class="badge badge--preorder" aria-label="Produit disponible en précommande">
+                                    Précommande
+                                </span>
+                                </div>
+
+                                <!-- Contenu -->
+                                <div class="product-card__body">
+                                <h3 class="product-card__title">Nom du produit</h3>
+                                <p class="product-card__price">39 €</p>
+                                </div>
+
+                            </a>
+                        </article>
+
+                        <article class="product-card"
+                            data-featured="true"
+                            data-price="49"
+                            data-category="tshirts|hoodies|accessoires"
+                            data-availability="preorder"
+                            data-sizes="xs,s,m,l,xl"    
+                        >
                             <!-- Lien couvrant la carte pour focus clavier + accessibilité -->
                             <a class="product-card__link" href="produit.html" aria-label="Voir le produit : Nom du produit">
                                 
@@ -169,55 +235,13 @@
                             </a>
                         </article>
 
-                        <article class="product-card" data-featured="true" data-preorder="true" data-price="49">
-                            <!-- Lien couvrant la carte pour focus clavier + accessibilité -->
-                            <a class="product-card__link" href="produit.html" aria-label="Voir le produit : Nom du produit">
-                                
-                                <!-- Visuel produit -->
-                                <div class="product-card__media" aria-hidden="true">
-                                <!-- Remplace par ton image -->
-                                <div class="product-card__img"></div>
-
-                                <!-- Badge (précommande) : sémantique + lisible -->
-                                <span class="badge badge--preorder" aria-label="Produit disponible en précommande">
-                                    Précommande
-                                </span>
-                                </div>
-
-                                <!-- Contenu -->
-                                <div class="product-card__body">
-                                <h3 class="product-card__title">Nom du produit</h3>
-                                <p class="product-card__price">49 €</p>
-                                </div>
-
-                            </a>
-                        </article>
-
-                        <article class="product-card" data-featured="true" data-preorder="true" data-price="49">
-                            <!-- Lien couvrant la carte pour focus clavier + accessibilité -->
-                            <a class="product-card__link" href="produit.html" aria-label="Voir le produit : Nom du produit">
-                                
-                                <!-- Visuel produit -->
-                                <div class="product-card__media" aria-hidden="true">
-                                <!-- Remplace par ton image -->
-                                <div class="product-card__img"></div>
-
-                                <!-- Badge (précommande) : sémantique + lisible -->
-                                <span class="badge badge--preorder" aria-label="Produit disponible en précommande">
-                                    Précommande
-                                </span>
-                                </div>
-
-                                <!-- Contenu -->
-                                <div class="product-card__body">
-                                <h3 class="product-card__title">Nom du produit</h3>
-                                <p class="product-card__price">49 €</p>
-                                </div>
-
-                            </a>
-                        </article>
-
-                        <article class="product-card" data-featured="true" data-preorder="true" data-price="49">
+                        <article class="product-card"
+                            data-featured="true"
+                            data-price="49"
+                            data-category="tshirts|hoodies|accessoires"
+                            data-availability="preorder"
+                            data-sizes="xs,s,m,l,xl"
+                        >
                             <!-- Lien couvrant la carte pour focus clavier + accessibilité -->
                             <a class="product-card__link" href="produit.html" aria-label="Voir le produit : Nom du produit">
                                 
@@ -285,5 +309,7 @@
     </footer>
 
     <script src="js/main.js" defer></script>
+    <script src="js/shop.js" defer></script>
+    <script src="js/cart.js" defer></script>
 </body>
 </html>
