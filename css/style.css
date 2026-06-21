@@ -1099,11 +1099,14 @@ small,
 
 .cart-item-info h2 {
   font-size: 20px;
+  padding-left: 8px;
   margin-bottom: 6px;
 }
 
 .cart-item-info p {
   color: var(--ui-text-muted);
+  padding-left: 8px;
+
 }
 
 .cart-item-quantity {
