@@ -235,6 +235,18 @@
       max-width: 100%;
     }
 
+/* ==========================================================
+   PAGE PRODUIT MOBILE
+   ========================================================== */
+
+    .product-detail-inner {
+      grid-template-columns: 1fr;
+    }
+
+    .product-detail-title {
+      font-size: 32px;
+    }
+
   /* ---------- Footer ---------- */
 
   .footer-top {
