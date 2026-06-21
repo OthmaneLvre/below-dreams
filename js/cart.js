@@ -2,9 +2,6 @@ console.log("cart.js loaded");
 
 /* ==========================================================
    BELOW DREAMS — CART
-   - Ajout panier depuis produit.html
-   - Stockage localStorage
-   - Affichage panier sur panier.html
    ========================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -21,38 +18,24 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem(CART_KEY, JSON.stringify(cart));
   };
 
-  const addProductToCart = () => {
-    const title = document.querySelector(".product-detail-title")?.textContent.trim();
-    const priceText = document.querySelector(".product-detail-price")?.textContent.trim();
-    const quantityInput = document.querySelector(".product-quantity");
-    const selectedSize = document.querySelector('input[name="size"]:checked');
-
-    if (!selectedSize) {
-      alert("Choisis une taille avant d'ajouter au panier.");
-      return;
-    }
-
-    const product = {
-      id: `${title}-${selectedSize.value}`,
-      name: title,
-      price: Number(priceText.replace("€", "").trim()),
-      size: selectedSize.value,
-      quantity: Number(quantityInput.value) || 1,
-      availability: "Précommande",
-    };
-
+  const updateCartCount = () => {
     const cart = getCart();
+    const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-    const existingProduct = cart.find((item) => item.id === product.id);
+    document.querySelectorAll(".cart-count").forEach((count) => {
+      count.textContent = String(totalQuantity);
+      count.hidden = totalQuantity === 0;
+    });
+  };
 
-    if (existingProduct) {
-      existingProduct.quantity += product.quantity;
-    } else {
-      cart.push(product);
-    }
+  const updateSummary = () => {
+    const cart = getCart();
+    const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-    saveCart(cart);
-    window.location.href = "panier.html";
+    const summaryValues = document.querySelectorAll(".cart-summary strong");
+
+    if (summaryValues[0]) summaryValues[0].textContent = `${total} €`;
+    if (summaryValues[2]) summaryValues[2].textContent = `${total} €`;
   };
 
   const renderCart = () => {
@@ -66,7 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
       cartItemsContainer.innerHTML = `
         <p class="cart-empty">Votre panier est vide.</p>
       `;
-      updateSummary(0);
+      updateSummary();
+      updateCartCount();
       return;
     }
 
@@ -99,16 +83,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     updateSummary();
+    updateCartCount();
   };
 
-  const updateSummary = () => {
-    const cart = getCart();
-    const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-    const summaryValues = document.querySelectorAll(".cart-summary strong");
-
-    if (summaryValues[0]) summaryValues[0].textContent = `${total} €`;
-    if (summaryValues[2]) summaryValues[2].textContent = `${total} €`;
+  const removeProduct = (productId) => {
+    const cart = getCart().filter((item) => item.id !== productId);
+    saveCart(cart);
+    renderCart();
+    updateCartCount();
   };
 
   const updateQuantity = (productId, action) => {
@@ -132,12 +114,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
     saveCart(cart);
     renderCart();
+    updateCartCount();
   };
 
-  const removeProduct = (productId) => {
-    const cart = getCart().filter((item) => item.id !== productId);
+  const addProductToCart = () => {
+    const title = document.querySelector(".product-detail-title")?.textContent.trim();
+    const priceText = document.querySelector(".product-detail-price")?.textContent.trim();
+    const quantityInput = document.querySelector(".product-quantity");
+    const selectedSize = document.querySelector('input[name="size"]:checked');
+
+    if (!selectedSize) {
+      alert("Choisis une taille avant d'ajouter au panier.");
+      return;
+    }
+
+    const product = {
+      id: `${title}-${selectedSize.value}`,
+      name: title,
+      price: Number(priceText.replace("€", "").trim()),
+      size: selectedSize.value,
+      quantity: Number(quantityInput.value) || 1,
+      availability: "Précommande",
+    };
+
+    const cart = getCart();
+    const existingProduct = cart.find((item) => item.id === product.id);
+
+    if (existingProduct) {
+      existingProduct.quantity += product.quantity;
+    } else {
+      cart.push(product);
+    }
+
     saveCart(cart);
-    renderCart();
+    updateCartCount();
+    window.location.href = "panier.html";
   };
 
   if (addToCartBtn) {
@@ -166,4 +177,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderCart();
   }
+
+  updateCartCount();
 });
