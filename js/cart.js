@@ -46,13 +46,23 @@ document.addEventListener("DOMContentLoaded", () => {
     cartItemsContainer.innerHTML = "";
 
     if (cart.length === 0) {
-      cartItemsContainer.innerHTML = `
-        <p class="cart-empty">Votre panier est vide.</p>
-      `;
-      updateSummary();
-      updateCartCount();
-      return;
+        document.querySelector(".cart-summary").style.display = "none";
+
+        cartItemsContainer.innerHTML = `
+            <div class="cart-empty">
+                <div class="cart-empty-icon">🛒</div>
+                <h2>Votre panier est vide</h2>
+                <p>Découvrez les pièces Below Dreams disponibles en précommande.</p>
+                <a href="boutique.html" class="btn-primary">Retour à la boutique</a>
+            </div>     
+        `;
+        
+        updateCartCount();
+        return;
     }
+
+        /* Si le panier contient des articles */ 
+        document.querySelector(".cart-summary").style.display = "flex";
 
     cart.forEach((item) => {
       const itemTotal = item.price * item.quantity;

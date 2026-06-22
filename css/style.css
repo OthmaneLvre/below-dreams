@@ -422,6 +422,35 @@ small,
   text-align: center;
 }
 
+.cart-empty {
+  padding: 48px 24px;
+  border-radius: 18px;
+
+  background: var(--ui-surface-1);
+  border: 1px solid var(--ui-border-soft);
+
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.cart-empty h2 {
+  font-size: 28px;
+}
+
+.cart-empty p {
+  color: var(--ui-text-muted);
+  max-width: 420px;
+}
+
+.cart-empty-icon {
+  font-size: 48px;
+  line-height: 1;
+}
+
 /* ==========================================================
    HERO
    ========================================================== */
