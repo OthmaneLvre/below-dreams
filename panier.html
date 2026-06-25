@@ -4,15 +4,14 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Below Dreams | Accueil</title>
-    <meta name="description" content="Below Dreams — pièces fortes, éditions limitées, précommande.">
+    <title>Below Dreams | Panier</title>
+    <meta name="description" content="Consultez votre panier Below Dreams avant de finaliser votre commande.">
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
 
 </head>
-
 <body>
     
     <!-- HEADER : Logo + Nav + Panier -->
@@ -62,7 +61,7 @@
                     </svg>
 
                     <span class="cart-count" aria-label="Nombre d'articles dans le panier">0</span>
-
+                    
                 </a>
             </nav>
         </div>
@@ -70,98 +69,70 @@
     </header>
     
     <main>
-        <!-- HERO -->
-        <section aria-label="Présentation de la marque" class="hero">
+        <section class="cart-page">
+            <div class="container cart-page-inner">
 
-            <!-- H1 SEO (masqué visuellement plus tard en CSS) -->
-            <h1 class="sr-only">Below Dreams — Marque de vêtements en édition limitée</h1>
+                <div class="cart-header">
+                    <h1>Mon panier</h1>
+                    <p>Vérifiez vos articles avant de passer commande.</p>
+                </div>
 
-            <!-- Logo central -->
-            <img
-                src="assets/logos/below-dreams-white.svg"
-                alt="Logo Below Dreams"
-                class="hero-logo"    
-            >
+                <div class="cart-layout">
 
-            <p class="hero-text">
-                Des pièces fortes. Sans compromis.
-                Éditions limitées. Précommande.
-            </p>
+                    <div class="cart-items" id="cart-items">
+                        <article class="cart-item">
+                            <div class="cart-item-img"></div>
 
-            <a href="boutique.html" class="btn-primary">
-                Découvrir la collection
-            </a>
+                            <div class="cart-item-info">
+                                <h2>Nom du produit</h2>
+                                <p>Taille : M</p>
+                                <p>Précommande</p>
+                            </div>
 
-        </section>
-        
-        <!-- NOS ESSENTIELS -->
-        <section aria-label="Nos essentiels" class="section-essentials">
-            <div class="container">
+                            <div class="cart-item-quantity">
+                                <button type="button">-</button>
+                                <span>1</span>
+                                <button type="button">+</button>
+                            </div>
 
-                <h2 class="section-title">Nos essentiels</h2>
+                            <p class="cart-item-price">79 €</p>
 
-                <div class="products">
+                            <button class="cart-remove" type="button">
+                                Supprimer
+                            </button>
+                        </article>
+                    </div>
 
-                    <article class="product-card">
-                        <img src="assets/images/product/pantalon-oversize.png" alt="Pantalon à jambe large unisexe Below Dreams" class="product-image">
-                        <h3 class="product-title">Pantalon à jambe large unisexe</h3>
-                        <p class="product-price">44,90 €</p>
-                        <span class="badge">Précommande</span>
-                    </article>
-   
-                    <article class="product-card">
-                        <img src="assets/images/product/hoodie-oversize-2.PNG" alt="T-shirt oversize unisexe Below Dreams" class="product-image">
-                        <h3 class="product-title">T-shirt oversize unisexe</h3>
-                        <p class="product-price">29,99 €</p>
-                        <span class="badge">Précommande</span>
-                    </article>
+                    <aside class="cart-summary">
+                        <h2>Résumé</h2>
 
-                    <article class="product-card">
-                        <img src="assets/images/product/pantalon-oversize.png" alt="Pantalon à jambe large unisexe Below Dreams" class="product-image">
-                        <h3 class="product-title">Pantalon à jambe large unisexe</h3>
-                        <p class="product-price">44,90 €</p>
-                        <span class="badge">Précommande</span>
-                    </article>
+                        <div class="cart-summary-line">
+                            <span>Sous-total</span>
+                            <strong>79 €</strong>
+                        </div>
 
-                    <article class="product-card">
-                        <img src="assets/images/product/short-sport.PNG" alt="Pantalon à jambe large unisexe Below Dreams" class="product-image">
-                        <h3 class="product-title">Short de sport homme</h3>
-                        <p class="product-price">24,90 €</p>
-                        <span class="badge">Précommande</span>
-                    </article>
+                        <div class="cart-summary-line">
+                            <span>Livraison</span>
+                            <strong>Calculée après</strong>
+                        </div>
+
+                        <div class="cart-summary-total">
+                            <span>Total</span>
+                            <strong>79 €</strong>
+                        </div>
+
+                        <button class="btn-primary cart-checkout" type="button">
+                            Commander
+                        </button>
+                    </aside>
 
                 </div>
 
             </div>
-        
         </section>
-
-        <!-- PRECOMMANDE -->
-        <section aria-label="Précommande" class="section-preorder">
-            <div class="container preorder-inner">
-
-                <div class="preorder-card">
-                    <h2 class="section-title">Fonctionnement en précommande</h2>
-                    <p>
-                        Les articles Below Dreams sont proposés en précommande. <br>
-                        Expédition sous 2 à 3 semaines après validation de la commande.
-                    </p>
-                </div>
-        
-        </section>
-
-
-        <!-- CTA -->
-        <section aria-label="Accéder à la boutique" class="section-cta">
-            <a href="boutique.html" class="btn-primary">
-                Découvrir la boutique
-            </a>
-        </section>
-
     </main>
 
-    
-    <!-- ================= FOOTER ================= -->
+        <!-- ================= FOOTER ================= -->
     <footer class="site-footer">
         <div class="container footer-inner">
 

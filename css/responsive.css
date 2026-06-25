@@ -235,6 +235,38 @@
       max-width: 100%;
     }
 
+/* ==========================================================
+   PAGE PRODUIT MOBILE
+   ========================================================== */
+
+  .product-detail-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .product-detail-title {
+    font-size: 32px;
+  }
+
+/* ==========================================================
+   PANIER MOBILE
+   ========================================================== */
+  .cart-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cart-item {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .cart-item-img {
+    margin: 0 auto;
+  }
+
+  .cart-item-quantity {
+    justify-content: center;
+  }
+
   /* ---------- Footer ---------- */
 
   .footer-top {
