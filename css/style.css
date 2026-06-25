@@ -533,10 +533,11 @@ small,
 
 /* Image placeholder (carré) */
 .product-image {
-  width: 92px;
+  width: 100%;
   aspect-ratio: 1 / 1;
+  object-fit: cover;
 
-  border-radius: 10px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.06);
 
   margin-bottom: 18px;
@@ -901,10 +902,10 @@ small,
 
 /* Placeholder image (à remplacer par <img>) */
 .product-card__img {
-  width: 74px;
-  height: 74px;
+  width: 100%;
+  height: 100%;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.06);
+  object-fit: cover;
 }
 
 /* Badge en overlay (précommande) */
