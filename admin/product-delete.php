@@ -2,6 +2,9 @@
 session_start();
 require_once '../config/database.php';
 
+require_once 'partials/header.php';
+require_once 'partials/sidebar.php';
+
 // Sécurité : accès admin uniquement
 if (!isset($_SESSION['admin_id'])) {
     header('Location: login.php');
