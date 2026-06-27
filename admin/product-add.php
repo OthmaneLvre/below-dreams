@@ -67,71 +67,100 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $error = "Merci de remplir les champs obligatoires.";
 }
+
+require_once 'partials/header.php';
+require_once 'partials/sidebar.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Ajouter un produit | Below Dreams</title>
-</head>
-<body>
+<main class="admin-main">
 
-<h1>Ajouter un produit</h1>
+    <header class="admin-header admin-header-between">
+        <div>
+            <h1>Ajouter un produit</h1>
+            <p>Ajoute un nouveau produit à la boutique Below Dreams.</p>
+        </div>
 
-<p>
-    <a href="products.php">Retour aux produits</a>
-</p>
+        <a href="products.php" class="admin-btn-secondary">
+            Retour aux produits
+        </a>
+    </header>
 
-<?php if (!empty($error)) : ?>
-    <p><?= htmlspecialchars($error) ?></p>
-<?php endif; ?>
+    <section class="admin-section">
 
-<form method="POST" enctype="multipart/form-data">
+        <?php if (!empty($error)) : ?>
+            <p class="admin-alert">
+                <?= htmlspecialchars($error) ?>
+            </p>
+        <?php endif; ?>
 
-    <label>Nom du produit *</label><br>
-    <input type="text" name="name" required><br><br>
+        <form method="POST" enctype="multipart/form-data" class="admin-form">
 
-    <label>Slug *</label><br>
-    <input type="text" name="slug" placeholder="ex: tshirt-oversize-unisexe" required><br><br>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nom du produit *</label>
+                    <input type="text" name="name" required>
+                </div>
 
-    <label>Catégorie *</label><br>
-    <select name="category" required>
-        <option value="">Choisir</option>
-        <option value="pantalon">Pantalon</option>
-        <option value="tshirt">T-shirt</option>
-        <option value="hoodie">Hoodie</option>
-        <option value="short">Short</option>
-    </select><br><br>
+                <div class="form-group">
+                    <label>Slug *</label>
+                    <input type="text" name="slug" placeholder="ex: tshirt-oversize-unisexe" required>
+                </div>
 
-    <label>Prix *</label><br>
-    <input type="number" name="price" step="0.01" required><br><br>
+                <div class="form-group">
+                    <label>Catégorie *</label>
+                    <select name="category" required>
+                        <option value="">Choisir</option>
+                        <option value="pantalon">Pantalon</option>
+                        <option value="tshirt">T-shirt</option>
+                        <option value="hoodie">Hoodie</option>
+                        <option value="short">Short</option>
+                    </select>
+                </div>
 
-    <label>Description</label><br>
-    <textarea name="description" rows="5"></textarea><br><br>
+                <div class="form-group">
+                    <label>Prix *</label>
+                    <input type="number" name="price" step="0.01" required>
+                </div>
 
-    <label>Statut</label><br>
-    <select name="status">
-        <option value="preorder">Précommande</option>
-        <option value="stock">Stock</option>
-    </select><br><br>
+                <div class="form-group">
+                    <label>Statut</label>
+                    <select name="status">
+                        <option value="preorder">Précommande</option>
+                        <option value="stock">Stock</option>
+                    </select>
+                </div>
 
-    <label>Tailles disponibles</label><br>
-    <input type="text" name="sizes" placeholder="ex: S,M,L,XL"><br><br>
+                <div class="form-group">
+                    <label>Tailles disponibles</label>
+                    <input type="text" name="sizes" placeholder="ex: S,M,L,XL">
+                </div>
+            </div>
 
-    <label>Image</label><br>
-    <input type="file" name="image" accept="image/*"><br><br>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="6"></textarea>
+            </div>
 
-    <label>
-        <input type="checkbox" name="is_featured">
-        Mettre en avant
-    </label><br><br>
+            <div class="form-group">
+                <label>Image</label>
+                <input type="file" name="image" accept="image/*">
+            </div>
 
-    <button type="submit">
-        Ajouter le produit
-    </button>
+            <label class="checkbox-group">
+                <input type="checkbox" name="is_featured">
+                <span>Mettre en avant</span>
+            </label>
 
-</form>
+            <div class="form-actions">
+                <button type="submit" class="admin-btn">
+                    Ajouter le produit
+                </button>
+            </div>
 
-</body>
-</html>
+        </form>
+
+    </section>
+
+</main>
+
+<?php require_once 'partials/footer.php'; ?>
