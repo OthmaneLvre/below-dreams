@@ -11,49 +11,43 @@ if (!isset($_SESSION['admin_id'])) {
 $productsCount = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
 $customersCount = $pdo->query("SELECT COUNT(*) FROM customers")->fetchColumn();
 $ordersCount = $pdo->query("SELECT COUNT(*) FROM orders")->fetchColumn();
+
+$pageTitle = "Dashboard | Below Dreams";
+
+require_once 'partials/header.php';
+require_once 'partials/sidebar.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard | Below Dreams</title>
-</head>
-<body>
+<main class="admin-main">
 
-    <h1>Dashboard Below Dreams</h1>
-    <p>Bienvenue <?= htmlspecialchars($_SESSION['admin_name']) ?></p>
+    <header class="admin-header">
+        <div>
+            <h1>Dashboard</h1>
+            <p>Bienvenue <?= htmlspecialchars($_SESSION['admin_name']) ?></p>
+        </div>
+    </header>
 
-    <nav>
-        <a href="dashboard.php">Dashboard</a> |
-        <a href="products.php">Produits</a> |
-        <a href="orders.php">Commandes</a> |
-        <a href="customers.php">Clients</a> |
-        <a href="logout.php">Déconnexion</a>
-    </nav>
-
-    <hr>
-
-    <section>
+    <section class="admin-section">
         <h2>Vue d’ensemble</h2>
 
-        <div>
-            <article>
-                <h3>Produits</h3>
-                <p><?= $productsCount ?></p>
+        <div class="stats-grid">
+            <article class="stat-card">
+                <span>Produits</span>
+                <strong><?= $productsCount ?></strong>
             </article>
 
-            <article>
-                <h3>Clients</h3>
-                <p><?= $customersCount ?></p>
+            <article class="stat-card">
+                <span>Clients</span>
+                <strong><?= $customersCount ?></strong>
             </article>
 
-            <article>
-                <h3>Commandes</h3>
-                <p><?= $ordersCount ?></p>
+            <article class="stat-card">
+                <span>Commandes</span>
+                <strong><?= $ordersCount ?></strong>
             </article>
         </div>
     </section>
 
-</body>
-</html>
+</main>
+
+<?php require_once 'partials/footer.php'; ?>

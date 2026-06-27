@@ -15,81 +15,77 @@ $query = $pdo->query("
 ");
 
 $products = $query->fetchAll(PDO::FETCH_ASSOC);
+
+require_once 'partials/header.php';
+require_once 'partials/sidebar.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Produits | Below Dreams</title>
-</head>
-<body>
+<main class="admin-main">
 
-<h1>Gestion des produits</h1>
+    <header class="admin-header admin-header-between">
+        <div>
+            <h1>Gestion des produits</h1>
+            <p>Ajoute, modifie et supprime les produits de la boutique.</p>
+        </div>
 
-<p>
-    <a href="dashboard.php">Dashboard</a>
-    |
-    <a href="product-add.php">Ajouter un produit</a>
-    |
-    <a href="logout.php">Déconnexion</a>
-</p>
+        <a href="product-add.php" class="admin-btn">
+            Ajouter un produit
+        </a>
+    </header>
 
-<table border="1" cellpadding="10">
+    <section class="admin-section">
+        <div class="table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Nom</th>
+                        <th>Catégorie</th>
+                        <th>Prix</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
 
-    <tr>
-        <th>ID</th>
-        <th>Nom</th>
-        <th>Catégorie</th>
-        <th>Prix</th>
-        <th>Statut</th>
-        <th>Actions</th>
-    </tr>
+                <tbody>
+                    <?php foreach ($products as $product) : ?>
+                        <tr>
+                            <td><?= $product['id'] ?></td>
 
-    <?php foreach ($products as $product) : ?>
+                            <td>
+                                <?php if (!empty($product['image'])) : ?>
+                                    <img src="../<?= htmlspecialchars($product['image']) ?>" class="product-thumb" alt="">
+                                <?php else : ?>
+                                    <span class="empty-image">Aucune</span>
+                                <?php endif; ?>
+                            </td>
 
-        <tr>
+                            <td><?= htmlspecialchars($product['name']) ?></td>
+                            <td><?= htmlspecialchars($product['category']) ?></td>
+                            <td><?= number_format($product['price'], 2, ',', ' ') ?> €</td>
 
-            <td><?= $product['id'] ?></td>
+                            <td>
+                                <span class="status-badge">
+                                    <?= htmlspecialchars($product['status']) ?>
+                                </span>
+                            </td>
 
-            <td>
-                <?= htmlspecialchars($product['name']) ?>
-            </td>
+                            <td>
+                                <div class="table-actions">
+                                    <a href="product-edit.php?id=<?= $product['id'] ?>">Modifier</a>
+                                    <a href="product-delete.php?id=<?= $product['id'] ?>" class="danger-link" onclick="return confirm('Supprimer ce produit ?')">
+                                        Supprimer
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </section>
 
-            <td>
-                <?= htmlspecialchars($product['category']) ?>
-            </td>
+</main>
 
-            <td>
-                <?= number_format($product['price'], 2, ',', ' ') ?> €
-            </td>
-
-            <td>
-                <?= htmlspecialchars($product['status']) ?>
-            </td>
-
-            <td>
-
-                <a href="product-edit.php?id=<?= $product['id'] ?>">
-                    Modifier
-                </a>
-
-                |
-
-                <a
-                    href="product-delete.php?id=<?= $product['id'] ?>"
-                    onclick="return confirm('Supprimer ce produit ?')"
-                >
-                    Supprimer
-                </a>
-
-            </td>
-
-        </tr>
-
-    <?php endforeach; ?>
-
-</table>
-
-</body>
-</html>
+<?php require_once 'partials/footer.php'; ?>
