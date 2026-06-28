@@ -1,3 +1,18 @@
+<?php
+require_once 'config/database.php';
+
+$query = $pdo->query("
+    SELECT *
+    FROM products
+    WHERE is_active = 1
+      AND is_featured = 1
+    ORDER BY id DESC
+    LIMIT 4
+");
+
+$featuredProducts = $query->fetchAll(PDO::FETCH_ASSOC);
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -20,7 +35,7 @@
         <div class="container header-inner">
 
             <!-- Logo à gauche -->
-            <a href="index.html" class="brand" aria-label="Below Dreams">
+            <a href="index.php" class="brand" aria-label="Below Dreams">
                 <img src="assets/logos/below-dreams-white.svg" alt="Below Dreams" class="brand-logo">
             </a>
 
@@ -35,14 +50,14 @@
 
                 <!-- Menu -->
                 <div class="nav-menu" id="nav-menu">
-                    <a href="boutique.html" class="nav-link">Boutique</a>
+                    <a href="shop.php" class="nav-link">Boutique</a>
                     <a href="contact.html" class="nav-link">Contact</a>
                     <a href="compte.html" class="nav-link">Mon Compte</a>
                 </div>
 
                 
                 <!-- Panier (reste visible) -->
-                <a href="panier.html" class="nav-cart" aria-label="Panier">
+                <a href="cart.php" class="nav-cart" aria-label="Panier">
                     <svg
                         class="icon-cart"
                         width="20"
@@ -88,7 +103,7 @@
                 Éditions limitées. Précommande.
             </p>
 
-            <a href="boutique.html" class="btn-primary">
+            <a href="shop.php" class="btn-primary">
                 Découvrir la collection
             </a>
 
@@ -100,37 +115,35 @@
 
                 <h2 class="section-title">Nos essentiels</h2>
 
-                <div class="products">
+               <div class="products">
 
-                    <article class="product-card">
-                        <img src="assets/images/product/pantalon-oversize.png" alt="Pantalon à jambe large unisexe Below Dreams" class="product-image">
-                        <h3 class="product-title">Pantalon à jambe large unisexe</h3>
-                        <p class="product-price">44,90 €</p>
-                        <span class="badge">Précommande</span>
-                    </article>
-   
-                    <article class="product-card">
-                        <img src="assets/images/product/hoodie-oversize-2.PNG" alt="T-shirt oversize unisexe Below Dreams" class="product-image">
-                        <h3 class="product-title">T-shirt oversize unisexe</h3>
-                        <p class="product-price">29,99 €</p>
-                        <span class="badge">Précommande</span>
-                    </article>
+                    <?php foreach ($featuredProducts as $product) : ?>
 
-                    <article class="product-card">
-                        <img src="assets/images/product/pantalon-oversize.png" alt="Pantalon à jambe large unisexe Below Dreams" class="product-image">
-                        <h3 class="product-title">Pantalon à jambe large unisexe</h3>
-                        <p class="product-price">44,90 €</p>
-                        <span class="badge">Précommande</span>
-                    </article>
+                        <article class="product-card">
+                            <a href="product.php?slug=<?= urlencode($product['slug']) ?>">
+                                <img
+                                    src="<?= htmlspecialchars($product['image']) ?>"
+                                    alt="<?= htmlspecialchars($product['name']) ?>"
+                                    class="product-image"
+                                >
 
-                    <article class="product-card">
-                        <img src="assets/images/product/short-sport.PNG" alt="Pantalon à jambe large unisexe Below Dreams" class="product-image">
-                        <h3 class="product-title">Short de sport homme</h3>
-                        <p class="product-price">24,90 €</p>
-                        <span class="badge">Précommande</span>
-                    </article>
+                                <h3 class="product-title">
+                                    <?= htmlspecialchars($product['name']) ?>
+                                </h3>
 
-                </div>
+                                <p class="product-price">
+                                    <?= number_format($product['price'], 2, ',', ' ') ?> €
+                                </p>
+
+                                <span class="badge">
+                                    <?= $product['status'] === 'preorder' ? 'Précommmande' : 'Stock' ?>
+                                </span>
+                            </a>
+                        </article>
+
+                    <?php endforeach; ?>
+
+               </div>
 
             </div>
         
@@ -153,7 +166,7 @@
 
         <!-- CTA -->
         <section aria-label="Accéder à la boutique" class="section-cta">
-            <a href="boutique.html" class="btn-primary">
+            <a href="shop.php" class="btn-primary">
                 Découvrir la boutique
             </a>
         </section>

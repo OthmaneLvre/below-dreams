@@ -1,14 +1,13 @@
 console.log("cart.js loaded");
 
-/* ==========================================================
-   BELOW DREAMS — CART
-   ========================================================== */
-
 document.addEventListener("DOMContentLoaded", () => {
   const CART_KEY = "belowdreams_cart";
 
   const addToCartBtn = document.querySelector(".add-to-cart");
   const cartItemsContainer = document.getElementById("cart-items");
+  const cartSummary = document.querySelector(".cart-summary");
+  const subtotalElement = document.getElementById("cart-subtotal");
+  const totalElement = document.getElementById("cart-total");
 
   const getCart = () => {
     return JSON.parse(localStorage.getItem(CART_KEY)) || [];
@@ -16,6 +15,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const saveCart = (cart) => {
     localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  };
+
+  const formatPrice = (price) => {
+    return Number(price).toFixed(2).replace(".", ",") + " €";
   };
 
   const updateCartCount = () => {
@@ -32,10 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const cart = getCart();
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-    const summaryValues = document.querySelectorAll(".cart-summary strong");
-
-    if (summaryValues[0]) summaryValues[0].textContent = `${total} €`;
-    if (summaryValues[2]) summaryValues[2].textContent = `${total} €`;
+    if (subtotalElement) subtotalElement.textContent = formatPrice(total);
+    if (totalElement) totalElement.textContent = formatPrice(total);
   };
 
   const renderCart = () => {
@@ -46,30 +47,33 @@ document.addEventListener("DOMContentLoaded", () => {
     cartItemsContainer.innerHTML = "";
 
     if (cart.length === 0) {
-        document.querySelector(".cart-summary").style.display = "none";
+      if (cartSummary) cartSummary.style.display = "none";
 
-        cartItemsContainer.innerHTML = `
-            <div class="cart-empty">
-                <div class="cart-empty-icon">🛒</div>
-                <h2>Votre panier est vide</h2>
-                <p>Découvrez les pièces Below Dreams disponibles en précommande.</p>
-                <a href="boutique.html" class="btn-primary">Retour à la boutique</a>
-            </div>     
-        `;
-        
-        updateCartCount();
-        return;
+      cartItemsContainer.innerHTML = `
+        <div class="cart-empty">
+          <div class="cart-empty-icon">🛒</div>
+          <h2>Votre panier est vide</h2>
+          <p>Découvrez les pièces Below Dreams disponibles en précommande.</p>
+          <a href="shop.php" class="btn-primary">Retour à la boutique</a>
+        </div>
+      `;
+
+      updateCartCount();
+      return;
     }
 
-        /* Si le panier contient des articles */ 
-        document.querySelector(".cart-summary").style.display = "flex";
+    if (cartSummary) cartSummary.style.display = "flex";
 
     cart.forEach((item) => {
       const itemTotal = item.price * item.quantity;
 
       cartItemsContainer.innerHTML += `
         <article class="cart-item" data-id="${item.id}">
-          <div class="cart-item-img"></div>
+          <img
+            src="${item.image}"
+            alt="${item.name}"
+            class="cart-item-img"
+          >
 
           <div class="cart-item-info">
             <h2>${item.name}</h2>
@@ -83,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <button type="button" class="cart-increase">+</button>
           </div>
 
-          <p class="cart-item-price">${itemTotal} €</p>
+          <p class="cart-item-price">${formatPrice(itemTotal)}</p>
 
           <button class="cart-remove" type="button">
             Supprimer
@@ -98,6 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const removeProduct = (productId) => {
     const cart = getCart().filter((item) => item.id !== productId);
+
     saveCart(cart);
     renderCart();
     updateCartCount();
@@ -128,22 +133,29 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const addProductToCart = () => {
-    const title = document.querySelector(".product-detail-title")?.textContent.trim();
-    const priceText = document.querySelector(".product-detail-price")?.textContent.trim();
-    const quantityInput = document.querySelector(".product-quantity");
     const selectedSize = document.querySelector('input[name="size"]:checked');
+    const quantityInput = document.querySelector(".product-quantity");
 
     if (!selectedSize) {
       alert("Choisis une taille avant d'ajouter au panier.");
       return;
     }
 
+    const quantity = Number(quantityInput.value) || 1;
+
+    if (quantity < 1) {
+      alert("La quantité doit être au minimum de 1.");
+      return;
+    }
+
     const product = {
-      id: `${title}-${selectedSize.value}`,
-      name: title,
-      price: Number(priceText.replace("€", "").trim()),
+      id: `${addToCartBtn.dataset.id}-${selectedSize.value}`,
+      productId: addToCartBtn.dataset.id,
+      name: addToCartBtn.dataset.name,
+      price: Number(addToCartBtn.dataset.price),
+      image: addToCartBtn.dataset.image,
       size: selectedSize.value,
-      quantity: Number(quantityInput.value) || 1,
+      quantity: quantity,
       availability: "Précommande",
     };
 
@@ -158,7 +170,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     saveCart(cart);
     updateCartCount();
-    window.location.href = "panier.html";
+
+    window.location.href = "cart.php";
   };
 
   if (addToCartBtn) {
