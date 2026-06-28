@@ -1,3 +1,17 @@
+<?php
+
+require_once 'config/database.php';
+
+$query = $pdo->query("
+    SELECT *
+    FROM products
+    WHERE is_active = 1
+    ORDER BY is_featured DESC, id DESC
+");
+
+$products = $query->fetchAll(PDO::FETCH_ASSOC);
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -35,14 +49,14 @@
 
                 <!-- Menu -->
                 <div class="nav-menu" id="nav-menu">
-                    <a href="boutique.html" class="nav-link">Boutique</a>
+                    <a href="shop.php" class="nav-link">Boutique</a>
                     <a href="contact.html" class="nav-link">Contact</a>
                     <a href="compte.html" class="nav-link">Mon Compte</a>
                 </div>
 
                 
                 <!-- Panier (reste visible) -->
-                <a href="panier.html" class="nav-cart" aria-label="Panier">
+                <a href="cart.php" class="nav-cart" aria-label="Panier">
                     <svg
                         class="icon-cart"
                         width="20"
@@ -124,7 +138,9 @@
                     <!-- LISTING PRODUITS -->
                 <section class="shop-results" aria-label="Résultats">
                     <div class="shop-toolbar">
-                        <p class="shop-count"><span>5</span> articles</p>
+                        <p class="shop-count">
+                            <span><?= count($products) ?></span> articles
+                        </p>
 
                         <!-- Bouton toggle : Mis en avant -->
                         <button
@@ -149,150 +165,52 @@
 
                     <div class="shop-grid">
                         <!-- PRODUCT CARD -->
-                        <article class="product-card"
-                            data-featured="true"
-                            data-price="44.90"
-                            data-category="pantalons"
-                            data-availability="preorder"
-                            data-sizes="s,m,l"
+                        <?php foreach ($products as $product) : ?>
+
+                        <article
+                            class="product-card"
+                            data-featured="<?= $product['is_featured'] ? 'true' : 'false' ?>"
+                            data-price="<?= $product['price'] ?>"
+                            data-category="<?= htmlspecialchars($product['category']) ?>"
+                            data-availability="<?= htmlspecialchars($product['status']) ?>"
+                            data-sizes="<?= htmlspecialchars(strtolower($product['sizes'])) ?>"
                         >
-                            <!-- Lien couvrant la carte pour focus clavier + accessibilité -->
-                            <a class="product-card__link" href="produit.html" aria-label="Voir le produit : Pantalon à jambe large unisexe">
-                                
-                                <!-- Visuel produit -->
-                                <div class="product-card__media" aria-hidden="true">
-                                    <img src="assets/images/product/pantalon-oversize.png" alt="Pantalon à jambe large unisexe Below Dreams" class="product-card__img">
-                                
-                                    <!-- Badge (précommande) : sémantique + lisible -->
-                                    <span class="badge badge--preorder" aria-label="Produit disponible en précommande">
-                                        Précommande
+
+                            <a
+                                class="product-card__link"
+                                href="product.php?slug=<?= urlencode($product['slug']) ?>"
+                                aria-label="Voir le produit : <?= htmlspecialchars($product['name']) ?>"
+                            >
+
+                                <div class="product-card__media">
+
+                                    <img
+                                        src="<?= htmlspecialchars($product['image']) ?>"
+                                        alt="<?= htmlspecialchars($product['name']) ?>"
+                                        class="product-card__img"
+                                    >
+
+                                    <span class="badge badge--preorder">
+                                        <?= htmlspecialchars($product['status']) ?>
                                     </span>
+
                                 </div>
 
-                                <!-- Contenu -->
                                 <div class="product-card__body">
-                                <h3 class="product-card__title">Pantalon à jambe large unisexe</h3>
-                                <p class="product-card__price">44,90 €</p>
+                                    <h3 class="product-card__title">
+                                        <?= htmlspecialchars($product['name']) ?>
+                                    </h3>
+
+                                    <p class="product-card__price">
+                                        <?= number_format($product['price'], 2, ',', ' ') ?> €
+                                    </p>
                                 </div>
 
                             </a>
+
                         </article>
 
-                        <article class="product-card"
-                            data-featured="true"
-                            data-price="29.99"
-                            data-category="tshirts"
-                            data-availability="preorder"
-                            data-sizes="s,m,l"    
-                        >
-                            <!-- Lien couvrant la carte pour focus clavier + accessibilité -->
-                            <a class="product-card__link" href="produit.html" aria-label="Voir le produit : T-shirt oversize unisexe">
-                                
-                                <!-- Visuel produit -->
-                                <div class="product-card__media" aria-hidden="true">
-                                    <img src="assets/images/product/tshirt-sport.jpg" alt="T-shirt oversize unisexe Below Dreams" class="product-card__img">
-
-                                    <!-- Badge (précommande) : sémantique + lisible -->
-                                    <span class="badge badge--preorder" aria-label="Produit disponible en précommande">
-                                        Précommande
-                                    </span>
-                                </div>
-
-                                <!-- Contenu -->
-                                <div class="product-card__body">
-                                <h3 class="product-card__title">T-shirt oversize unisexe</h3>
-                                <p class="product-card__price">29,99 €</p>
-                                </div>
-
-                            </a>
-                        </article>
-
-                        <article class="product-card"
-                            data-featured="true"
-                            data-price="54.90"
-                            data-category="hoodies"
-                            data-availability="preorder"
-                            data-sizes="s,m,l"
-                        >
-                            <!-- Lien couvrant la carte pour focus clavier + accessibilité -->
-                            <a class="product-card__link" href="produit.html" aria-label="Voir le produit : Sweat a capuche oversize unisexe">
-                                
-                                <!-- Visuel produit -->
-                                <div class="product-card__media" aria-hidden="true">
-                                    <img src="assets/images/product/hoodie-oversize-2.PNG" alt="Sweat à capuche unisexe Below Dreams" class="product-card__img">
-
-                                    <!-- Badge (précommande) : sémantique + lisible -->
-                                    <span class="badge badge--preorder" aria-label="Produit disponible en précommande">
-                                        Précommande
-                                    </span>
-                                </div>
-
-                                <!-- Contenu -->
-                                <div class="product-card__body">
-                                <h3 class="product-card__title">Sweat a capuche oversize unisexe</h3>
-                                <p class="product-card__price">54,90 €</p>
-                                </div>
-
-                            </a>
-                        </article>
-
-                        <article class="product-card"
-                            data-featured="true"
-                            data-price="19.90"
-                            data-category="tshirts"
-                            data-availability="preorder"
-                            data-sizes="s,m,l"
-                        >
-                            <!-- Lien couvrant la carte pour focus clavier + accessibilité -->
-                            <a class="product-card__link" href="produit.html" aria-label="Voir le produit :  T-shirt de sport homme">
-                                
-                                <!-- Visuel produit -->
-                                <div class="product-card__media" aria-hidden="true">
-                                    <img src="assets/images/product/tshirt-sport-homme.PNG" alt=" T-shirt de sport homme Below Dreams" class="product-card__img">
-
-                                    <!-- Badge (précommande) : sémantique + lisible -->
-                                    <span class="badge badge--preorder" aria-label="Produit disponible en précommande">
-                                        Précommande
-                                    </span>
-                                </div>
-
-                                <!-- Contenu -->
-                                <div class="product-card__body">
-                                <h3 class="product-card__title"> T-shirt de sport homme</h3>
-                                <p class="product-card__price">19,90 €</p>
-                                </div>
-
-                            </a>
-                        </article>
-
-                        <article class="product-card"
-                            data-featured="true"
-                            data-price="24.90"
-                            data-category="shorts"
-                            data-availability="preorder"
-                            data-sizes="s,m,l,xl"
-                        >
-                            <!-- Lien couvrant la carte pour focus clavier + accessibilité -->
-                            <a class="product-card__link" href="produit.html" aria-label="Voir le produit :  Short de sport">
-                                
-                                <!-- Visuel produit -->
-                                <div class="product-card__media" aria-hidden="true">
-                                    <img src="assets/images/product/short-sport.PNG" alt=" Short de sport homme Below Dreams" class="product-card__img">
-
-                                    <!-- Badge (précommande) : sémantique + lisible -->
-                                    <span class="badge badge--preorder" aria-label="Produit disponible en précommande">
-                                        Précommande
-                                    </span>
-                                </div>
-
-                                <!-- Contenu -->
-                                <div class="product-card__body">
-                                <h3 class="product-card__title"> Short de sport homme</h3>
-                                <p class="product-card__price">24,90 €</p>
-                                </div>
-
-                            </a>
-                        </article>
+                        <?php endforeach; ?>
 
                     </div>
 

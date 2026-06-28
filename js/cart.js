@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="cart-empty-icon">🛒</div>
                 <h2>Votre panier est vide</h2>
                 <p>Découvrez les pièces Below Dreams disponibles en précommande.</p>
-                <a href="boutique.html" class="btn-primary">Retour à la boutique</a>
+                <a href="shop.php" class="btn-primary">Retour à la boutique</a>
             </div>     
         `;
         
@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     saveCart(cart);
     updateCartCount();
-    window.location.href = "panier.html";
+    window.location.href = "cart.php";
   };
 
   if (addToCartBtn) {

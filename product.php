@@ -1,3 +1,32 @@
+<?php
+require_once 'config/database.php';
+
+if (!isset($_GET['slug']) || empty($_GET['slug'])) {
+    header('Location: shop.php');
+    exit;
+}
+
+$slug = $_GET['slug'];
+
+$query = $pdo->prepare("
+    SELECT *
+    FROM products
+    WHERE slug = ?
+    AND is_active = 1
+    LIMIT 1
+");
+
+$query->execute([$slug]);
+$product = $query->fetch(PDO::FETCH_ASSOC);
+
+if (!$product) {
+    header('Location: shop.php');
+    exit;
+}
+
+$sizes = array_filter(array_map('trim', explode(',', $product['sizes'])));
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -34,14 +63,14 @@
 
                 <!-- Menu -->
                 <div class="nav-menu" id="nav-menu">
-                    <a href="boutique.html" class="nav-link">Boutique</a>
+                    <a href="shop.php" class="nav-link">Boutique</a>
                     <a href="contact.html" class="nav-link">Contact</a>
                     <a href="compte.html" class="nav-link">Mon Compte</a>
                 </div>
 
                 
                 <!-- Panier (reste visible) -->
-                <a href="panier.html" class="nav-cart" aria-label="Panier">
+                <a href="cart.php" class="nav-cart" aria-label="Panier">
                     <svg
                         class="icon-cart"
                         width="20"
@@ -72,27 +101,39 @@
             <div class="container product-detail-inner">
 
                 <div class="product-detail-media">
-                    <div class="product-detail-img"></div>
+                    <img 
+                        src="<?= htmlspecialchars($product['image']) ?>"
+                        alt="<?= htmlspecialchars($product['name']) ?>"
+                        class="product-detail-img"
+                    >
                 </div>
 
                 <div class="product-detail-content">
-                    <span class="badge badge--preorder">Précommande</span>
+                    <span class="badge badge--preorder">
+                        <?= htmlspecialchars($product['status']) === 'preorder' ? 'Précommande' : 'Stock' ?>
+                    </span>
 
-                    <h1 class="product-detail-title">Nom du produit</h1>
-                    <p class="product-detail-price">79 €</p>
+                    <h1 class="product-detail-title">
+                        <?= htmlspecialchars($product['name']) ?>
+                    </h1>
+
+                    <p class="product-detail-price">
+                        <?= number_format($product['price'], 2, ',', ' ') ?> €
+                    </p>
 
                     <p class="product-detail-text">
-                        Pièce Below Dreams en édition limitée. Précommande avec livraison sous 2 à 3 semaines.
+                        <?= nl2br(htmlspecialchars($product['description'])) ?>
                     </p>
 
                     <div class="product-option">
                         <h2>Taille</h2>
                         <div class="product-sizes">
-                            <label><input type="radio" name="size" value="XS"> XS</label>
-                            <label><input type="radio" name="size" value="S"> S</label>
-                            <label><input type="radio" name="size" value="M"> M</label>
-                            <label><input type="radio" name="size" value="L"> L</label>
-                            <label><input type="radio" name="size" value="XL"> XL</label>                          
+                            <?php foreach ($sizes as $size) : ?>
+                                <label>
+                                    <input type="radio" name="size" value="<?= htmlspecialchars($size) ?>">
+                                    <?= htmlspecialchars($size) ?>
+                                </label>
+                            <?php endforeach; ?>
                         </div>
                     </div>
 
@@ -101,7 +142,14 @@
                         <input class="product-quantity" type="number" value="1" min="1">
                     </div>
 
-                    <button class="btn-primary add-to-cart" type="button">
+                    <button 
+                        class="btn-primary add-to-cart"
+                        type="button"
+                        data-id="<?= $product['id'] ?>"
+                        data-name="<?= htmlspecialchars($product['name']) ?>"
+                        data-price="<?= $product['price'] ?>"
+                        data-image="<?= htmlspecialchars($product['image']) ?>"
+                    >
                         Ajouter au panier
                     </button>
                 </div>
