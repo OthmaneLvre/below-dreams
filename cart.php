@@ -19,7 +19,7 @@
         <div class="container header-inner">
 
             <!-- Logo à gauche -->
-            <a href="index.html" class="brand" aria-label="Below Dreams">
+            <a href="index.php" class="brand" aria-label="Below Dreams">
                 <img src="assets/logos/below-dreams-white.svg" alt="Below Dreams" class="brand-logo">
             </a>
 
@@ -34,14 +34,14 @@
 
                 <!-- Menu -->
                 <div class="nav-menu" id="nav-menu">
-                    <a href="boutique.html" class="nav-link">Boutique</a>
+                    <a href="shop.php" class="nav-link">Boutique</a>
                     <a href="contact.html" class="nav-link">Contact</a>
                     <a href="compte.html" class="nav-link">Mon Compte</a>
                 </div>
 
                 
                 <!-- Panier (reste visible) -->
-                <a href="panier.html" class="nav-cart" aria-label="Panier">
+                <a href="cart.php" class="nav-cart" aria-label="Panier">
                     <svg
                         class="icon-cart"
                         width="20"
@@ -80,27 +80,7 @@
                 <div class="cart-layout">
 
                     <div class="cart-items" id="cart-items">
-                        <article class="cart-item">
-                            <div class="cart-item-img"></div>
-
-                            <div class="cart-item-info">
-                                <h2>Nom du produit</h2>
-                                <p>Taille : M</p>
-                                <p>Précommande</p>
-                            </div>
-
-                            <div class="cart-item-quantity">
-                                <button type="button">-</button>
-                                <span>1</span>
-                                <button type="button">+</button>
-                            </div>
-
-                            <p class="cart-item-price">79 €</p>
-
-                            <button class="cart-remove" type="button">
-                                Supprimer
-                            </button>
-                        </article>
+                        <p class="cart-empty">Votre panier est vide.</p>
                     </div>
 
                     <aside class="cart-summary">
@@ -108,7 +88,7 @@
 
                         <div class="cart-summary-line">
                             <span>Sous-total</span>
-                            <strong>79 €</strong>
+                            <strong id="cart-subtotal">0,00 €</strong>
                         </div>
 
                         <div class="cart-summary-line">
@@ -118,7 +98,7 @@
 
                         <div class="cart-summary-total">
                             <span>Total</span>
-                            <strong>79 €</strong>
+                            <strong id="cart-total">0,00 €</strong>
                         </div>
 
                         <button class="btn-primary cart-checkout" type="button">
