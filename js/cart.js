@@ -133,8 +133,13 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const addProductToCart = () => {
-    const selectedSize = document.querySelector('input[name="size"]:checked');
+    const productButton = document.querySelector(".add-to-cart");
     const quantityInput = document.querySelector(".product-quantity");
+    const selectedSize = document.querySelector('input[name="size"]:checked');
+
+    if (!productButton || !quantityInput) {
+      return;
+    }
 
     if (!selectedSize) {
       alert("Choisis une taille avant d'ajouter au panier.");
@@ -149,14 +154,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const product = {
-      id: `${addToCartBtn.dataset.id}-${selectedSize.value}`,
-      productId: addToCartBtn.dataset.id,
-      name: addToCartBtn.dataset.name,
-      price: Number(addToCartBtn.dataset.price),
-      image: addToCartBtn.dataset.image,
+      id: `${productButton.dataset.id}-${selectedSize.value}`,
+      product_id: Number(productButton.dataset.id),
+      slug: productButton.dataset.slug,
+      name: productButton.dataset.name,
+      price: Number(productButton.dataset.price),
+      image: productButton.dataset.image,
       size: selectedSize.value,
       quantity: quantity,
-      availability: "Précommande",
+      availability: productButton.dataset.status === "preorder" ? "Précommande" : "Stock",
     };
 
     const cart = getCart();

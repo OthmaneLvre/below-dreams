@@ -82,10 +82,12 @@ require_once 'partials/header.php';
                     <button 
                         class="btn-primary add-to-cart"
                         type="button"
-                        data-id="<?= $product['id'] ?>"
+                        data-id="<?= (int) $product['id'] ?>"
+                        data-slug="<?= htmlspecialchars($product['slug']) ?>"
                         data-name="<?= htmlspecialchars($product['name']) ?>"
-                        data-price="<?= $product['price'] ?>"
+                        data-price="<?= htmlspecialchars($product['price']) ?>"
                         data-image="<?= htmlspecialchars($product['image']) ?>"
+                        data-status="<?= htmlspecialchars($product['status']) ?>"
                     >
                         Ajouter au panier
                     </button>
