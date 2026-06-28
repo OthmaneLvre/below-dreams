@@ -39,9 +39,9 @@ require_once 'partials/header.php';
                             <strong id="cart-total">0,00 €</strong>
                         </div>
 
-                        <button class="btn-primary cart-checkout" type="button">
+                        <a href="checkout.php" class="btn-primary cart-checkout" >
                             Commander
-                        </button>
+                        </a>
                     </aside>
 
                 </div>
