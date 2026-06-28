@@ -11,79 +11,14 @@ $query = $pdo->query("
 ");
 
 $featuredProducts = $query->fetchAll(PDO::FETCH_ASSOC);
+
+$pageTitle = "Below Dreams | Accueil";
+$pageDescription = "Below Dreams — pièces fortes, éditions limitées, précommande.";
+$basePath = '';
+
+require_once 'partials/header.php';
 ?>
-
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Below Dreams | Accueil</title>
-    <meta name="description" content="Below Dreams — pièces fortes, éditions limitées, précommande.">
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
-
-</head>
-
-<body>
-    
-    <!-- HEADER : Logo + Nav + Panier -->
-    <header class="site-header">
-        <div class="container header-inner">
-
-            <!-- Logo à gauche -->
-            <a href="index.php" class="brand" aria-label="Below Dreams">
-                <img src="assets/logos/below-dreams-white.svg" alt="Below Dreams" class="brand-logo">
-            </a>
-
-            <nav class="nav" aria-label="Navigation principale">
-
-                <!-- Bouton burger (mobile) -->
-                <button class="nav-toggle" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav-menu">
-                    <span class="nav-toggle-bar" aria-hidden="true"></span>
-                    <span class="nav-toggle-bar" aria-hidden="true"></span>
-                    <span class="nav-toggle-bar" aria-hidden="true"></span>
-                </button>
-
-                <!-- Menu -->
-                <div class="nav-menu" id="nav-menu">
-                    <a href="shop.php" class="nav-link">Boutique</a>
-                    <a href="contact.html" class="nav-link">Contact</a>
-                    <a href="compte.html" class="nav-link">Mon Compte</a>
-                </div>
-
-                
-                <!-- Panier (reste visible) -->
-                <a href="cart.php" class="nav-cart" aria-label="Panier">
-                    <svg
-                        class="icon-cart"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9M9 22a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        />
-                    </svg>
-
-                    <span class="cart-count" aria-label="Nombre d'articles dans le panier">0</span>
-
-                </a>
-            </nav>
-        </div>
-
-    </header>
-    
+  
     <main>
         <!-- HERO -->
         <section aria-label="Présentation de la marque" class="hero">
@@ -173,41 +108,4 @@ $featuredProducts = $query->fetchAll(PDO::FETCH_ASSOC);
 
     </main>
 
-    
-    <!-- ================= FOOTER ================= -->
-    <footer class="site-footer">
-        <div class="container footer-inner">
-
-            <!-- Ligne haute -->
-            <div class="footer-top">
-                <img src="assets/logos/below-dreams-white.svg"
-                    alt="Below Dreams" 
-                    class="footer-logo"    
-                >
-
-                <nav class="footer-nav" aria-label="Liens légaux">
-                    <a href="docs/mentions-legales.html">Mentions légales</a>
-                    <a href="docs/cgv.html">CGV</a>
-                    <a href="docs/politique-confidentialite.html">Politique de confidentialité</a>
-                    <a href="contact.html">Contact</a>
-                </nav>
-            </div>
-
-            <!-- Ligne basse -->
-            <div class="footer-bottom">
-                <p>© Below Dreams — Tous droits réservés</p>
-                <p>
-                    Développé par 
-                    <a href="https://olcreativestudio.fr" target="_blank" rel="noopener noreferrer">
-                        OL Creative Studio
-                    </a>
-                </p>
-            </div>
-        
-        </div>
-    </footer>
-
-    <script src="js/main.js" defer></script>
-    <script src="js/cart.js" defer></script>
-</body>
-</html>
+<?php require_once 'partials/footer.php'; ?>
