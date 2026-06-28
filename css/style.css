@@ -1533,3 +1533,96 @@ small,
     margin-top:auto;
     align-self:flex-start;
 }
+
+.account-success {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(0, 180, 90, 0.12);
+  border: 1px solid rgba(0, 180, 90, 0.25);
+  color: #9ff0bd;
+  margin-bottom: 18px;
+}
+
+.account-form-large {
+  width: 100%;
+  max-width: none;
+}
+
+.account-form-large .form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.account-form-large button {
+  width: fit-content;
+  margin-top: 24px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.account-submit {
+  min-width: 260px;
+}
+
+.address-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(320px, 1fr));
+  gap: 28px;
+}
+
+.address-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  padding: 28px;
+  border-radius: 18px;
+
+  background: var(--ui-surface-2);
+  border: 1px solid var(--ui-border-soft);
+}
+
+.address-card h2 {
+  margin-bottom: 10px;
+}
+
+.account-form textarea {
+  min-height: 120px;
+  resize: vertical;
+
+  width: 100%;
+  padding: 13px 14px;
+
+  border-radius: 12px;
+  border: 1px solid var(--ui-border-soft);
+
+  background: var(--ui-surface-2);
+  color: var(--c-white);
+}
+
+.account-form textarea:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.same-address-check {
+  grid-column: 1 / -1;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  margin: 4px 0;
+  font-weight: 600;
+  color: var(--ui-text-soft);
+}
+
+.same-address-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--c-white);
+}
