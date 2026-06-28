@@ -19,7 +19,7 @@
         <div class="container header-inner">
 
             <!-- Logo à gauche -->
-            <a href="index.html" class="brand" aria-label="Below Dreams">
+            <a href="index.php" class="brand" aria-label="Below Dreams">
                 <img src="assets/logos/below-dreams-white.svg" alt="Below Dreams" class="brand-logo">
             </a>
 
