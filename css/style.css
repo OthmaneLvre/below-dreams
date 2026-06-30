@@ -1801,3 +1801,65 @@ small,
 .checkout-edit:hover{
     opacity:.7;
 }
+
+/* ==========================================================
+   SUCCESS PAGE
+========================================================== */
+
+.success-page {
+  padding: 100px 0;
+}
+
+.success-inner {
+  display: flex;
+  justify-content: center;
+}
+
+.success-card {
+  width: min(680px, 100%);
+  padding: 48px;
+  border-radius: 22px;
+  background: var(--ui-surface-1);
+  border: 1px solid var(--ui-border-soft);
+  text-align: center;
+}
+
+.success-icon {
+  font-size: 60px;
+  margin-bottom: 20px;
+}
+
+.success-card h1 {
+  margin-bottom: 16px;
+}
+
+.success-card p {
+  color: var(--ui-text-muted);
+  margin-bottom: 10px;
+}
+
+.success-card strong {
+  color: var(--c-white);
+}
+
+.success-actions {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 14px 24px;
+  border-radius: 12px;
+
+  border: 1px solid var(--ui-border-soft);
+  color: var(--c-white);
+
+  font-weight: 600;
+  font-size: var(--fs-small);
+}
