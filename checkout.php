@@ -136,9 +136,15 @@ require_once 'partials/header.php';
                         <strong id="checkout-total">0,00 €</strong>
                     </div>
 
-                    <button class="btn-primary checkout-submit" type="button">
-                        Continuer vers le paiement
-                    </button>
+                        
+                    <form method="POST" action="checkout_process.php" id="checkout-form">
+                        <input type="hidden" name="cart" id="checkout-cart-input">
+
+                        <button class="btn-primary checkout-submit" type="submit">
+                            Continuer vers le paiement
+                        </button>
+                    </form>
+
                 </aside>
 
             </div>
