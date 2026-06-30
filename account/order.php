@@ -169,6 +169,38 @@ require_once '../partials/header.php';
             <strong><?= number_format($order['total'], 2, ',', ' ') ?> €</strong>
         </div>
 
+        <?php if (!empty($order['carrier']) || !empty($order['tracking_number']) || !empty($order['shipped_at'])) : ?>
+
+            <div class="account-section-title">
+                Livraison
+            </div>
+
+            <div class="order-detail-header">
+
+                <div>
+                    <strong>Transporteur</strong>
+                    <span><?= htmlspecialchars($order['carrier'] ?? 'Non renseigné') ?></span>
+                </div>
+
+                <div>
+                    <strong>Numéro de suivi</strong>
+                    <span><?= htmlspecialchars($order['tracking_number'] ?? 'Non renseigné') ?></span>
+                </div>
+
+                <div>
+                    <strong>Expédiée le</strong>
+                    <span>
+                        <?= !empty($order['shipped_at'])
+                            ? date('d/m/Y à H:i', strtotime($order['shipped_at']))
+                            : 'Non expédiée'
+                        ?>
+                    </span>
+                </div>
+
+            </div>
+
+        <?php endif; ?>
+
         <a href="orders.php" class="btn-secondary">
             ← Retour à mes commandes
         </a>

@@ -15,3 +15,4 @@ node_modules/
 .env
 
 config/stripe.php
+config/mail.php

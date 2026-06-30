@@ -558,3 +558,12 @@ a {
 
     font-weight:600;
 }
+
+.admin-order-form input{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #ddd;
+    background:#fff;
+    font:inherit;
+}
