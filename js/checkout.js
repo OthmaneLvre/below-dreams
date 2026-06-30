@@ -1,21 +1,45 @@
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("checkout.js loaded");
+
   const CART_KEY = "belowdreams_cart";
 
   const checkoutItems = document.getElementById("checkout-items");
   const subtotalElement = document.getElementById("checkout-subtotal");
   const totalElement = document.getElementById("checkout-total");
+  const checkoutForm = document.getElementById("checkout-form");
+  const checkoutCartInput = document.getElementById("checkout-cart-input");
 
   const getCart = () => {
-    return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    try {
+      return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    } catch (error) {
+      return [];
+    }
   };
 
   const formatPrice = (price) => {
     return Number(price).toFixed(2).replace(".", ",") + " €";
   };
 
-  const cart = getCart();
+  if (checkoutForm && checkoutCartInput) {
+    checkoutForm.addEventListener("submit", (event) => {
+      const cart = getCart();
+
+      if (cart.length === 0) {
+        event.preventDefault();
+        alert("Votre panier est vide.");
+        window.location.href = "cart.php";
+        return;
+      }
+
+      checkoutCartInput.value = JSON.stringify(cart);
+      console.log("Panier envoyé :", cart);
+    });
+  }
 
   if (!checkoutItems) return;
+
+  const cart = getCart();
 
   if (cart.length === 0) {
     checkoutItems.innerHTML = `
@@ -30,7 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   let subtotal = 0;
-
   checkoutItems.innerHTML = "";
 
   cart.forEach((item) => {
