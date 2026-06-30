@@ -28,19 +28,33 @@ $allowedStatuses = [
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $newStatus = $_POST['status'] ?? '';
     $adminNote = trim($_POST['admin_note'] ?? '');
+    $carrier = trim($_POST['carrier'] ?? '');
+    $trackingNumber = trim($_POST['tracking_number'] ?? '');
 
     if (in_array($newStatus, $allowedStatuses, true)) {
-        $updateQuery = $pdo->prepare("
-            UPDATE orders
-            SET status = ?, admin_note = ?, updated_at = NOW()
-            WHERE id = ?
-        ");
+    $updateQuery = $pdo->prepare("
+        UPDATE orders
+        SET
+            status = ?,
+            admin_note = ?,
+            carrier = ?,
+            tracking_number = ?,
+            shipped_at = CASE
+                WHEN ? = 'shipped' AND shipped_at IS NULL THEN NOW()
+                ELSE shipped_at
+            END,
+            updated_at = NOW()
+        WHERE id = ?
+    ");
 
-        $updateQuery->execute([
-            $newStatus,
-            $adminNote,
-            $orderId
-        ]);
+    $updateQuery->execute([
+        $newStatus,
+        $adminNote,
+        $carrier ?: null,
+        $trackingNumber ?: null,
+        $newStatus,
+        $orderId
+    ]);
 
         header('Location: order.php?id=' . $orderId . '&updated=1');
         exit;
@@ -291,6 +305,26 @@ require_once 'partials/sidebar.php';
                     rows="6"
                     placeholder="Ajouter une note interne..."
                 ><?= htmlspecialchars($order['admin_note'] ?? '') ?></textarea>
+
+                <label for="carrier">Transporteur</label>
+
+                <input
+                    type="text"
+                    name="carrier"
+                    id="carrier"
+                    placeholder="Ex : Colissimo, Mondial Relay..."
+                    value="<?= htmlspecialchars($order['carrier'] ?? '') ?>"
+                >
+
+                <label for="tracking_number">Numéro de suivi</label>
+
+                <input
+                    type="text"
+                    name="tracking_number"
+                    id="tracking_number"
+                    placeholder="Ex : 8A12345678901"
+                    value="<?= htmlspecialchars($order['tracking_number'] ?? '') ?>"
+                >
 
                 <button type="submit" class="admin-btn">
                     Enregistrer
