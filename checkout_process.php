@@ -2,6 +2,7 @@
 session_start();
 
 require_once 'config/database.php';
+require_once 'config/stripe.php';
 
 if (!isset($_SESSION['customer_id'])) {
     header('Location: account/login.php');
@@ -25,6 +26,7 @@ try {
     $pdo->beginTransaction();
 
     $total = 0;
+    $lineItems = [];
 
     foreach ($cart as $item) {
         if (
@@ -37,12 +39,26 @@ try {
             throw new Exception('Panier invalide.');
         }
 
-        $total += (float) $item['price'] * (int) $item['quantity'];
+        $price = (float) $item['price'];
+        $quantity = (int) $item['quantity'];
+
+        $total += $price * $quantity;
+
+        $lineItems[] = [
+            'price_data' => [
+                'currency' => 'eur',
+                'product_data' => [
+                    'name' => $item['name'] . ' - Taille ' . $item['size'],
+                ],
+                'unit_amount' => (int) round($price * 100),
+            ],
+            'quantity' => $quantity,
+        ];
     }
 
     $orderQuery = $pdo->prepare("
-        INSERT INTO orders (customer_id, total, status)
-        VALUES (?, ?, 'pending')
+        INSERT INTO orders (customer_id, total, status, payment_status)
+        VALUES (?, ?, 'pending', 'unpaid')
     ");
 
     $orderQuery->execute([
@@ -90,17 +106,45 @@ try {
         ]);
     }
 
+    $domain = 'http://localhost/belowDreams';
+
+    $checkoutSession = \Stripe\Checkout\Session::create([
+        'payment_method_types' => ['card'],
+        'mode' => 'payment',
+        'client_reference_id' => $orderId,
+        'line_items' => $lineItems,
+        'success_url' => $domain . '/success.php?session_id={CHECKOUT_SESSION_ID}',
+        'cancel_url' => $domain . '/checkout.php?payment=cancelled',
+        'metadata' => [
+            'order_id' => $orderId,
+            'order_number' => $orderNumber
+        ],
+    ]);
+
+    $updateStripeSession = $pdo->prepare("
+        UPDATE orders
+        SET stripe_session_id = ?
+        WHERE id = ?
+    ");
+
+    $updateStripeSession->execute([
+        $checkoutSession->id,
+        $orderId
+    ]);
+
     $pdo->commit();
 
     $_SESSION['last_order_id'] = $orderId;
 
-    header('Location: success.php');
+    header('Location: ' . $checkoutSession->url);
     exit;
 
 } catch (Exception $e) {
-    $pdo->rollBack();
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
 
-    $_SESSION['checkout_error'] = "Une erreur est survenue lors de la création de la commande.";
+    $_SESSION['checkout_error'] = "Une erreur est survenue lors de la création du paiement.";
 
     header('Location: checkout.php');
     exit;
