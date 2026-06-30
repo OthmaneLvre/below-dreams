@@ -9,3 +9,6 @@ Thumbs.db
 # Build (si plus tard)
 dist/
 node_modules/
+
+config/stripe.php
+/vendor/
