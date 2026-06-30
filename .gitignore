@@ -10,5 +10,8 @@ Thumbs.db
 dist/
 node_modules/
 
-config/stripe.php
 /vendor/
+
+.env
+
+config/stripe.php
