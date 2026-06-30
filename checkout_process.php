@@ -70,11 +70,12 @@ try {
             order_id,
             product_id,
             product_name,
+            product_image,
             size,
             quantity,
             price
         )
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     ");
 
     foreach ($cart as $item) {
@@ -82,6 +83,7 @@ try {
             $orderId,
             (int) $item['product_id'],
             $item['name'],
+            $item['image'] ?? null,
             $item['size'],
             (int) $item['quantity'],
             (float) $item['price']
