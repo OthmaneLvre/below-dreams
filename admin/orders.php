@@ -32,7 +32,10 @@ $statusClasses = [
     'cancelled' => 'status-cancelled'
 ];
 
-$query = $pdo->prepare("
+$search = trim($_GET['search'] ?? '');
+$statusFilter = $_GET['status'] ?? '';
+
+$sql = "
     SELECT
         orders.id,
         orders.order_number,
@@ -43,11 +46,44 @@ $query = $pdo->prepare("
         customers.lastname,
         customers.email
     FROM orders
-    INNER JOIN customers ON orders.customer_id = customers.id
-    ORDER BY orders.created_at DESC
-");
+    INNER JOIN customers
+        ON orders.customer_id = customers.id
+    WHERE 1
+";
 
-$query->execute();
+$params = [];
+
+if ($search !== '') {
+
+    $sql .= "
+        AND (
+            orders.order_number LIKE ?
+            OR customers.firstname LIKE ?
+            OR customers.lastname LIKE ?
+            OR customers.email LIKE ?
+        )
+    ";
+
+    $like = '%' . $search . '%';
+
+    $params[] = $like;
+    $params[] = $like;
+    $params[] = $like;
+    $params[] = $like;
+}
+
+if ($statusFilter !== '') {
+
+    $sql .= " AND orders.status = ?";
+
+    $params[] = $statusFilter;
+}
+
+$sql .= " ORDER BY orders.created_at DESC";
+
+$query = $pdo->prepare($sql);
+
+$query->execute($params);
 
 $orders = $query->fetchAll(PDO::FETCH_ASSOC);
 
@@ -84,13 +120,49 @@ $paidOrders = count(array_filter($orders, fn($order) => $order['status'] === 'pa
 
     </section>
 
+    <section class="admin-filters">
+
+        <form method="GET" class="admin-search-form">
+
+            <input
+                type="text"
+                name="search"
+                placeholder="Rechercher une commande, un client ou un email..."
+                value="<?= htmlspecialchars($_GET['search'] ?? '') ?>"
+            >
+
+            <select name="status">
+
+                <option value="">Tous les statuts</option>
+
+                <?php foreach ($statusLabels as $key => $label) : ?>
+
+                    <option
+                        value="<?= $key ?>"
+                        <?= (($_GET['status'] ?? '') === $key) ? 'selected' : '' ?>
+                    >
+                        <?= $label ?>
+                    </option>
+
+                <?php endforeach; ?>
+
+            </select>
+
+            <button class="admin-btn">
+                Rechercher
+            </button>
+
+        </form>
+
+    </section>
+
     <section class="admin-section">
 
         <?php if (empty($orders)) : ?>
 
             <div class="admin-empty">
                 <h2>Aucune commande</h2>
-                <p>Aucune commande n'a encore été passée sur la boutique.</p>
+                <p>Aucune commande ne correspond à votre recherche.</p>
             </div>
 
         <?php else : ?>
