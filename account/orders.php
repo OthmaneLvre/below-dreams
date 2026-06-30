@@ -6,11 +6,6 @@ require_once '../config/database.php';
 $pageTitle = "Mes commandes | Below Dreams";
 $basePath = '../';
 
-/*
-    Pour l'instant il n'y a pas encore de commandes.
-    Cette requête sera utilisée lorsque le checkout sera terminé.
-*/
-
 $query = $pdo->prepare("
     SELECT *
     FROM orders
@@ -21,6 +16,15 @@ $query = $pdo->prepare("
 $query->execute([$_SESSION['customer_id']]);
 
 $orders = $query->fetchAll(PDO::FETCH_ASSOC);
+
+$statusLabels = [
+    'pending' => 'En attente',
+    'paid' => 'Payée',
+    'processing' => 'En préparation',
+    'shipped' => 'Expédiée',
+    'completed' => 'Terminée',
+    'cancelled' => 'Annulée'
+];
 
 require_once '../partials/header.php';
 ?>
@@ -68,7 +72,6 @@ require_once '../partials/header.php';
             <table class="orders-table">
 
                 <thead>
-
                     <tr>
                         <th>Commande</th>
                         <th>Date</th>
@@ -76,17 +79,20 @@ require_once '../partials/header.php';
                         <th>Total</th>
                         <th></th>
                     </tr>
-
                 </thead>
 
                 <tbody>
 
                 <?php foreach ($orders as $order) : ?>
 
+                    <?php
+                    $status = $statusLabels[$order['status']] ?? 'Inconnu';
+                    ?>
+
                     <tr>
 
                         <td>
-                            #<?= htmlspecialchars($order['id']) ?>
+                            <?= htmlspecialchars($order['order_number']) ?>
                         </td>
 
                         <td>
@@ -94,22 +100,20 @@ require_once '../partials/header.php';
                         </td>
 
                         <td>
-                            <?= htmlspecialchars($order['status']) ?>
+                            <?= htmlspecialchars($status) ?>
                         </td>
 
                         <td>
-                            <?= number_format($order['total'],2,',',' ') ?> €
+                            <?= number_format($order['total'], 2, ',', ' ') ?> €
                         </td>
 
                         <td>
-
                             <a
                                 class="btn-primary btn-small"
                                 href="order.php?id=<?= $order['id'] ?>"
                             >
-                                Voir
+                                Voir le détail
                             </a>
-
                         </td>
 
                     </tr>
