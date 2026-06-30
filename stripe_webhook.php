@@ -2,6 +2,7 @@
 
 require_once 'config/database.php';
 require_once 'config/stripe.php';
+require_once 'includes/mailer.php';
 
 $payload = file_get_contents('php://input');
 $sigHeader = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
@@ -43,6 +44,8 @@ if ($event->type === 'checkout.session.completed') {
             $paymentIntentId,
             $orderId
         ]);
+        
+        sendOrderConfirmationEmail($pdo, (int) $orderId);
     }
 }
 
