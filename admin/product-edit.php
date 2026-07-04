@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $slug = trim($_POST['slug']);
     $category = trim($_POST['category']);
     $price = trim($_POST['price']);
+    $stock = (int) $_POST['stock'];
     $description = trim($_POST['description']);
     $status = $_POST['status'];
     $sizes = trim($_POST['sizes']);
@@ -62,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 slug = ?,
                 category = ?,
                 price = ?,
+                stock = ?,
                 description = ?,
                 status = ?,
                 sizes = ?,
@@ -75,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $slug,
             $category,
             $price,
+            $stock,
             $description,
             $status,
             $sizes,
@@ -146,6 +149,17 @@ require_once 'partials/sidebar.php';
                 <div class="form-group">
                     <label>Prix *</label>
                     <input type="number" name="price" step="0.01" value="<?= htmlspecialchars($product['price']) ?>" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Stock *</label>
+                    <input
+                        type="number"
+                        name="stock"
+                        min="0"
+                        value="<?= (int) $product['stock'] ?>"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
