@@ -19,22 +19,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = $_POST['status'];
     $sizes = trim($_POST['sizes']);
     $image = '';
+    $productImages = [];
 
-    if (!empty($_FILES['image']['name'])) {
+    if (!empty($_FILES['images']['name'][0])) {
         $uploadDir = '../assets/images/product/';
-
-        $fileName = time() . '-' . basename($_FILES['image']['name']);
-        $targetPath = $uploadDir . $fileName;
-
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
-        $extension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
-        if (in_array($extension, $allowedExtensions)) {
-            move_uploaded_file($_FILES['image']['tmp_name'], $targetPath);
+        foreach ($_FILES['images']['name'] as $index => $originalName) {
+            if (empty($originalName)) {
+                continue;
+            }
 
-            $image = 'assets/images/product/' . $fileName;
-        } else {
-            $error = "Format d'image non autorisé.";
+            $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+
+            if (!in_array($extension, $allowedExtensions, true)) {
+                $error = "Format d'image non autorisé.";
+                break;
+            }
+
+            $safeName = uniqid('product-', true) . '.' . $extension;
+            $targetPath = $uploadDir . $safeName;
+
+            if (move_uploaded_file($_FILES['images']['tmp_name'][$index], $targetPath)) {
+                $imagePath = 'assets/images/product/' . $safeName;
+
+                $productImages[] = $imagePath;
+
+                if ($index === 0) {
+                    $image = $imagePath;
+                }
+            }
         }
     }
 
@@ -60,6 +74,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $image,
             $isFeatured
         ]);
+
+        $productId = $pdo->lastInsertId();
+
+        if (!empty($productImages)) {
+            $imageQuery = $pdo->prepare("
+                INSERT INTO product_images (
+                    product_id,
+                    image_path,
+                    is_main,
+                    sort_order
+                )
+                VALUES (?, ?, ?, ?)
+            ");
+
+            foreach ($productImages as $index => $imagePath) {
+                $imageQuery->execute([
+                    $productId,
+                    $imagePath,
+                    $index === 0 ? 1 : 0,
+                    $index
+                ]);
+            }
+        }
 
         header('Location: products.php');
         exit;
@@ -142,8 +179,9 @@ require_once 'partials/sidebar.php';
             </div>
 
             <div class="form-group">
-                <label>Image</label>
-                <input type="file" name="image" accept="image/*">
+                <label>Image du produit</label>
+                <input type="file" name="images[]" accept="image/*" multiple>
+                <small>La première image sera utilisée comme image principale.</small>
             </div>
 
             <label class="checkbox-group">
