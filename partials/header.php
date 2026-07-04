@@ -1,3 +1,9 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -32,7 +38,44 @@
             <div class="nav-menu" id="nav-menu">
                 <a href="<?= $basePath ?? '' ?>shop.php" class="nav-link">Boutique</a>
                 <a href="<?= $basePath ?? '' ?>contact.html" class="nav-link">Contact</a>
-                <a href="<?= $basePath ?? '' ?>account/dashboard.php" class="nav-link">Mon Compte</a>
+
+                <?php if (isset($_SESSION['customer_id'])) : ?>
+
+                <div class="nav-user-dropdown">
+
+                    <button class="nav-user-button" type="button">
+                        Bonjour <?= htmlspecialchars($_SESSION['customer_firstname']) ?> ▼
+                    </button>
+
+                    <div class="nav-user-menu">
+
+                        <a href="<?= $basePath ?? '' ?>account/dashboard.php">
+                            Mon compte
+                        </a>
+
+                        <a href="<?= $basePath ?? '' ?>account/orders.php">
+                            Mes commandes
+                        </a>
+
+                        <a href="<?= $basePath ?? '' ?>account/logout.php" class="nav-link-logout">
+                            Déconnexion
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <?php else : ?>
+
+                    <a href="<?= $basePath ?? '' ?>account/login.php" class="nav-link">
+                        Connexion
+                    </a>
+
+                    <a href="<?= $basePath ?? '' ?>account/register.php" class="nav-link nav-link-register">
+                        Inscription
+                    </a>
+
+                <?php endif; ?>
             </div>
 
             <a href="<?= $basePath ?? '' ?>cart.php" class="nav-cart" aria-label="Panier">
