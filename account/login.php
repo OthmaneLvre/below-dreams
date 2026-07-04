@@ -29,7 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($customer && password_verify($password, $customer['password'])) {
             $_SESSION['customer_id'] = $customer['id'];
-            $_SESSION['customer_name'] = $customer['firstname'];
+            $_SESSION['customer_firstname'] = $customer['firstname'];
+            $_SESSION['customer_lastname'] = $customer['lastname'];
 
             header('Location: dashboard.php');
             exit;
