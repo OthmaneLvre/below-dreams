@@ -404,6 +404,71 @@ small,
   transform: translateY(1px);
 }
 
+.nav-user {
+  color: var(--ui-text-soft);
+  font-size: var(--fs-small);
+  font-weight: 600;
+}
+
+/* ===========================
+   User dropdown
+=========================== */
+
+.nav-user-dropdown {
+    position: relative;
+}
+
+.nav-user-button {
+    background: none;
+    border: none;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+    padding: .5rem 0;
+}
+
+.nav-user-menu {
+    position: absolute;
+    top: 120%;
+    right: 0;
+
+    min-width: 180px;
+
+    background: #111;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+
+    display: flex;
+    flex-direction: column;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: .25s ease;
+
+    z-index: 1000;
+}
+
+.nav-user-dropdown:hover .nav-user-menu {
+    opacity: 1;
+    visibility: visible;
+}
+
+.nav-user-menu a {
+    color: #fff;
+    text-decoration: none;
+    padding: .9rem 1rem;
+    transition: background .2s ease;
+}
+
+.nav-user-menu a:hover {
+    background: rgba(255,255,255,.06);
+}
+
+.nav-link-logout {
+    color: #ff6b6b;
+}
+
 /* SVG panier */
 .icon-cart {
   width: 18px;
