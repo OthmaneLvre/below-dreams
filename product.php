@@ -26,6 +26,22 @@ if (!$product) {
 
 $sizes = array_filter(array_map('trim', explode(',', $product['sizes'])));
 
+$imagesQuery = $pdo->prepare("
+    SELECT image_path
+    FROM product_images
+    WHERE product_id = ?
+    ORDER BY is_main DESC, sort_order ASC, id ASC
+");
+
+$imagesQuery->execute([$product['id']]);
+$productImages = $imagesQuery->fetchAll(PDO::FETCH_COLUMN);
+
+if (empty($productImages) && !empty($product['image'])) {
+    $productImages[] = $product['image'];
+}
+
+$mainImage = $productImages[0] ?? $product['image'];
+
 $pageTitle = "Below Dreams | " . $product['name'];
 $pageDescription = substr(strip_tags($product['description']), 0, 160);
 $basePath = '';
@@ -38,11 +54,33 @@ require_once 'partials/header.php';
             <div class="container product-detail-inner">
 
                 <div class="product-detail-media">
-                    <img 
-                        src="<?= htmlspecialchars($product['image']) ?>"
-                        alt="<?= htmlspecialchars($product['name']) ?>"
-                        class="product-detail-img"
+                    <img
+                            src="<?= htmlspecialchars($mainImage) ?>"
+                            alt="<?= htmlspecialchars($product['name']) ?>"
+                            class="product-detail-img"
+                            id="main-product-image"
                     >
+
+                        <?php if (count($productImages) > 1) : ?>
+                            <div class="product-gallery-thumbs">
+
+                                <?php foreach ($productImages as $index => $imagePath) : ?>
+                                    <button
+                                        type="button"
+                                        class="product-gallery-thumb <?= $index === 0 ? 'active' : '' ?>"
+                                        data-image="<?= htmlspecialchars($imagePath) ?>"
+                                        aria-label="Voir l'image <?= $index + 1 ?>"
+                                    >
+                                        <img
+                                            src="<?= htmlspecialchars($imagePath) ?>"
+                                            alt="<?= htmlspecialchars($product['name']) ?> image <?= $index + 1 ?>"
+                                        >
+                                    </button>
+                                <?php endforeach; ?>
+
+                            </div>
+                        <?php endif; ?>
+                
                 </div>
 
                 <div class="product-detail-content">
@@ -86,7 +124,7 @@ require_once 'partials/header.php';
                         data-slug="<?= htmlspecialchars($product['slug']) ?>"
                         data-name="<?= htmlspecialchars($product['name']) ?>"
                         data-price="<?= htmlspecialchars($product['price']) ?>"
-                        data-image="<?= htmlspecialchars($product['image']) ?>"
+                        data-image="<?= htmlspecialchars($mainImage) ?>"
                         data-status="<?= htmlspecialchars($product['status']) ?>"
                     >
                         Ajouter au panier
@@ -96,5 +134,25 @@ require_once 'partials/header.php';
             </div>
         </section>
     </main>
+
+<script>
+document.querySelectorAll('.product-gallery-thumb').forEach(function (button) {
+    button.addEventListener('click', function () {
+        const mainImage = document.getElementById('main-product-image');
+
+        if (!mainImage) {
+            return;
+        }
+
+        mainImage.src = this.dataset.image;
+
+        document.querySelectorAll('.product-gallery-thumb').forEach(function (thumb) {
+            thumb.classList.remove('active');
+        });
+
+        this.classList.add('active');
+    });
+});
+</script>
 
 <?php require_once 'partials/footer.php'; ?>
