@@ -1159,6 +1159,28 @@ small,
   border: 1px solid var(--ui-border-soft);
 }
 
+.product-stock{
+    margin:1rem 0;
+    font-weight:600;
+}
+
+.product-stock-ok{
+    color:#2ecc71;
+}
+
+.product-stock-ko{
+    color:#e74c3c;
+}
+
+.product-stock-preorder{
+    color:#f1c40f;
+}
+
+.add-to-cart:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
 .product-detail-content .badge--preorder {
   position: static;
 }
