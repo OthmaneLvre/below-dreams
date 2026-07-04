@@ -29,6 +29,23 @@ if ($event->type === 'checkout.session.completed') {
     $paymentStatus = $session->payment_status ?? null;
 
     if ($orderId && $paymentStatus === 'paid') {
+
+        $checkOrder = $pdo->prepare("
+            SELECT payment_status
+            FROM orders
+            WHERE id = ?
+            LIMIT 1
+        ");
+
+        $checkOrder->execute([$orderId]);
+
+        $currentOrder = $checkOrder->fetch(PDO::FETCH_ASSOC);
+
+        if (!$currentOrder || $currentOrder['payment_status'] === 'paid') {
+            http_response_code(200);
+            exit('Already processed');
+        }
+
         $query = $pdo->prepare("
             UPDATE orders
             SET
@@ -44,6 +61,36 @@ if ($event->type === 'checkout.session.completed') {
             $paymentIntentId,
             $orderId
         ]);
+
+        $itemsQuery = $pdo->prepare("
+            SELECT
+                order_items.product_id,
+                order_items.quantity,
+                products.status
+            FROM order_items
+            INNER JOIN products ON order_items.product_id = products.id
+            WHERE order_items.order_id = ?    
+        ");
+
+        $itemsQuery->execute([$orderId]);
+
+        $orderItems = $itemsQuery->fetchAll(PDO::FETCH_ASSOC);
+
+        $stockQuery = $pdo->prepare("
+            UPDATE products
+            SET stock = GREATEST(stock - ?, 0)
+            WHERE id = ?
+            AND status = 'stock'
+        ");
+
+        foreach ($orderItems as $item) {
+            if ($item['status'] === 'stock') {
+                $stockQuery->execute([
+                    (int) $item['quantity'],
+                    (int) $item['product_id']
+                ]);
+            }
+        }
         
         sendOrderConfirmationEmail($pdo, (int) $orderId);
     }

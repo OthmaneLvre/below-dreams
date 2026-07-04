@@ -42,6 +42,9 @@ if (empty($productImages) && !empty($product['image'])) {
 
 $mainImage = $productImages[0] ?? $product['image'];
 
+$isAvailable = $product['status'] === 'preorder'
+    || (int) $product['stock'] > 0;
+
 $pageTitle = "Below Dreams | " . $product['name'];
 $pageDescription = substr(strip_tags($product['description']), 0, 160);
 $basePath = '';
@@ -117,9 +120,30 @@ require_once 'partials/header.php';
                         <input class="product-quantity" type="number" value="1" min="1">
                     </div>
 
+                    <?php if ($product['status'] === 'preorder') : ?>
+
+                        <p class="product-stock product-stock-preorder">
+                            📦 Disponible en précommande
+                        </p>
+
+                    <?php elseif ((int) $product['stock'] > 0) : ?>
+
+                        <p class="product-stock product-stock-ok">
+                            ✅ En stock (<?= (int) $product['stock'] ?>)
+                        </p>
+
+                    <?php else : ?>
+
+                        <p class="product-stock product-stock-ko">
+                            ❌ Rupture de stock
+                        </p>
+
+                    <?php endif; ?>
+
                     <button 
                         class="btn-primary add-to-cart"
                         type="button"
+                        <?= !$isAvailable ? 'disabled' : '' ?>
                         data-id="<?= (int) $product['id'] ?>"
                         data-slug="<?= htmlspecialchars($product['slug']) ?>"
                         data-name="<?= htmlspecialchars($product['name']) ?>"
@@ -127,7 +151,7 @@ require_once 'partials/header.php';
                         data-image="<?= htmlspecialchars($mainImage) ?>"
                         data-status="<?= htmlspecialchars($product['status']) ?>"
                     >
-                        Ajouter au panier
+                        <?= $isAvailable ? 'Ajouter au panier' : 'Rupture de stock' ?>
                     </button>
                 </div>
 

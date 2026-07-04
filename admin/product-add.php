@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $slug = trim($_POST['slug']);
     $category = trim($_POST['category']);
     $price = trim($_POST['price']);
+    $stock = (int) $_POST['stock'];
     $description = trim($_POST['description']);
     $status = $_POST['status'];
     $sizes = trim($_POST['sizes']);
@@ -57,10 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($name && $slug && $category && $price) {
         $query = $pdo->prepare("
             INSERT INTO products (
-                name, slug, category, price, description,
+                name, slug, category, price, stock, description,
                 status, sizes, image, is_featured
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
         $query->execute([
@@ -68,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $slug,
             $category,
             $price,
+            $stock,
             $description,
             $status,
             $sizes,
@@ -157,6 +159,11 @@ require_once 'partials/sidebar.php';
                 <div class="form-group">
                     <label>Prix *</label>
                     <input type="number" name="price" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Stock *</label>
+                    <input type="number" name="stock" min="0" value="0" required>
                 </div>
 
                 <div class="form-group">
