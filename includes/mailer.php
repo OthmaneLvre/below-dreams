@@ -4,6 +4,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/email-template.php';
 
 function sendMail(string $toEmail, string $toName, string $subject, string $htmlBody): bool
 {
@@ -83,7 +84,7 @@ function sendOrderConfirmationEmail(PDO $pdo, int $orderId): bool
         $order['email'],
         $customerName,
         $subject,
-        $body
+        getEmailTemplate('Confirmation de commande', $body)
     );
 }
 
@@ -92,7 +93,6 @@ function sendAdminPasswordResetEmail(
     string $adminName,
     string $resetLink
 ): bool
-
 {
     $subject = "Réinitialisation de votre mot de passe administrateur";
 
@@ -120,6 +120,38 @@ function sendAdminPasswordResetEmail(
         $adminEmail,
         $adminName,
         $subject,
-        $body
+        getEmailTemplate('Réinitialisation du mot de passe', $body)
+    );
+}
+
+function sendCustomerWelcomeEmail(
+    string $customerEmail,
+    string $customerName
+): bool {
+    $subject = "Bienvenue chez Below Dreams";
+
+    $body = "
+        <h1>Bienvenue chez Below Dreams</h1>
+
+        <p>Bonjour " . htmlspecialchars($customerName) . ",</p>
+
+        <p>Votre compte client a bien été créé.</p>
+
+        <p>Vous pouvez maintenant accéder à votre espace client, suivre vos commandes et profiter de votre boutique Below Dreams.</p>
+
+        <p>
+            <a href=\"https://belowdreams.fr/account/login.php\">
+                Accéder à mon espace client
+            </a>
+        </p>
+
+        <p>À très bientôt,<br>L'équipe Below Dreams</p>
+    ";
+
+    return sendMail(
+        $customerEmail,
+        $customerName,
+        $subject,
+        getEmailTemplate('Bienvenue chez Below Dreams', $body)
     );
 }
