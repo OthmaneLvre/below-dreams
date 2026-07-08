@@ -2,6 +2,7 @@
 session_start();
 
 require_once '../config/database.php';
+require_once '../includes/mailer.php';
 
 if (isset($_SESSION['admin_id'])) {
     header('Location: dashboard.php');
@@ -36,23 +37,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     reset_token_expires_at = ?
                 WHERE id = ?
             ");
+
             $update->execute([
                 $token,
                 $expiresAt,
                 $admin['id']
             ]);
 
-            $resetLink = "http://localhost/belowdreams/admin/reset-password.php?token=" . $token;
+            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 
-            /*
-                En local, mail() ne fonctionne pas forcément.
-                Pour tester, on affiche le lien directement.
-                En production, on remplacera ça par un vrai envoi email.
-            */
-            $message = "Lien de réinitialisation généré : <br><a href=\"" . htmlspecialchars($resetLink) . "\">Réinitialiser mon mot de passe</a>";
-        } else {
-            $message = "Si un compte admin existe avec cet email, un lien de réinitialisation a été généré.";
+            $resetLink = $protocol . '://' . $_SERVER['HTTP_HOST']
+                . dirname($_SERVER['PHP_SELF'])
+                . '/reset-password.php?token=' . urlencode($token);
+
+            sendAdminPasswordResetEmail(
+                $admin['email'],
+                $admin['name'],
+                $resetLink
+            );
         }
+
+        $message = "Si cette adresse email existe, un lien de réinitialisation vient d'être envoyé.";
     }
 }
 ?>
