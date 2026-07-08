@@ -169,17 +169,23 @@ require_once 'partials/sidebar.php';
 
                 <div class="form-group">
                     <label>Mot de passe actuel</label>
-                    <input type="password" name="current_password">
+
+                    <div class="password-field">
+                        <input type="password" name="current_password" id="current_password">
+                        <button type="button" class="password-toggle" data-target="current_password">Voir</button>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label>Nouveau mot de passe</label>
-                    <input type="password" name="new_password">
+                    <input type="password" name="new_password" id="new_password">
+                    <button type="button" class="password-toggle" data-target="new_password">Voir</button>
                 </div>
 
                 <div class="form-group">
                     <label>Confirmer le nouveau mot de passe</label>
-                    <input type="password" name="confirm_password">
+                    <input type="password" name="confirm_password" id="confirm_password">
+                    <button type="button" class="password-toggle" data-target="confirm_password">Voir</button>
                 </div>
 
             </div>
@@ -195,5 +201,20 @@ require_once 'partials/sidebar.php';
     </section>
 
 </main>
+
+<script>
+document.querySelectorAll('.password-toggle').forEach(function (button) {
+    button.addEventListener('click', function () {
+        const input = document.getElementById(this.dataset.target);
+
+        if (!input) {
+            return;
+        }
+
+        input.type = input.type === 'password' ? 'text' : 'password';
+        this.textContent = input.type === 'password' ? 'Voir' : 'Masquer';
+    });
+});
+</script>
 
 <?php require_once 'partials/footer.php'; ?>
