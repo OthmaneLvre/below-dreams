@@ -48,37 +48,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body class="admin-login-page">
 
-    <main class="admin-login-wrapper">
+<main class="admin-login-wrapper">
 
-        <section class="admin-login-card">
+    <section class="admin-login-card">
 
-            <img
-                src="../assets/logos/below-dreams-black.svg"
-                alt="Below Dreams"
-                class="admin-login-logo"
-            >
+        <img
+            src="../assets/logos/below-dreams-black.svg"
+            alt="Below Dreams"
+            class="admin-login-logo"
+        >
 
-            <h1>Administration</h1>
-            <p>Connectez-vous pour gérer la boutique Below Dreams.</p>
+        <h1>Administration</h1>
+        <p>Connectez-vous pour gérer la boutique Below Dreams.</p>
 
-            <?php if (!empty($error)) : ?>
-                <div class="admin-login-error">
-                    <?= htmlspecialchars($error) ?>
-                </div>
-            <?php endif; ?>
+        <?php if (!empty($error)) : ?>
+            <div class="admin-login-error">
+                <?= htmlspecialchars($error) ?>
+            </div>
+        <?php endif; ?>
 
-            <form method="POST" class="admin-login-form">
+        <form method="POST" class="admin-login-form">
 
-                <div>
-                    <label for="email">Email</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        required
-                        autocomplete="email"
-                    >
-                </div>
+            <div>
+                <label for="email">Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    autocomplete="email"
+                >
+            </div>
+
+            <div>
+                <label for="password">Mot de passe</label>
 
                 <div class="password-field">
                     <input
@@ -88,30 +91,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         required
                         autocomplete="current-password"
                     >
-                    <button type="button" class="password-toggle" data-target="password">Voir</button>
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-target="password"
+                        aria-label="Afficher le mot de passe"
+                    >
+                        <span class="eye-icon">👁️</span>
+                    </button>
                 </div>
+            </div>
 
-                <button type="submit">
-                    Se connecter
-                </button>
+            <button type="submit">
+                Se connecter
+            </button>
 
-            </form>
+        </form>
 
-        </section>
+    </section>
 
-    </main>
+</main>
 
 <script>
 document.querySelectorAll('.password-toggle').forEach(function (button) {
     button.addEventListener('click', function () {
         const input = document.getElementById(this.dataset.target);
+        const icon = this.querySelector('.eye-icon');
 
-        if (!input) {
+        if (!input || !icon) {
             return;
         }
 
-        input.type = input.type === 'password' ? 'text' : 'password';
-        this.textContent = input.type === 'password' ? 'Voir' : 'Masquer';
+        const isPassword = input.type === 'password';
+
+        input.type = isPassword ? 'text' : 'password';
+        icon.textContent = isPassword ? '🙈' : '👁️';
+        this.setAttribute(
+            'aria-label',
+            isPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'
+        );
     });
 });
 </script>
