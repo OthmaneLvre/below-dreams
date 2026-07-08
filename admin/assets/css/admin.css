@@ -589,3 +589,178 @@ a {
     flex-direction: column;
     gap: 18px;
 }
+
+/* ==========================
+   ADMIN LOGIN
+========================== */
+
+.admin-login-page{
+    min-height:100vh;
+    background:#0a0a0a;
+    color:#111;
+}
+
+.admin-login-wrapper{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+}
+
+.admin-login-card{
+    width:min(460px, 100%);
+    padding:42px;
+    border-radius:24px;
+    background:#fff;
+    box-shadow:0 30px 80px rgba(0,0,0,.35);
+    text-align:center;
+}
+
+.admin-login-logo{
+    width:120px;
+    margin:0 auto 26px;
+}
+
+.admin-login-card h1{
+    font-size:34px;
+    margin-bottom:10px;
+}
+
+.admin-login-card p{
+    color:#666;
+    margin-bottom:28px;
+}
+
+.admin-login-error{
+    padding:14px 16px;
+    border-radius:12px;
+    background:#fee2e2;
+    color:#991b1b;
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+.admin-login-form{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    text-align:left;
+}
+
+.admin-login-form label{
+    display:block;
+    font-weight:700;
+    font-size:14px;
+    margin-bottom:8px;
+}
+
+.admin-login-form input{
+    width:100%;
+    padding:14px 16px;
+    border-radius:12px;
+    border:1px solid #ded8cf;
+    font:inherit;
+}
+
+.admin-login-form input:focus{
+    outline:none;
+    border-color:#111;
+}
+
+.admin-login-form button{
+    margin-top:8px;
+    width:100%;
+    border:none;
+    border-radius:12px;
+    padding:15px 18px;
+    background:#111;
+    color:#fff;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.admin-login-form button:hover{
+    opacity:.9;
+}
+
+.admin-separator{
+    border:none;
+    border-top:1px solid #e5e0d8;
+    margin:10px 0;
+}
+
+.password-field{
+    position:relative;
+}
+
+.password-field input{
+    width:100%;
+    padding-right:52px;
+}
+
+.password-toggle{
+    position:absolute;
+    top:50%;
+    right:12px;
+    transform:translateY(-50%);
+
+    width:34px;
+    height:34px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:none;
+    background:transparent;
+
+    cursor:pointer;
+    font-size:18px;
+}
+
+.password-toggle:hover{
+    opacity:.7;
+}
+
+.admin-login-form .password-field,
+.admin-form .password-field{
+    position:relative;
+    width:100%;
+}
+
+.admin-login-form .password-field input,
+.admin-form .password-field input{
+    width:100%;
+    padding-right:52px;
+}
+
+.admin-login-form .password-toggle,
+.admin-form .password-toggle{
+    position:absolute;
+    top:50%;
+    right:12px;
+    transform:translateY(-50%);
+
+    width:34px;
+    height:34px;
+    padding:0;
+    margin:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:none;
+    border-radius:50%;
+    background:transparent;
+    color:#111;
+
+    cursor:pointer;
+    font-size:18px;
+}
+
+.admin-login-form .password-toggle:hover,
+.admin-form .password-toggle:hover{
+    background:#f4f1ec;
+}
