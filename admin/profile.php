@@ -172,20 +172,50 @@ require_once 'partials/sidebar.php';
 
                     <div class="password-field">
                         <input type="password" name="current_password" id="current_password">
-                        <button type="button" class="password-toggle" data-target="current_password">Voir</button>
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            data-target="current_password"
+                            aria-label="Afficher le mot de passe"
+                        >
+                            <span class="eye-icon">👁️</span>
+                        </button>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label>Nouveau mot de passe</label>
-                    <input type="password" name="new_password" id="new_password">
-                    <button type="button" class="password-toggle" data-target="new_password">Voir</button>
+
+                    <div class="password-field">
+                        <input type="password" name="new_password" id="new_password">
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            data-target="new_password"
+                            aria-label="Afficher le mot de passe"
+                        >
+                            <span class="eye-icon">👁️</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label>Confirmer le nouveau mot de passe</label>
-                    <input type="password" name="confirm_password" id="confirm_password">
-                    <button type="button" class="password-toggle" data-target="confirm_password">Voir</button>
+
+                    <div class="password-field">
+                        <input type="password" name="confirm_password" id="confirm_password">
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            data-target="confirm_password"
+                            aria-label="Afficher le mot de passe"
+                        >
+                            <span class="eye-icon">👁️</span>
+                        </button>
+                    </div>
                 </div>
 
             </div>
@@ -206,13 +236,20 @@ require_once 'partials/sidebar.php';
 document.querySelectorAll('.password-toggle').forEach(function (button) {
     button.addEventListener('click', function () {
         const input = document.getElementById(this.dataset.target);
+        const icon = this.querySelector('.eye-icon');
 
-        if (!input) {
+        if (!input || !icon) {
             return;
         }
 
-        input.type = input.type === 'password' ? 'text' : 'password';
-        this.textContent = input.type === 'password' ? 'Voir' : 'Masquer';
+        const isPassword = input.type === 'password';
+
+        input.type = isPassword ? 'text' : 'password';
+        icon.textContent = isPassword ? '🙈' : '👁️';
+        this.setAttribute(
+            'aria-label',
+            isPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'
+        );
     });
 });
 </script>
