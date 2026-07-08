@@ -10,6 +10,12 @@ if (isset($_SESSION['admin_id'])) {
 
 $error = '';
 
+$success = '';
+
+if (isset($_GET['reset']) && $_GET['reset'] === 'success') {
+    $success = "Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter.";
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
@@ -60,6 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <h1>Administration</h1>
         <p>Connectez-vous pour gérer la boutique Below Dreams.</p>
+
+        <?php if (!empty($success)) : ?>
+            <div class="admin-login-success">
+                <?= htmlspecialchars($success) ?>
+            </div>
+        <?php endif; ?>
 
         <?php if (!empty($error)) : ?>
             <div class="admin-login-error">

@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $admin['id']
             ]);
 
-            $resetLink = "http://localhost/below-dreams/admin/reset-password.php?token=" . $token;
+            $resetLink = "http://localhost/belowdreams/admin/reset-password.php?token=" . $token;
 
             /*
                 En local, mail() ne fonctionne pas forcément.
