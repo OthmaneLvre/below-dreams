@@ -103,6 +103,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
+            <div class="admin-forgot-password">
+                <a href="forgot-password.php">Mot de passe oublié ?</a>
+            </div>
+
             <button type="submit">
                 Se connecter
             </button>
