@@ -2,6 +2,7 @@
 session_start();
 
 require_once '../config/database.php';
+require_once '../includes/mailer.php';
 
 if (isset($_SESSION['customer_id'])) {
     header('Location: dashboard.php');
@@ -54,7 +55,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $hashedPassword
             ]);
 
-            $_SESSION['customer_id'] = $pdo->lastInsertId();
+            $customerId = $pdo->lastInsertId();
+
+            sendCustomerWelcomeEmail(
+                $email,
+                trim($firstname . ' ' . $lastname)
+            );
+
+            $_SESSION['customer_id'] = $customerId;
             $_SESSION['customer_name'] = $firstname;
 
             header('Location: dashboard.php');
