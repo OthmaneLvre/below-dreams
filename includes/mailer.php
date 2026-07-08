@@ -86,3 +86,40 @@ function sendOrderConfirmationEmail(PDO $pdo, int $orderId): bool
         $body
     );
 }
+
+function sendAdminPasswordResetEmail(
+    string $adminEmail,
+    string $adminName,
+    string $resetLink
+): bool
+
+{
+    $subject = "Réinitialisation de votre mot de passe administrateur";
+
+    $body = "
+        <h1>Réinitialisation du mot de passe</h1>
+
+        <p>Bonjour,</p>
+
+        <p>Vous avez demandé la réinitialisation de votre mot de passe administrateur Below Dreams.</p>
+
+        <p>
+            <a href=\"" . htmlspecialchars($resetLink) . "\">
+                Réinitialiser mon mot de passe
+            </a>
+        </p>
+
+        <p>Ce lien est valable pendant 1 heure.</p>
+
+        <p>Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet email.</p>
+
+        <p>L'équipe Below Dreams</p>
+    ";
+
+    return sendMail(
+        $adminEmail,
+        $adminName,
+        $subject,
+        $body
+    );
+}
