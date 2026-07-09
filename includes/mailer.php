@@ -59,25 +59,107 @@ function sendOrderConfirmationEmail(PDO $pdo, int $orderId): bool
         return false;
     }
 
-    $customerName = trim($order['firstname'] . ' ' . $order['lastname']);
+    $itemsQuery = $pdo->prepare("
+        SELECT
+            product_name,
+            size,
+            quantity,
+            price
+        FROM order_items
+        WHERE order_id = ?
+    ");
 
+    $itemsQuery->execute([$orderId]);
+    $items = $itemsQuery->fetchAll(PDO::FETCH_ASSOC);
+
+    $customerName = trim($order['firstname'] . ' ' . $order['lastname']);
     $subject = "Confirmation de votre commande " . $order['order_number'];
+
+    $itemsHtml = "";
+
+    foreach ($items as $item) {
+        $lineTotal = (float) $item['price'] * (int) $item['quantity'];
+
+        $itemsHtml .= "
+            <tr>
+                <td style='padding:12px;border-bottom:1px solid #eeeeee;'>
+                    <strong>" . htmlspecialchars($item['product_name']) . "</strong><br>
+                    <span style='color:#777;font-size:14px;'>
+                        Taille : " . htmlspecialchars($item['size']) . "
+                    </span>
+                </td>
+
+                <td style='padding:12px;border-bottom:1px solid #eeeeee;text-align:center;'>
+                    " . (int) $item['quantity'] . "
+                </td>
+
+                <td style='padding:12px;border-bottom:1px solid #eeeeee;text-align:right;'>
+                    " . number_format($lineTotal, 2, ',', ' ') . " €
+                </td>
+            </tr>
+        ";
+    }
 
     $body = "
         <h1>Merci pour votre commande</h1>
 
         <p>Bonjour " . htmlspecialchars($order['firstname']) . ",</p>
 
-        <p>Votre commande <strong>" . htmlspecialchars($order['order_number']) . "</strong> a bien été confirmée.</p>
-
         <p>
-            Montant total :
-            <strong>" . number_format((float) $order['total'], 2, ',', ' ') . " €</strong>
+            Votre commande <strong>" . htmlspecialchars($order['order_number']) . "</strong>
+            a bien été confirmée.
         </p>
 
-        <p>Nous vous informerons dès que votre commande sera expédiée.</p>
+        <table width='100%' cellpadding='0' cellspacing='0'
+            style='border-collapse:collapse;margin:30px 0;background:#ffffff;'>
 
-        <p>Merci pour votre confiance,<br>L'équipe Below Dreams</p>
+            <thead>
+                <tr>
+                    <th align='left' style='padding:12px;border-bottom:2px solid #111111;'>
+                        Article
+                    </th>
+                    <th align='center' style='padding:12px;border-bottom:2px solid #111111;'>
+                        Qté
+                    </th>
+                    <th align='right' style='padding:12px;border-bottom:2px solid #111111;'>
+                        Total
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {$itemsHtml}
+            </tbody>
+
+            <tfoot>
+                <tr>
+                    <td colspan='2' style='padding:16px;text-align:right;'>
+                        <strong>Total payé</strong>
+                    </td>
+                    <td style='padding:16px;text-align:right;'>
+                        <strong>" . number_format((float) $order['total'], 2, ',', ' ') . " €</strong>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <p>
+            Nous préparons votre commande avec soin.
+            Vous recevrez un nouvel email dès son expédition.
+        </p>
+
+        <p style='text-align:center;margin:35px 0;'>
+            <a href='https://belowdreams.fr/account/orders.php'
+                style='background:#111111;color:#ffffff;padding:14px 28px;
+                text-decoration:none;border-radius:6px;display:inline-block;'>
+                Voir mes commandes
+            </a>
+        </p>
+
+        <p>
+            Merci pour votre confiance,<br>
+            <strong>L'équipe Below Dreams</strong>
+        </p>
     ";
 
     return sendMail(
