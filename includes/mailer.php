@@ -149,7 +149,7 @@ function sendOrderConfirmationEmail(PDO $pdo, int $orderId): bool
         </p>
 
         <p style='text-align:center;margin:35px 0;'>
-            <a href='https://belowdreams.fr/account/orders.php'
+            <a href='https://belowdreams.com/account/orders.php'
                 style='background:#111111;color:#ffffff;padding:14px 28px;
                 text-decoration:none;border-radius:6px;display:inline-block;'>
                 Voir mes commandes
@@ -222,7 +222,7 @@ function sendCustomerWelcomeEmail(
         <p>Vous pouvez maintenant accéder à votre espace client, suivre vos commandes et profiter de votre boutique Below Dreams.</p>
 
         <p>
-            <a href=\"https://belowdreams.fr/account/login.php\">
+            <a href=\"https://belowdreams.com/account/login.php\">
                 Accéder à mon espace client
             </a>
         </p>

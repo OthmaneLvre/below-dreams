@@ -55,7 +55,7 @@ if ($event->type === 'checkout.session.completed') {
                 $updateOrder = $pdo->prepare("
                     UPDATE orders
                     SET
-                        status = 'confirmed',
+                        status = 'paid',
                         payment_status = 'paid',
                         stripe_payment_intent_id = ?,
                         paid_at = NOW(),
