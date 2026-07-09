@@ -106,7 +106,7 @@ try {
         ]);
     }
 
-    $domain = 'http://localhost/belowDreams';
+    $domain = 'https://belowDreams.com';
 
     $checkoutSession = \Stripe\Checkout\Session::create([
         'payment_method_types' => ['card'],
