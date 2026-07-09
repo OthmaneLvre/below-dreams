@@ -68,7 +68,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="email" name="email" required>
 
             <label>Mot de passe</label>
-            <input type="password" name="password" required>
+            <div class="password-field">
+                <input type="password" name="password" id="password" required>
+                <button type="button" class="toggle-password" data-target="password">👁</button>
+            </div>
+            
 
             <button type="submit" class="btn-primary">
                 Se connecter
@@ -81,6 +85,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </p>
     </section>
 </main>
+
+<script>
+document.querySelectorAll('.toggle-password').forEach(button => {
+    button.addEventListener('click', () => {
+        const input = document.getElementById(button.dataset.target);
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            button.textContent = '🙈';
+        } else {
+            input.type = 'password';
+            button.textContent = '👁';
+        }
+    });
+});
+</script>
 
 </body>
 </html>

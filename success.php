@@ -2,24 +2,38 @@
 session_start();
 
 require_once 'config/database.php';
+require_once 'config/stripe.php';
 
 if (!isset($_SESSION['customer_id'])) {
     header('Location: account/login.php');
     exit;
 }
 
-if (!isset($_SESSION['last_order_id'])) {
+$sessionId = $_GET['session_id'] ?? '';
+
+if (empty($sessionId)) {
     header('Location: shop.php');
     exit;
 }
 
-$orderId = $_SESSION['last_order_id'];
+$stripeSession = \Stripe\Checkout\Session::retrieve($sessionId);
+
+if (
+    empty($stripeSession->client_reference_id) ||
+    $stripeSession->payment_status !== 'paid'
+) {
+    header('Location: shop.php');
+    exit;
+}
+
+$orderId = (int) $stripeSession->client_reference_id;
 
 $query = $pdo->prepare("
     SELECT *
     FROM orders
     WHERE id = ?
     AND customer_id = ?
+    LIMIT 1
 ");
 
 $query->execute([
@@ -49,7 +63,7 @@ require_once 'partials/header.php';
 
                 <div class="success-icon">✅</div>
 
-                <h1>Commande enregistrée</h1>
+                <h1>Commande confirmée</h1>
 
                 <p>Merci pour votre commande.</p>
 

@@ -43,8 +43,12 @@ if (session_status() === PHP_SESSION_NONE) {
 
                 <div class="nav-user-dropdown">
 
+                    <?php
+                    $customerFirstname = $_SESSION['customer_firstname'] ?? '';
+                    ?>
+
                     <button class="nav-user-button" type="button">
-                        Bonjour <?= htmlspecialchars($_SESSION['customer_firstname']) ?> ▼
+                        Bonjour <?= htmlspecialchars($customerFirstname) ?> ▼
                     </button>
 
                     <div class="nav-user-menu">
