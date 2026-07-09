@@ -11,7 +11,7 @@
                 <a href="<?= $basePath ?? '' ?>docs/mentions-legales.html">Mentions légales</a>
                 <a href="<?= $basePath ?? '' ?>docs/cgv.html">CGV</a>
                 <a href="<?= $basePath ?? '' ?>docs/politique-confidentialite.html">Politique de confidentialité</a>
-                <a href="<?= $basePath ?? '' ?>contact.html">Contact</a>
+                <a href="<?= $basePath ?? '' ?>contact.php">Contact</a>
             </nav>
         </div>
 
