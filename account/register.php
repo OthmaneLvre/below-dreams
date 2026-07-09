@@ -63,7 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
 
             $_SESSION['customer_id'] = $customerId;
-            $_SESSION['customer_name'] = $firstname;
+            $_SESSION['customer_firstname'] = $firstname;
+            $_SESSION['customer_lastname'] = $lastname;
 
             header('Location: dashboard.php');
             exit;
@@ -108,11 +109,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="text" name="phone">
 
             <label>Mot de passe *</label>
-            <input type="password" name="password" required>
+            <div class="password-field">
+                <input type="password" name="password" id="password" required>
+                <button type="button" class="toggle-password" data-target="password">👁</button>
+            </div>
+            
 
             <label>Confirmer le mot de passe *</label>
-            <input type="password" name="password_confirm" required>
-
+            <div class="password-field">
+                <input type="password" name="password_confirm" id="password_confirm" required>
+                <button type="button" class="toggle-password" data-target="password_confirm">👁</button>
+            </div>
+            
             <button type="submit" class="btn-primary">
                 Créer mon compte
             </button>
@@ -124,6 +132,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </p>
     </section>
 </main>
+
+<script>
+document.querySelectorAll('.toggle-password').forEach(button => {
+    button.addEventListener('click', () => {
+        const input = document.getElementById(button.dataset.target);
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            button.textContent = '🙈';
+        } else {
+            input.type = 'password';
+            button.textContent = '👁';
+        }
+    });
+});
+</script>
 
 </body>
 </html>
