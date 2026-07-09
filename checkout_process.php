@@ -134,8 +134,6 @@ try {
 
     $pdo->commit();
 
-    $_SESSION['last_order_id'] = $orderId;
-
     header('Location: ' . $checkoutSession->url);
     exit;
 
