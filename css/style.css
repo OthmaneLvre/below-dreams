@@ -1902,6 +1902,57 @@ small,
     font-weight: 600;
 }
 
+.order-price-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  margin-top: 30px;
+  padding: 22px;
+
+  border-radius: 16px;
+  border: 1px solid var(--ui-border-soft);
+
+  background: var(--ui-surface-2);
+}
+
+.order-price-summary > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.order-price-summary-total {
+  margin-top: 4px;
+  padding-top: 16px;
+
+  border-top: 1px solid var(--ui-border-soft);
+
+  font-size: 18px;
+}
+
+.order-section-spacing {
+  margin-top: 38px;
+}
+
+.order-address-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  padding: 22px;
+
+  border-radius: 16px;
+  border: 1px solid var(--ui-border-soft);
+
+  background: var(--ui-surface-2);
+}
+
+.order-address-card p {
+  color: var(--ui-text-muted);
+}
+
 .status-pending{
     color:#ffe8a3;
     background:rgba(255, 193, 7, 0.14);
@@ -2167,6 +2218,82 @@ small,
   display: flex;
   justify-content: center;
   gap: 16px;
+}
+
+.success-reference {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  margin: 28px 0;
+  padding: 18px;
+
+  border-radius: 14px;
+  border: 1px solid var(--ui-border-soft);
+
+  background: var(--ui-surface-2);
+}
+
+.success-reference span,
+.success-shipping-label {
+  color: var(--ui-text-muted);
+  font-size: 13px;
+}
+
+.success-reference strong {
+  font-size: 20px;
+}
+
+.success-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  padding: 22px;
+
+  border-radius: 16px;
+  border: 1px solid var(--ui-border-soft);
+
+  background: var(--ui-surface-1);
+
+  text-align: left;
+}
+
+.success-summary-line,
+.success-summary-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.success-summary-total {
+  margin-top: 4px;
+  padding-top: 16px;
+
+  border-top: 1px solid var(--ui-border-soft);
+
+  font-size: 18px;
+}
+
+.success-shipping {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  margin-top: 18px;
+  padding: 18px;
+
+  border-radius: 14px;
+  border: 1px solid var(--ui-border-soft);
+
+  background: var(--ui-surface-2);
+
+  text-align: left;
+}
+
+.success-shipping p {
+  margin: 0;
 }
 
 .btn-secondary {
