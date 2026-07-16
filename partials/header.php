@@ -37,7 +37,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
             <div class="nav-menu" id="nav-menu">
                 <a href="<?= $basePath ?? '' ?>shop.php" class="nav-link">Boutique</a>
-                <a href="<?= $basePath ?? '' ?>contact.html" class="nav-link">Contact</a>
+                <a href="<?= $basePath ?? '' ?>contact.php" class="nav-link">Contact</a>
 
                 <?php if (isset($_SESSION['customer_id'])) : ?>
 

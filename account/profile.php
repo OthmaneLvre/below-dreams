@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['customer_id']
             ]);
 
-            $_SESSION['customer_name'] = $firstname;
+            $_SESSION['customer_firstname'] = $firstname;
 
             $success = "Vos informations ont bien été mises à jour.";
 

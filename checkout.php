@@ -8,14 +8,39 @@ if (!isset($_SESSION['customer_id'])) {
     exit;
 }
 
-$query = $pdo->prepare("
+$customerQuery = $pdo->prepare("
     SELECT *
     FROM customers
     WHERE id = ?
+    LIMIT 1
 ");
 
-$query->execute([$_SESSION['customer_id']]);
-$customer = $query->fetch(PDO::FETCH_ASSOC);
+$customerQuery->execute([$_SESSION['customer_id']]);
+$customer = $customerQuery->fetch(PDO::FETCH_ASSOC);
+
+if (!$customer) {
+    session_destroy();
+    header('Location: account/login.php');
+    exit;
+}
+
+$shippingQuery = $pdo->query("
+    SELECT
+        id,
+        name,
+        carrier,
+        logo,
+        description,
+        delivery_type,
+        price,
+        free_shipping_threshold,
+        estimated_delay
+    FROM shipping_methods
+    WHERE is_active = 1
+    ORDER BY sort_order ASC, id ASC
+");
+
+$shippingMethods = $shippingQuery->fetchAll(PDO::FETCH_ASSOC);
 
 $pageTitle = "Checkout | Below Dreams";
 $pageDescription = "Finalisez votre commande Below Dreams.";
@@ -32,6 +57,14 @@ require_once 'partials/header.php';
                 <h1>Finaliser ma commande</h1>
                 <p>Vérifiez vos informations avant validation.</p>
             </header>
+
+            <?php if (!empty($_SESSION['checkout_error'])) : ?>
+                <div class="checkout-alert">
+                    <?= htmlspecialchars($_SESSION['checkout_error']) ?>
+                </div>
+
+                <?php unset($_SESSION['checkout_error']); ?>
+            <?php endif; ?>
 
             <div class="checkout-layout">
 
@@ -63,52 +96,223 @@ require_once 'partials/header.php';
                     </article>
 
                     <article class="checkout-card">
-                        <div class="checkout-card-header">
 
+                        <div class="checkout-card-header">
                             <h2>Adresse de livraison</h2>
 
                             <a href="account/addresses.php" class="checkout-edit">
                                 Modifier
                             </a>
-
                         </div>
 
                         <?php if (!empty($customer['shipping_address'])) : ?>
-                            <p><?= nl2br(htmlspecialchars($customer['shipping_address'])) ?></p>
+
+                            <p>
+                                <?= nl2br(
+                                    htmlspecialchars($customer['shipping_address'])
+                                ) ?>
+                            </p>
+
                             <p>
                                 <?= htmlspecialchars($customer['shipping_postcode']) ?>
                                 <?= htmlspecialchars($customer['shipping_city']) ?>
                             </p>
-                            <p><?= htmlspecialchars($customer['shipping_country']) ?></p>
+
+                            <p>
+                                <?= htmlspecialchars($customer['shipping_country']) ?>
+                            </p>
+
                         <?php else : ?>
+
                             <p>Aucune adresse de livraison enregistrée.</p>
+
                             <a href="account/addresses.php" class="btn-primary">
                                 Ajouter une adresse
                             </a>
+
                         <?php endif; ?>
+
                     </article>
 
                     <article class="checkout-card">
-                        <div class="checkout-card-header">
 
+                        <div class="checkout-card-header">
                             <h2>Adresse de facturation</h2>
 
                             <a href="account/addresses.php" class="checkout-edit">
                                 Modifier
                             </a>
-
                         </div>
 
                         <?php if (!empty($customer['billing_address'])) : ?>
-                            <p><?= nl2br(htmlspecialchars($customer['billing_address'])) ?></p>
+
+                            <p>
+                                <?= nl2br(
+                                    htmlspecialchars($customer['billing_address'])
+                                ) ?>
+                            </p>
+
                             <p>
                                 <?= htmlspecialchars($customer['billing_postcode']) ?>
                                 <?= htmlspecialchars($customer['billing_city']) ?>
                             </p>
-                            <p><?= htmlspecialchars($customer['billing_country']) ?></p>
+
+                            <p>
+                                <?= htmlspecialchars($customer['billing_country']) ?>
+                            </p>
+
                         <?php else : ?>
+
                             <p>Adresse identique ou non renseignée.</p>
+
                         <?php endif; ?>
+
+                    </article>
+
+                    <article class="checkout-card">
+
+                        <div class="checkout-card-header">
+                            <div>
+                                <h2>Mode de livraison</h2>
+                                <p>Choisissez votre mode de livraison.</p>
+                            </div>
+                        </div>
+
+                        <?php if (empty($shippingMethods)) : ?>
+
+                            <div class="checkout-shipping-empty">
+                                Aucun mode de livraison n’est disponible actuellement.
+                            </div>
+
+                        <?php else : ?>
+
+                            <div class="checkout-shipping-list">
+
+                                <?php foreach ($shippingMethods as $index => $method) : ?>
+
+                                    <?php
+                                    $price = (float) $method['price'];
+
+                                    $threshold = $method['free_shipping_threshold'];
+
+                                    $thresholdValue = (
+                                        $threshold !== null
+                                        && $threshold !== ''
+                                    )
+                                        ? (float) $threshold
+                                        : null;
+                                    ?>
+
+                                    <label class="checkout-shipping-option">
+
+                                        <input
+                                            type="radio"
+                                            name="shipping_method_display"
+                                            value="<?= (int) $method['id'] ?>"
+                                            data-shipping-price="<?= htmlspecialchars(
+                                                number_format($price, 2, '.', '')
+                                            ) ?>"
+                                            data-free-threshold="<?= $thresholdValue !== null
+                                                ? htmlspecialchars(
+                                                    number_format(
+                                                        $thresholdValue,
+                                                        2,
+                                                        '.',
+                                                        ''
+                                                    )
+                                                )
+                                                : '' ?>"
+                                            <?= $index === 0 ? 'checked' : '' ?>
+                                        >
+
+                                        <span class="checkout-shipping-radio"></span>
+
+                                        <?php if (!empty($method['logo'])) : ?>
+                                            
+                                            <span class="checkout-shipping-logo">
+                                                <img
+                                                    src="<?=  htmlspecialchars($method['logo']) ?>"
+                                                    alt="<?=  htmlspecialchars(
+                                                        $method['carrier']
+                                                        ?: $method['name']
+                                                    ) ?>"
+                                                >
+                                            </span>
+
+                                        <?php else : ?>
+                                            <span class="checkout-shipping-logo checkout-shipping-logo-placeholder">
+                                                🚚
+                                            </span>
+
+                                        <?php endif; ?>
+
+                                        <span class="checkout-shipping-content">
+
+                                            <span class="checkout-shipping-header">
+
+                                                <strong>
+                                                    <?= htmlspecialchars($method['name']) ?>
+                                                </strong>
+
+                                                <span class="checkout-shipping-price">
+                                                    <?php if ($price === 0.0) : ?>
+                                                        Gratuit
+                                                    <?php else : ?>
+                                                        <?= number_format(
+                                                            $price,
+                                                            2,
+                                                            ',',
+                                                            ' '
+                                                        ) ?> €
+                                                    <?php endif; ?>
+                                                </span>
+
+                                            </span>
+
+                                            <?php if (!empty($method['carrier'])) : ?>
+                                                <span class="checkout-shipping-carrier">
+                                                    <?= htmlspecialchars($method['carrier']) ?>
+                                                </span>
+                                            <?php endif; ?>
+
+                                            <?php if (!empty($method['description'])) : ?>
+                                                <span class="checkout-shipping-description">
+                                                    <?= htmlspecialchars(
+                                                        $method['description']
+                                                    ) ?>
+                                                </span>
+                                            <?php endif; ?>
+
+                                            <?php if (!empty($method['estimated_delay'])) : ?>
+                                                <span class="checkout-shipping-delay">
+                                                    <?= htmlspecialchars(
+                                                        $method['estimated_delay']
+                                                    ) ?>
+                                                </span>
+                                            <?php endif; ?>
+
+                                            <?php if ($thresholdValue !== null) : ?>
+                                                <span class="checkout-shipping-threshold">
+                                                    Offerte dès
+                                                    <?= number_format(
+                                                        $thresholdValue,
+                                                        2,
+                                                        ',',
+                                                        ' '
+                                                    ) ?> €
+                                                </span>
+                                            <?php endif; ?>
+
+                                        </span>
+
+                                    </label>
+
+                                <?php endforeach; ?>
+
+                            </div>
+
+                        <?php endif; ?>
+
                     </article>
 
                     <article class="checkout-card">
@@ -119,6 +323,7 @@ require_once 'partials/header.php';
                 </section>
 
                 <aside class="checkout-summary">
+
                     <h2>Résumé</h2>
 
                     <div class="checkout-summary-line">
@@ -128,19 +333,44 @@ require_once 'partials/header.php';
 
                     <div class="checkout-summary-line">
                         <span>Livraison</span>
-                        <strong>Calculée après</strong>
+                        <strong id="checkout-shipping-price">
+                            À sélectionner
+                        </strong>
                     </div>
+
+                    <div
+                        class="checkout-shipping-saving"
+                        id="checkout-shipping-saving"
+                        hidden
+                    ></div>
 
                     <div class="checkout-summary-total">
                         <span>Total</span>
                         <strong id="checkout-total">0,00 €</strong>
                     </div>
 
-                        
-                    <form method="POST" action="checkout_process.php" id="checkout-form">
-                        <input type="hidden" name="cart" id="checkout-cart-input">
+                    <form
+                        method="POST"
+                        action="checkout_process.php"
+                        id="checkout-form"
+                    >
+                        <input
+                            type="hidden"
+                            name="cart"
+                            id="checkout-cart-input"
+                        >
 
-                        <button class="btn-primary checkout-submit" type="submit">
+                        <input
+                            type="hidden"
+                            name="shipping_method_id"
+                            id="checkout-shipping-method-input"
+                        >
+
+                        <button
+                            class="btn-primary checkout-submit"
+                            type="submit"
+                            <?= empty($shippingMethods) ? 'disabled' : '' ?>
+                        >
                             Continuer vers le paiement
                         </button>
                     </form>

@@ -267,6 +267,231 @@
     justify-content: center;
   }
 
+  /* ==========================================================
+   CONTACT MOBILE
+   ========================================================== */
+
+  .contact-inner {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .contact-content h2 {
+    font-size: 32px;
+  }
+
+  .contact-card,
+  .contact-box {
+    padding: 22px;
+  }
+
+  /* ==========================================================
+   ACCOUNT MOBILE
+   ========================================================== */
+
+  .account-area {
+    display: block;
+    min-height: auto;
+  }
+
+  .account-sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+
+    padding: 24px;
+    border-right: none;
+    border-bottom: 1px solid var(--ui-border-soft);
+  }
+
+  .account-sidebar h2 {
+    font-size: 28px;
+    margin-bottom: 22px;
+  }
+
+  .account-nav {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .account-nav a {
+    padding: 12px 14px;
+    text-align: center;
+  }
+
+  .account-logout {
+    margin-top: 0;
+  }
+
+  .account-main {
+    padding: 24px;
+  }
+
+  .account-header {
+    padding: 28px 24px;
+  }
+
+  .account-header h1 {
+    font-size: 38px;
+  }
+
+  .account-section {
+    padding: 24px;
+  }
+
+  .account-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .account-box {
+    min-height: auto;
+    padding: 24px;
+  }
+
+  .account-box .btn-primary {
+    width: 100%;
+  }
+
+  /* Account forms mobile */
+
+  .account-form-large .form-grid,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-form-large button,
+  .account-submit {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .account-form input,
+  .account-form textarea,
+  .account-form select {
+    min-width: 0;
+  }
+
+  /* Account addresses mobile */
+
+  .address-grid {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .address-card {
+    min-width: 0;
+    padding: 24px;
+  }
+
+  .same-address-check {
+    grid-column: auto;
+    align-items: flex-start;
+  }
+
+  /* Account orders mobile */
+
+  .orders-table {
+    display: block;
+    width: 100%;
+  }
+
+  .orders-table thead {
+    display: none;
+  }
+
+  .orders-table tbody {
+    display: grid;
+    gap: 16px;
+  }
+
+  .orders-table tr {
+    display: grid;
+    gap: 12px;
+
+    padding: 20px;
+    border-radius: 16px;
+
+    background: var(--ui-surface-2);
+    border: 1px solid var(--ui-border-soft);
+  }
+
+  .orders-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+
+    padding: 0;
+    border-bottom: none;
+    color: var(--c-white);
+  }
+
+  .orders-table td::before {
+    font-weight: 700;
+    color: var(--ui-text-muted);
+  }
+
+  .orders-table td:nth-child(1)::before {
+    content: "Commande";
+  }
+
+  .orders-table td:nth-child(2)::before {
+    content: "Date";
+  }
+
+  .orders-table td:nth-child(3)::before {
+    content: "Statut";
+  }
+
+  .orders-table td:nth-child(4)::before {
+    content: "Total";
+  }
+
+  .orders-table td:nth-child(5)::before {
+    content: "";
+  }
+
+  .orders-table td:last-child {
+    justify-content: stretch;
+  }
+
+  .orders-table .btn-small {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  /* Account order detail mobile */
+
+  .order-detail-header {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .order-detail-header div {
+    padding: 22px;
+  }
+
+  .order-item {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .order-item-image img,
+  .order-item-placeholder {
+    margin: 0 auto;
+  }
+
+  .order-item-price {
+    align-items: center;
+  }
+
+  .order-total {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
   /* ---------- Footer ---------- */
 
   .footer-top {
@@ -353,6 +578,127 @@
 
   .shop-sort select {
     width: 100%;
+  }
+
+  /* Contact petit mobile */
+  .contact-hero {
+    padding: 56px 0;
+  }
+
+  .contact-section {
+    padding: 56px 0;
+  }
+
+  .contact-content h2 {
+    font-size: 28px;
+  }
+
+  .contact-form input,
+  .contact-form select,
+  .contact-form textarea {
+    font-size: 16px;
+  }
+
+  /* Account petit mobile */
+
+  .account-sidebar {
+    padding: 20px 16px;
+  }
+
+  .account-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .account-main {
+    padding: 18px;
+  }
+
+  .account-header {
+    padding: 24px 20px;
+  }
+
+  .account-header h1 {
+    font-size: 32px;
+  }
+
+  .account-section {
+    padding: 20px;
+  }
+
+  .account-box h2 {
+    font-size: 22px;
+  }
+
+  .account-form-large .form-grid,
+  .form-grid {
+    gap: 16px;
+  }
+
+  .account-form input,
+  .account-form textarea,
+  .account-form select {
+    width: 100%;
+  }
+
+  .address-card {
+    padding: 22px;
+  }
+
+  .address-card h2 {
+    font-size: 30px;
+  }
+
+  .same-address-check {
+    font-size: 14px;
+  }
+
+  .orders-table tr {
+    padding: 18px;
+  }
+
+  .orders-table td {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .orders-table td:last-child {
+    flex-direction: row;
+  }
+
+  .order-detail-header div {
+    padding: 20px;
+  }
+
+  .order-item {
+    padding: 20px;
+  }
+
+  .order-item-info h3 {
+    font-size: 22px;
+  }
+
+  .order-total strong {
+    font-size: 24px;
+  }
+
+  .account-header h1 {
+    overflow-wrap: anywhere;
+  }
+
+  .checkout-shipping-header {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .checkout-shipping-option {
+    grid-template-columns: auto 56px minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .checkout-shipping-logo {
+    width: 56px;
+    height: 46px;
   }
 
   /* Footer : liens plus compacts */
