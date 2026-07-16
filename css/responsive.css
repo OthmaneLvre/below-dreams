@@ -685,6 +685,22 @@
     overflow-wrap: anywhere;
   }
 
+  .checkout-shipping-header {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .checkout-shipping-option {
+    grid-template-columns: auto 56px minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .checkout-shipping-logo {
+    width: 56px;
+    height: 46px;
+  }
+
   /* Footer : liens plus compacts */
   .footer-nav a {
     font-size: 13px;

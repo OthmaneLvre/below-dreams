@@ -1,0 +1,53 @@
+/* ==========================
+   RESPONSIVE SETTINGS
+========================== */
+
+@media (max-width: 1300px) {
+    .settings-stats-grid,
+    .shipping-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 1000px) {
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-header-between {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 700px) {
+    .settings-stats-grid,
+    .shipping-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-card {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .settings-card-footer,
+    .shipping-section-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .settings-card-footer .admin-btn {
+        width: 100%;
+    }
+
+    .form-actions {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+
+    .form-actions .admin-btn,
+    .form-actions .admin-btn-secondary {
+        width: 100%;
+    }
+}
