@@ -1902,6 +1902,57 @@ small,
     font-weight: 600;
 }
 
+.order-price-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  margin-top: 30px;
+  padding: 22px;
+
+  border-radius: 16px;
+  border: 1px solid var(--ui-border-soft);
+
+  background: var(--ui-surface-2);
+}
+
+.order-price-summary > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.order-price-summary-total {
+  margin-top: 4px;
+  padding-top: 16px;
+
+  border-top: 1px solid var(--ui-border-soft);
+
+  font-size: 18px;
+}
+
+.order-section-spacing {
+  margin-top: 38px;
+}
+
+.order-address-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  padding: 22px;
+
+  border-radius: 16px;
+  border: 1px solid var(--ui-border-soft);
+
+  background: var(--ui-surface-2);
+}
+
+.order-address-card p {
+  color: var(--ui-text-muted);
+}
+
 .status-pending{
     color:#ffe8a3;
     background:rgba(255, 193, 7, 0.14);
@@ -2169,6 +2220,82 @@ small,
   gap: 16px;
 }
 
+.success-reference {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  margin: 28px 0;
+  padding: 18px;
+
+  border-radius: 14px;
+  border: 1px solid var(--ui-border-soft);
+
+  background: var(--ui-surface-2);
+}
+
+.success-reference span,
+.success-shipping-label {
+  color: var(--ui-text-muted);
+  font-size: 13px;
+}
+
+.success-reference strong {
+  font-size: 20px;
+}
+
+.success-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  padding: 22px;
+
+  border-radius: 16px;
+  border: 1px solid var(--ui-border-soft);
+
+  background: var(--ui-surface-1);
+
+  text-align: left;
+}
+
+.success-summary-line,
+.success-summary-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.success-summary-total {
+  margin-top: 4px;
+  padding-top: 16px;
+
+  border-top: 1px solid var(--ui-border-soft);
+
+  font-size: 18px;
+}
+
+.success-shipping {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  margin-top: 18px;
+  padding: 18px;
+
+  border-radius: 14px;
+  border: 1px solid var(--ui-border-soft);
+
+  background: var(--ui-surface-2);
+
+  text-align: left;
+}
+
+.success-shipping p {
+  margin: 0;
+}
+
 .btn-secondary {
   display: inline-flex;
   align-items: center;
@@ -2227,4 +2354,345 @@ small,
 
 .account-form .password-field .toggle-password:hover {
     color: #fff;
+}
+
+/* ==========================================================
+   CONTACT
+   ========================================================== */
+
+.contact-hero {
+  padding: calc(var(--section-pad) - 12px) 0;
+  border-bottom: 1px solid var(--ui-border-soft);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 1));
+}
+
+.contact-hero-inner {
+  text-align: center;
+  display: grid;
+  gap: 14px;
+}
+
+.contact-hero h1 {
+  font-size: var(--fs-h2);
+}
+
+.contact-hero p {
+  max-width: 620px;
+  margin: 0 auto;
+  color: var(--ui-text-muted);
+}
+
+.contact-section {
+  padding: var(--section-pad) 0;
+  background: var(--c-black);
+}
+
+.contact-inner {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 42px;
+  align-items: start;
+}
+
+.contact-content {
+  display: grid;
+  gap: 22px;
+}
+
+.contact-content h2 {
+  font-size: 38px;
+}
+
+.contact-content p {
+  color: var(--ui-text-muted);
+}
+
+.contact-box,
+.contact-card {
+  padding: 28px;
+  border-radius: 18px;
+  background: var(--ui-surface-1);
+  border: 1px solid var(--ui-border-soft);
+  box-shadow: var(--ui-shadow-1);
+}
+
+.contact-box h3 {
+  margin-bottom: 8px;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.contact-form label {
+  font-size: var(--fs-small);
+  font-weight: 600;
+}
+
+.contact-form input,
+.contact-form select,
+.contact-form textarea {
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--ui-border-soft);
+  background: var(--ui-surface-2);
+  color: var(--c-white);
+}
+
+.contact-form select option {
+  background: var(--c-black);
+  color: var(--c-white);
+}
+
+.contact-form textarea {
+  resize: vertical;
+  min-height: 150px;
+}
+
+.contact-form input:focus,
+.contact-form select:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.contact-submit {
+  margin-top: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.contact-honeypot {
+  display: none;
+}
+
+/* ==========================
+   CHECKOUT SHIPPING
+========================== */
+
+.checkout-alert {
+  margin-bottom: 24px;
+  padding: 15px 18px;
+
+  border-radius: 12px;
+  border: 1px solid rgba(255, 107, 107, 0.25);
+
+  background: rgba(255, 107, 107, 0.1);
+  color: #ffb4b4;
+
+  font-weight: 700;
+}
+
+.checkout-shipping-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.checkout-shipping-option {
+  position: relative;
+
+  display: grid;
+  grid-template-columns: auto 72px minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+
+  width: 100%;
+  padding: 18px 20px;
+
+  border: 1px solid var(--ui-border-soft);
+  border-radius: 16px;
+
+  background: var(--ui-surface-2);
+  color: var(--c-white);
+
+  cursor: pointer;
+
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease,
+    background 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.checkout-shipping-option:hover {
+  transform: translateY(-1px);
+
+  border-color: rgba(255, 255, 255, 0.18);
+  background: var(--ui-surface-3);
+}
+
+.checkout-shipping-option.is-selected {
+  border-color: rgba(255, 255, 255, 0.38);
+  background: rgba(255, 255, 255, 0.07);
+
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.checkout-shipping-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.checkout-shipping-radio {
+  position: relative;
+  flex-shrink: 0;
+
+  width: 20px;
+  height: 20px;
+
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-radius: 50%;
+
+  transition:
+    border-color 200ms ease,
+    background 200ms ease;
+}
+
+.checkout-shipping-option input:checked
++ .checkout-shipping-radio {
+  border-color: var(--c-white);
+}
+
+.checkout-shipping-option input:checked
++ .checkout-shipping-radio::after {
+  content: "";
+
+  position: absolute;
+  inset: 4px;
+
+  border-radius: 50%;
+  background: var(--c-white);
+}
+
+.checkout-shipping-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 7px;
+
+  min-width: 0;
+}
+
+.checkout-shipping-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.checkout-shipping-header strong {
+  color: var(--c-white);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.checkout-shipping-price {
+  color: var(--c-white);
+  font-size: 15px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.checkout-shipping-carrier {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.checkout-shipping-description,
+.checkout-shipping-delay {
+  color: var(--ui-text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.checkout-shipping-threshold {
+  display: inline-flex;
+  align-items: center;
+
+  width: fit-content;
+  margin-top: 4px;
+  padding: 6px 10px;
+
+  border: 1px solid rgba(46, 204, 113, 0.22);
+  border-radius: 999px;
+
+  background: rgba(46, 204, 113, 0.1);
+  color: #9ff0bd;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.checkout-shipping-saving {
+  margin-top: -6px;
+
+  color: #9ff0bd;
+
+  font-size: 12px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.checkout-shipping-empty {
+  padding: 18px;
+
+  border: 1px solid rgba(255, 193, 7, 0.25);
+  border-radius: 14px;
+
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffe8a3;
+
+  font-weight: 700;
+}
+
+.checkout-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cart-shipping-note {
+  margin-top: -8px;
+
+  color: var(--ui-text-muted);
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.checkout-shipping-logo {
+  width: 72px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 7px;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+.checkout-shipping-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.checkout-shipping-logo-placeholder {
+  background: var(--ui-surface-3);
+  color: var(--c-white);
+  font-size: 22px;
 }

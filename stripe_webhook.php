@@ -21,6 +21,12 @@ try {
     exit('Invalid signature');
 }
 
+/*
+|--------------------------------------------------------------------------
+| Paiement validé
+|--------------------------------------------------------------------------
+*/
+
 if ($event->type === 'checkout.session.completed') {
     $session = $event->data->object;
 
@@ -29,14 +35,17 @@ if ($event->type === 'checkout.session.completed') {
     $paymentStatus = $session->payment_status ?? null;
 
     if ($orderId && $paymentStatus === 'paid') {
-        $pdo->beginTransaction();
-
         try {
+            $pdo->beginTransaction();
+
             $checkOrder = $pdo->prepare("
-                SELECT payment_status, confirmation_email_sent_at
+                SELECT
+                    payment_status,
+                    confirmation_email_sent_at
                 FROM orders
                 WHERE id = ?
                 LIMIT 1
+                FOR UPDATE
             ");
 
             $checkOrder->execute([(int) $orderId]);
@@ -44,18 +53,22 @@ if ($event->type === 'checkout.session.completed') {
 
             if (!$currentOrder) {
                 $pdo->rollBack();
+
                 http_response_code(200);
                 exit('Order not found');
             }
 
             $alreadyPaid = $currentOrder['payment_status'] === 'paid';
-            $emailAlreadySent = !empty($currentOrder['confirmation_email_sent_at']);
+
+            $emailAlreadySent = !empty(
+                $currentOrder['confirmation_email_sent_at']
+            );
 
             if (!$alreadyPaid) {
                 $updateOrder = $pdo->prepare("
                     UPDATE orders
                     SET
-                        status = 'confirmed',
+                        status = 'paid',
                         payment_status = 'paid',
                         stripe_payment_intent_id = ?,
                         paid_at = NOW(),
@@ -74,7 +87,8 @@ if ($event->type === 'checkout.session.completed') {
                         order_items.quantity,
                         products.status
                     FROM order_items
-                    INNER JOIN products ON order_items.product_id = products.id
+                    INNER JOIN products
+                        ON order_items.product_id = products.id
                     WHERE order_items.order_id = ?
                 ");
 
@@ -99,29 +113,71 @@ if ($event->type === 'checkout.session.completed') {
             }
 
             if (!$emailAlreadySent) {
-                $markEmailSent = $pdo->prepare("
-                    UPDATE orders
-                    SET confirmation_email_sent_at = NOW()
-                    WHERE id = ?
-                    AND confirmation_email_sent_at IS NULL
-                ");
+                $emailSent = sendOrderConfirmationEmail(
+                    $pdo,
+                    (int) $orderId
+                );
 
-                $markEmailSent->execute([(int) $orderId]);
+                if ($emailSent) {
+                    $markEmailSent = $pdo->prepare("
+                        UPDATE orders
+                        SET confirmation_email_sent_at = NOW()
+                        WHERE id = ?
+                        AND confirmation_email_sent_at IS NULL
+                    ");
 
-                if ($markEmailSent->rowCount() > 0) {
-                    sendOrderConfirmationEmail($pdo, (int) $orderId);
+                    $markEmailSent->execute([
+                        (int) $orderId
+                    ]);
                 }
             }
 
             $pdo->commit();
 
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
             }
 
             http_response_code(500);
             exit('Webhook processing error');
+        }
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| Session Stripe expirée
+|--------------------------------------------------------------------------
+|
+| Une commande est créée avant la redirection vers Stripe.
+| Si la session expire sans paiement, elle passe en annulée.
+|
+*/
+
+if ($event->type === 'checkout.session.expired') {
+    $session = $event->data->object;
+
+    $orderId = $session->metadata->order_id ?? null;
+
+    if ($orderId) {
+        try {
+            $cancelOrder = $pdo->prepare("
+                UPDATE orders
+                SET
+                    status = 'cancelled',
+                    payment_status = 'unpaid',
+                    updated_at = NOW()
+                WHERE id = ?
+                AND payment_status != 'paid'
+                AND status = 'pending'
+            ");
+
+            $cancelOrder->execute([(int) $orderId]);
+
+        } catch (Throwable $e) {
+            http_response_code(500);
+            exit('Webhook expiration processing error');
         }
     }
 }

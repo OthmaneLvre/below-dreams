@@ -270,10 +270,96 @@ require_once 'partials/sidebar.php';
 
                 </div>
 
-                <div class="admin-order-total">
-                    <span>Total de la commande</span>
-                    <strong><?= number_format($order['total'], 2, ',', ' ') ?> €</strong>
+                <div class="admin-order-price-summary">
+
+                    <div>
+                        <span>Sous-total articles</span>
+
+                        <strong>
+                            <?= number_format(
+                                (float) $order['subtotal'],
+                                2,
+                                ',',
+                                ' '
+                            ) ?> €
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Frais de livraison</span>
+
+                        <strong>
+                            <?php if ((float) $order['shipping_price'] === 0.0) : ?>
+                                Gratuit
+                            <?php else : ?>
+                                <?= number_format(
+                                    (float) $order['shipping_price'],
+                                    2,
+                                    ',',
+                                    ' '
+                                ) ?> €
+                            <?php endif; ?>
+                        </strong>
+                    </div>
+
+                    <div class="admin-order-price-total">
+                        <span>Total de la commande</span>
+
+                        <strong>
+                            <?= number_format(
+                                (float) $order['total'],
+                                2,
+                                ',',
+                                ' '
+                            ) ?> €
+                        </strong>
+                    </div>
+
                 </div>
+
+            </div>
+
+            <div class="admin-card">
+                
+                <h2>Livraison choisie</h2>
+
+                <div class="admin-info-grid">
+
+                    <div>
+                        <span>Mode de livraison</span>
+
+                        <strong>
+                            <?= htmlspecialchars(
+                                $order['shippin_method_name']
+                                ?? 'Non renseigné'
+                            ) ?>
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Transporteur prévu</span>
+
+                        <strong>
+                            <?= htmlspecialchars(
+                                $order['shipping_carrier']
+                                ?? 'Non renseigné'
+                            ) ?>
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Type</span>
+
+                        <strong>
+                            <?= htmlspecialchars(
+                                $order['shipping_type']
+                                ?? 'Non renseigné'
+                            ) ?>
+                        </strong>
+                    </div>
+                    
+                </div>
+
             </div>
 
         </section>
