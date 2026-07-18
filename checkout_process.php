@@ -349,6 +349,9 @@ try {
     |--------------------------------------------------------------------------
     */
 
+    $legalAcceptedAt = date('Y-m-d H:i:s');
+    $cgvVersion = '2026-07-18';
+
     $orderQuery = $pdo->prepare("
         INSERT INTO orders (
             customer_id,
@@ -361,7 +364,12 @@ try {
             shipping_address_snapshot,
             total,
             status,
-            payment_status
+            payment_status,
+
+            cgv_version,
+            cgv_accepted_at,
+            privacy_accepted_at,
+            payment_obligation_accepted_at
         )
         VALUES (
             ?,
@@ -374,7 +382,12 @@ try {
             ?,
             ?,
             'pending',
-            'unpaid'
+            'unpaid',
+
+            ?,
+            ?,
+            ?,
+            ?
         )
     ");
 
@@ -387,13 +400,19 @@ try {
         $shippingMethod['delivery_type'],
         $shippingPrice,
         $shippingAddressSnapshot,
-        $total
+        $total,
+
+        $cgvVersion,
+        $legalAcceptedAt,
+        $legalAcceptedAt,
+        $legalAcceptedAt
     ]);
 
     $orderId = (int) $pdo->lastInsertId();
 
     $orderNumber = 'BD-'
-        . date('Y')
+        . date('Ymd')
+        . '-'
         . str_pad(
             (string) $orderId,
             5,
@@ -450,7 +469,7 @@ try {
     */
 
     $domain = 'https://belowdreams.com';
-    $legalAcceptedAt = gmdate('c');
+    $legalAcceptedAtIso = gmdate('c');
 
     $checkoutSession =
         \Stripe\Checkout\Session::create([
@@ -499,7 +518,7 @@ try {
                     '1',
 
                 'legal_accepted_at' =>
-                    $legalAcceptedAt,
+                    $legalAcceptedAtIso,
 
                 'cgv_version' =>
                     '2026-07-18'
