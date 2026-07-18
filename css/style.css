@@ -525,39 +525,167 @@ small,
 }
 
 /* ==========================================================
-   HERO
-   ========================================================== */
+   HERO VIDEO
+========================================================== */
 
 .hero {
-  min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+
+  min-height: calc(100vh - var(--header-h));
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 80px 24px;
+
+  border-bottom: 1px solid var(--ui-border-soft);
+  background: var(--c-black);
+}
+
+.hero-video-media {
+  position: absolute;
+  inset: 0;
+  z-index: -4;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: none;
+  object-fit: cover;
+  object-position: center;
+
+  filter:
+    grayscale(100%)
+    contrast(1.22)
+    brightness(0.68);
+
+  transform: scale(1.04);
+  animation: hero-video-zoom 16s ease-in-out infinite alternate;
+}
+
+.hero-video-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(0, 0, 0, 0.08) 0%,
+      rgba(0, 0, 0, 0.34) 50%,
+      rgba(0, 0, 0, 0.76) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.32) 0%,
+      rgba(0, 0, 0, 0.52) 55%,
+      rgba(0, 0, 0, 0.82) 100%
+    );
+}
+
+.hero-video-grain {
+  position: absolute;
+  inset: -50%;
+  z-index: -2;
+
+  opacity: 0.045;
+  pointer-events: none;
+
+  background-image:
+    radial-gradient(
+      rgba(255, 255, 255, 0.45) 0.55px,
+      transparent 0.55px
+    );
+
+  background-size: 4px 4px;
+  animation: hero-grain 0.3s steps(2) infinite;
+}
+
+.hero-content {
+  width: min(680px, 100%);
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding-top: var(--header-h);
+  gap: 24px;
 
   text-align: center;
-  gap: 24px;
-  border-bottom: 1px solid var(--ui-border-soft);
 
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.85),
-    rgba(0, 0, 0, 1)
-  );
+  animation: hero-content-reveal 900ms ease both;
 }
 
 .hero-logo {
-  width: 220px; /* clé du problème actuel */
-  max-width: 80%;
+  width: clamp(210px, 19vw, 300px);
+  max-width: 82%;
   height: auto;
+
+  filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.45));
 }
 
 .hero-text {
-  color: var(--c-grey-400);
-  font-size: var(--fs-body);
-  line-height: var(--lh-body);
-  max-width: 420px;
+  max-width: 520px;
+
+  color: rgba(255, 255, 255, 0.78);
+
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.8;
+  letter-spacing: 0.01em;
+
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.75);
+}
+
+.hero-cta {
+  margin-top: 4px;
+  min-width: 220px;
+
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+}
+
+@keyframes hero-video-zoom {
+  from {
+    transform: scale(1.04);
+  }
+
+  to {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes hero-content-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-grain {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  25% {
+    transform: translate(2%, -1%);
+  }
+
+  50% {
+    transform: translate(-1%, 2%);
+  }
+
+  75% {
+    transform: translate(1%, 1%);
+  }
+
+  100% {
+    transform: translate(-2%, -1%);
+  }
 }
 
 /* ==========================================================
