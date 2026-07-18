@@ -21,26 +21,57 @@ require_once 'partials/header.php';
   
     <main>
         <!-- HERO -->
-        <section aria-label="Présentation de la marque" class="hero">
+        <section
+            aria-label="Présentation de la marque"
+            class="hero hero-video"
+        >
 
-            <!-- H1 SEO (masqué visuellement plus tard en CSS) -->
-            <h1 class="sr-only">Below Dreams — Marque de vêtements en édition limitée</h1>
-
-            <!-- Logo central -->
-            <img
-                src="assets/logos/below-dreams-white.svg"
-                alt="Logo Below Dreams"
-                class="hero-logo"    
+            <video
+                class="hero-video-media"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="metadata"
+                aria-hidden="true"
             >
+                <source
+                    src="assets/videos/hero.webm"
+                    type="video/webm"
+                >
 
-            <p class="hero-text">
-                Des pièces fortes. Sans compromis.
-                Éditions limitées. Précommande.
-            </p>
+                <source
+                    src="assets/videos/hero.mp4"
+                    type="video/mp4"
+                >
+            </video>
 
-            <a href="shop.php" class="btn-primary">
-                Découvrir la collection
-            </a>
+            <div class="hero-video-overlay" aria-hidden="true"></div>
+
+            <div class="hero-video-grain" aria-hidden="true"></div>
+
+            <div class="hero-content">
+
+                <h1 class="sr-only">
+                    Below Dreams — Marque de vêtements en édition limitée
+                </h1>
+
+                <img
+                    src="assets/logos/below-dreams-white.svg"
+                    alt="Below Dreams"
+                    class="hero-logo"
+                >
+
+                <p class="hero-text">
+                    Des pièces fortes. Sans compromis.<br>
+                    Éditions limitées. Précommande.
+                </p>
+
+                <a href="shop.php" class="btn-primary hero-cta">
+                    Découvrir la collection
+                </a>
+
+            </div>
 
         </section>
         
