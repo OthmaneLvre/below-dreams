@@ -150,6 +150,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </a>
         </p>
 
+        <p class="account-switch">
+            <a href="forgot-password.php">
+                Mot de passe oublié ?
+            </a>
+        </p>
+
     </section>
 </main>
 
