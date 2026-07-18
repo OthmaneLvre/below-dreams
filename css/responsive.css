@@ -730,8 +730,86 @@
       font-size: .9rem;
   }
 
+  .withdrawal-form {
+    padding: 22px 18px;
+  }
+
+  .withdrawal-field {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      align-items: start;
+  }
+
+  .withdrawal-field span {
+      min-height: 36px;
+  }
+
+  .withdrawal-actions {
+      flex-direction: column;
+  }
+
+  .withdrawal-actions .btn-primary,
+  .withdrawal-actions .btn-secondary {
+      width: 100%;
+  }
+
   /* Footer : liens plus compacts */
   .footer-nav a {
     font-size: 13px;
   }
+}
+
+/* ==========================================================
+   IMPRESSION — FORMULAIRE DE RÉTRACTATION
+========================================================== */
+
+@media print {
+
+    .site-header,
+    .site-footer,
+    .legal-hero,
+    .legal-section:not(:has(.withdrawal-form)),
+    .withdrawal-actions,
+    .legal-update {
+        display: none !important;
+    }
+
+    body,
+    .legal-page,
+    .legal-content {
+        background: #fff !important;
+        color: #000 !important;
+    }
+
+    .legal-content {
+        padding: 0 !important;
+    }
+
+    .legal-container {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    .legal-section:has(.withdrawal-form) {
+        display: block !important;
+        padding: 0 !important;
+        border: none !important;
+    }
+
+    .legal-section:has(.withdrawal-form) > h2,
+    .legal-section:has(.withdrawal-form) > p {
+        display: none !important;
+    }
+
+    .withdrawal-form {
+        margin: 0 !important;
+        padding: 20mm 15mm !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .withdrawal-form a {
+        color: #000 !important;
+        text-decoration: none !important;
+    }
 }
