@@ -51,3 +51,39 @@
         width: 100%;
     }
 }
+
+/* ==========================================================
+   ADMIN — CLIENTS RESPONSIVE
+========================================================== */
+
+@media (max-width: 900px) {
+
+    .admin-customers-toolbar {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-customers-toolbar-actions {
+        width: 100%;
+    }
+
+    .admin-customers-toolbar-actions .admin-button {
+        flex: 1;
+    }
+
+    .admin-results-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+}
+
+@media (max-width: 640px) {
+
+    .admin-customers-toolbar-actions {
+        flex-direction: column;
+    }
+
+    .admin-pagination {
+        flex-wrap: wrap;
+    }
+}
