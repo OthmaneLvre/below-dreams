@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../includes/session.php';
+require_once __DIR__ . '/../includes/security-headers.php';
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../includes/login-rate-limit.php';
 require_once __DIR__ . '/../config/database.php';
