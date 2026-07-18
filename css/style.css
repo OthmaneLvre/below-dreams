@@ -2195,6 +2195,93 @@ small,
 }
 
 /* ==========================================================
+   CHECKOUT — ACCEPTATIONS JURIDIQUES
+========================================================== */
+
+.checkout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.checkout-legal {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  padding: 18px;
+
+  border: 1px solid var(--ui-border-soft);
+  border-radius: 14px;
+
+  background: var(--ui-surface-2);
+}
+
+.checkout-legal-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  color: var(--ui-text-muted);
+  font-size: 13px;
+  line-height: 1.55;
+
+  cursor: pointer;
+}
+
+.checkout-legal-option input {
+  flex-shrink: 0;
+
+  width: 17px;
+  height: 17px;
+  margin-top: 2px;
+
+  accent-color: var(--c-white);
+  cursor: pointer;
+}
+
+.checkout-legal-option a {
+  color: var(--c-white);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.checkout-legal-option a:hover {
+  opacity: 0.75;
+}
+
+.checkout-legal-option strong {
+  color: var(--c-white);
+}
+
+.checkout-legal-error {
+  padding: 13px 14px;
+
+  border: 1px solid rgba(255, 107, 107, 0.28);
+  border-radius: 12px;
+
+  background: rgba(255, 107, 107, 0.1);
+  color: #ffb4b4;
+
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.checkout-payment-note {
+  color: var(--ui-text-muted);
+  font-size: 12px;
+  text-align: center;
+}
+
+.checkout-submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ==========================================================
    SUCCESS PAGE
 ========================================================== */
 

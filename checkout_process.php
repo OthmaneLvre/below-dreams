@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 
 require_once 'config/database.php';
@@ -14,6 +15,48 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+/*
+|--------------------------------------------------------------------------
+| Acceptations juridiques obligatoires
+|--------------------------------------------------------------------------
+*/
+
+$acceptCgv = filter_input(
+    INPUT_POST,
+    'accept_cgv',
+    FILTER_VALIDATE_BOOLEAN
+);
+
+$acceptPrivacy = filter_input(
+    INPUT_POST,
+    'accept_privacy',
+    FILTER_VALIDATE_BOOLEAN
+);
+
+$acceptPaymentObligation = filter_input(
+    INPUT_POST,
+    'accept_payment_obligation',
+    FILTER_VALIDATE_BOOLEAN
+);
+
+if (
+    !$acceptCgv
+    || !$acceptPrivacy
+    || !$acceptPaymentObligation
+) {
+    $_SESSION['checkout_error'] =
+        'Vous devez accepter les conditions obligatoires avant de continuer.';
+
+    header('Location: checkout.php');
+    exit;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Panier et mode de livraison
+|--------------------------------------------------------------------------
+*/
+
 $cartJson = $_POST['cart'] ?? '';
 $cart = json_decode($cartJson, true);
 
@@ -24,14 +67,16 @@ $shippingMethodId = filter_input(
 );
 
 if (empty($cart) || !is_array($cart)) {
-    $_SESSION['checkout_error'] = 'Votre panier est vide ou invalide.';
+    $_SESSION['checkout_error'] =
+        'Votre panier est vide ou invalide.';
 
     header('Location: cart.php');
     exit;
 }
 
 if (!$shippingMethodId) {
-    $_SESSION['checkout_error'] = 'Veuillez sélectionner un mode de livraison.';
+    $_SESSION['checkout_error'] =
+        'Veuillez sélectionner un mode de livraison.';
 
     header('Location: checkout.php');
     exit;
@@ -51,11 +96,25 @@ try {
         LIMIT 1
     ");
 
-    $customerQuery->execute([$_SESSION['customer_id']]);
+    $customerQuery->execute([
+        $_SESSION['customer_id']
+    ]);
+
     $customer = $customerQuery->fetch(PDO::FETCH_ASSOC);
 
     if (!$customer) {
         throw new Exception('Client introuvable.');
+    }
+
+    if (
+        empty($customer['shipping_address'])
+        || empty($customer['shipping_postcode'])
+        || empty($customer['shipping_city'])
+        || empty($customer['shipping_country'])
+    ) {
+        throw new Exception(
+            'Veuillez renseigner une adresse de livraison complète.'
+        );
     }
 
     /*
@@ -72,11 +131,16 @@ try {
         LIMIT 1
     ");
 
-    $shippingQuery->execute([$shippingMethodId]);
+    $shippingQuery->execute([
+        $shippingMethodId
+    ]);
+
     $shippingMethod = $shippingQuery->fetch(PDO::FETCH_ASSOC);
 
     if (!$shippingMethod) {
-        throw new Exception('Mode de livraison indisponible.');
+        throw new Exception(
+            'Mode de livraison indisponible.'
+        );
     }
 
     $pdo->beginTransaction();
@@ -116,16 +180,31 @@ try {
             FILTER_VALIDATE_INT
         );
 
-        $size = trim((string) ($item['size'] ?? ''));
+        $size = trim(
+            (string) ($item['size'] ?? '')
+        );
 
-        if (!$productId || !$quantity || $quantity < 1 || $size === '') {
-            throw new Exception('Un article du panier est invalide.');
+        if (
+            !$productId
+            || !$quantity
+            || $quantity < 1
+            || $size === ''
+        ) {
+            throw new Exception(
+                'Un article du panier est invalide.'
+            );
         }
 
-        $productQuery->execute([$productId]);
+        $productQuery->execute([
+            $productId
+        ]);
+
         $product = $productQuery->fetch(PDO::FETCH_ASSOC);
 
-        if (!$product || (int) $product['is_active'] !== 1) {
+        if (
+            !$product
+            || (int) $product['is_active'] !== 1
+        ) {
             throw new Exception(
                 'Un produit de votre panier n’est plus disponible.'
             );
@@ -159,13 +238,26 @@ try {
         $lineItems[] = [
             'price_data' => [
                 'currency' => 'eur',
+
                 'product_data' => [
-                    'name' => $product['name'] . ' - Taille ' . $size,
+                    'name' => $product['name']
+                        . ' - Taille '
+                        . $size,
                 ],
-                'unit_amount' => (int) round($productPrice * 100),
+
+                'unit_amount' => (int) round(
+                    $productPrice * 100
+                ),
             ],
+
             'quantity' => $quantity,
         ];
+    }
+
+    if (empty($validatedItems) || $subtotal <= 0) {
+        throw new Exception(
+            'Votre panier ne contient aucun article valide.'
+        );
     }
 
     /*
@@ -174,10 +266,13 @@ try {
     |--------------------------------------------------------------------------
     */
 
-    $normalShippingPrice = (float) $shippingMethod['price'];
+    $normalShippingPrice =
+        (float) $shippingMethod['price'];
+
     $shippingPrice = $normalShippingPrice;
 
-    $freeShippingThreshold = $shippingMethod['free_shipping_threshold'];
+    $freeShippingThreshold =
+        $shippingMethod['free_shipping_threshold'];
 
     if (
         $freeShippingThreshold !== null
@@ -193,11 +288,17 @@ try {
         $lineItems[] = [
             'price_data' => [
                 'currency' => 'eur',
+
                 'product_data' => [
-                    'name' => 'Livraison - ' . $shippingMethod['name'],
+                    'name' => 'Livraison - '
+                        . $shippingMethod['name'],
                 ],
-                'unit_amount' => (int) round($shippingPrice * 100),
+
+                'unit_amount' => (int) round(
+                    $shippingPrice * 100
+                ),
             ],
+
             'quantity' => 1,
         ];
     }
@@ -208,15 +309,37 @@ try {
     |--------------------------------------------------------------------------
     */
 
-    $shippingAddressSnapshot = json_encode([
-        'firstname' => $customer['firstname'] ?? '',
-        'lastname' => $customer['lastname'] ?? '',
-        'address' => $customer['shipping_address'] ?? '',
-        'postcode' => $customer['shipping_postcode'] ?? '',
-        'city' => $customer['shipping_city'] ?? '',
-        'country' => $customer['shipping_country'] ?? '',
-        'phone' => $customer['phone'] ?? ''
-    ], JSON_UNESCAPED_UNICODE);
+    $shippingAddressSnapshot = json_encode(
+        [
+            'firstname' =>
+                $customer['firstname'] ?? '',
+
+            'lastname' =>
+                $customer['lastname'] ?? '',
+
+            'address' =>
+                $customer['shipping_address'] ?? '',
+
+            'postcode' =>
+                $customer['shipping_postcode'] ?? '',
+
+            'city' =>
+                $customer['shipping_city'] ?? '',
+
+            'country' =>
+                $customer['shipping_country'] ?? '',
+
+            'phone' =>
+                $customer['phone'] ?? ''
+        ],
+        JSON_UNESCAPED_UNICODE
+    );
+
+    if ($shippingAddressSnapshot === false) {
+        throw new Exception(
+            'Impossible d’enregistrer l’adresse de livraison.'
+        );
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -269,7 +392,12 @@ try {
 
     $orderNumber = 'BD-'
         . date('Y')
-        . str_pad($orderId, 5, '0', STR_PAD_LEFT);
+        . str_pad(
+            (string) $orderId,
+            5,
+            '0',
+            STR_PAD_LEFT
+        );
 
     $updateOrderNumber = $pdo->prepare("
         UPDATE orders
@@ -319,30 +447,62 @@ try {
     |--------------------------------------------------------------------------
     */
 
-    $domain = 'https://belowDreams.com';
+    $domain = 'https://belowdreams.com';
+    $legalAcceptedAt = gmdate('c');
 
-    $checkoutSession = \Stripe\Checkout\Session::create([
-        'payment_method_types' => ['card'],
-        'mode' => 'payment',
+    $checkoutSession =
+        \Stripe\Checkout\Session::create([
+            'payment_method_types' => [
+                'card'
+            ],
 
-        'client_reference_id' => (string) $orderId,
+            'mode' => 'payment',
 
-        'customer_email' => $customer['email'],
+            'client_reference_id' =>
+                (string) $orderId,
 
-        'line_items' => $lineItems,
+            'customer_email' =>
+                $customer['email'],
 
-        'success_url' => $domain
-            . '/success.php?session_id={CHECKOUT_SESSION_ID}',
+            'line_items' =>
+                $lineItems,
 
-        'cancel_url' => $domain
-            . '/checkout.php?payment=cancelled',
+            'success_url' =>
+                $domain
+                . '/success.php'
+                . '?session_id={CHECKOUT_SESSION_ID}',
 
-        'metadata' => [
-            'order_id' => (string) $orderId,
-            'order_number' => $orderNumber,
-            'shipping_method_id' => (string) $shippingMethod['id']
-        ],
-    ]);
+            'cancel_url' =>
+                $domain
+                . '/checkout.php'
+                . '?payment=cancelled',
+
+            'metadata' => [
+                'order_id' =>
+                    (string) $orderId,
+
+                'order_number' =>
+                    $orderNumber,
+
+                'shipping_method_id' =>
+                    (string) $shippingMethod['id'],
+
+                'cgv_accepted' =>
+                    '1',
+
+                'privacy_acknowledged' =>
+                    '1',
+
+                'payment_obligation_accepted' =>
+                    '1',
+
+                'legal_accepted_at' =>
+                    $legalAcceptedAt,
+
+                'cgv_version' =>
+                    '2026-07-18'
+            ],
+        ]);
 
     $updateStripeSession = $pdo->prepare("
         UPDATE orders
@@ -357,7 +517,10 @@ try {
 
     $pdo->commit();
 
-    header('Location: ' . $checkoutSession->url);
+    header(
+        'Location: ' . $checkoutSession->url
+    );
+
     exit;
 
 } catch (Throwable $e) {
@@ -365,7 +528,13 @@ try {
         $pdo->rollBack();
     }
 
-    $_SESSION['checkout_error'] = $e->getMessage();
+    error_log(
+        'Erreur checkout Below Dreams : '
+        . $e->getMessage()
+    );
+
+    $_SESSION['checkout_error'] =
+        $e->getMessage();
 
     header('Location: checkout.php');
     exit;
