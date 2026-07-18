@@ -63,8 +63,12 @@
     </div>
 </footer>
 
+<?php require __DIR__ . '/cookie-consent.php'; ?>
+
+
 <script src="<?= $basePath ?? '' ?>js/main.js" defer></script>
 <script src="<?= $basePath ?? '' ?>js/cart.js" defer></script>
+<script src="<?= $basePath ?? '' ?>js/cookie-consent.js" defer></script>
 
 </body>
 </html>

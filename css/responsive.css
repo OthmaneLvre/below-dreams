@@ -753,6 +753,50 @@
       width: 100%;
   }
 
+  /* Consentement cookies */
+
+  .cookie-consent {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .cookie-consent-panel {
+    width: 100%;
+    max-height: 92vh;
+
+    padding: 26px 20px;
+
+    border-right: none;
+    border-bottom: none;
+    border-left: none;
+    border-radius: 22px 22px 0 0;
+  }
+
+  .cookie-consent-panel h2 {
+    font-size: 28px;
+  }
+
+  .cookie-consent-actions {
+    flex-direction: column;
+  }
+
+  .cookie-consent-actions .btn-primary,
+  .cookie-consent-button {
+    width: 100%;
+  }
+
+  .cookie-preference {
+    align-items: flex-start;
+    gap: 16px;
+
+    padding: 17px;
+  }
+
+  .cookie-preference-required {
+    max-width: 90px;
+    text-align: center;
+  }
+
   /* Footer : liens plus compacts */
   .footer-nav a {
     font-size: 13px;
