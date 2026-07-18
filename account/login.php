@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../includes/session.php';
 require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/login-rate-limit.php';
 require_once __DIR__ . '/../config/database.php';
 
 if (isset($_SESSION['customer_id'])) {
@@ -14,7 +15,10 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     requireValidCsrfToken();
 
-    $email = trim($_POST['email'] ?? '');
+    $email = mb_strtolower( 
+        trim($_POST['email'] ?? '')
+    );
+
     $password = $_POST['password'] ?? '';
 
     if ($email === '' || $password === '') {
@@ -22,40 +26,87 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Email ou mot de passe incorrect.";
     } else {
-        $query = $pdo->prepare("
-            SELECT
-                id,
-                firstname,
-                lastname,
-                email,
-                password
-            FROM customers
-            WHERE email = ?
-            LIMIT 1
-        ");
+        $rateLimit = getLoginRateLimitStatus(
+            $pdo,
+            'customer',
+            $email
+        );
 
-        $query->execute([$email]);
+        if ($rateLimit['locked']) {
+            $error =
+                "Trop de tentatives ont été effectuées. "
+                . "Veuillez réessayer dans "
+                . formatLoginLockDuration(
+                    $rateLimit['remaining_seconds']
+                )
+                . ".";
+        } else {
+            $query = $pdo->prepare("
+                SELECT
+                    id,
+                    firstname,
+                    lastname,
+                    email,
+                    password
+                FROM customers
+                WHERE email = ?
+                LIMIT 1
+            ");
 
-        $customer = $query->fetch(PDO::FETCH_ASSOC);
+            $query->execute([$email]);
 
-        if (
-            $customer
-            && password_verify(
-                $password,
-                $customer['password']
-            )
-        ) {
-            regenerateSession();
+            $customer = $query->fetch(PDO::FETCH_ASSOC);
 
-            $_SESSION['customer_id'] = (int) $customer['id'];
-            $_SESSION['customer_firstname'] = $customer['firstname'];
-            $_SESSION['customer_lastname'] = $customer['lastname'];
+            if (
+                $customer
+                && password_verify(
+                    $password,
+                    $customer['password']
+                )
+            ) {
+                clearLoginAttempts(
+                    $pdo,
+                    'customer',
+                    $email
+                );
 
-            header('Location: dashboard.php');
-            exit;
+                regenerateSession();
+
+                $_SESSION['customer_id'] =
+                    (int) $customer['id'];
+
+                $_SESSION['customer_firstname'] =
+                    $customer['firstname'];
+
+                $_SESSION['customer_lastname'] =
+                    $customer['lastname'];
+
+                header('Location: dashboard.php');
+                exit;
+            }
+
+            recordFailedLoginAttempt(
+                $pdo,
+                'customer',
+                $email
+            );
+
+            $updatedRateLimit = getLoginRateLimitStatus(
+                $pdo,
+                'customer',
+                $email
+            );
+
+            if ($updatedRateLimit['locked']) {
+                $error =
+                "Trop de tentatives ont été effectuées. "
+                . "Veuillez réessayer dans "
+                . LOGIN_LOCK_MINUTES
+                . " minutes.";
+            } else {
+                $error = "Email ou mot de passe incorrect.";
+            }
         }
-
-        $error = "Email ou mot de passe incorrect.";
     }
 }
 ?>
@@ -111,6 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ENT_QUOTES,
                     'UTF-8'
                 ) ?>"
+                maxlength="190"
                 autocomplete="email"
                 required
             >
@@ -144,15 +196,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
 
         <p class="account-switch">
-            Pas encore de compte ?
-            <a href="register.php">
-                Créer un compte
+            <a href="forgot-password.php">
+                Mot de passe oublié ?
             </a>
         </p>
 
         <p class="account-switch">
-            <a href="forgot-password.php">
-                Mot de passe oublié ?
+            Pas encore de compte ?
+            <a href="register.php">
+                Créer un compte
             </a>
         </p>
 
