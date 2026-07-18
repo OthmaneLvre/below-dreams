@@ -3,18 +3,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const checkoutItems = document.getElementById("checkout-items");
   const subtotalElement = document.getElementById("checkout-subtotal");
+
   const shippingPriceElement = document.getElementById(
     "checkout-shipping-price"
   );
+
   const shippingSavingElement = document.getElementById(
     "checkout-shipping-saving"
   );
+
   const totalElement = document.getElementById("checkout-total");
 
   const checkoutForm = document.getElementById("checkout-form");
-  const checkoutCartInput = document.getElementById("checkout-cart-input");
+  const checkoutCartInput = document.getElementById(
+    "checkout-cart-input"
+  );
+
   const shippingMethodInput = document.getElementById(
     "checkout-shipping-method-input"
+  );
+
+  const checkoutSubmit = document.getElementById("checkout-submit");
+
+  const legalError = document.getElementById(
+    "checkout-legal-error"
+  );
+
+  const acceptCgv = document.getElementById("accept-cgv");
+
+  const acceptPrivacy = document.getElementById(
+    "accept-privacy"
+  );
+
+  const acceptPaymentObligation = document.getElementById(
+    "accept-payment-obligation"
   );
 
   const shippingOptions = document.querySelectorAll(
@@ -27,6 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       return Array.isArray(cart) ? cart : [];
     } catch (error) {
+      console.error("Impossible de lire le panier.", error);
+
       return [];
     }
   };
@@ -76,6 +100,51 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   };
 
+  const areLegalConditionsAccepted = () => {
+    return Boolean(
+      acceptCgv?.checked &&
+      acceptPrivacy?.checked &&
+      acceptPaymentObligation?.checked
+    );
+  };
+
+  const canSubmitCheckout = () => {
+    const currentCart = getCart();
+    const selectedShippingOption =
+      getSelectedShippingOption();
+
+    return Boolean(
+      currentCart.length > 0 &&
+      selectedShippingOption &&
+      areLegalConditionsAccepted()
+    );
+  };
+
+  const updateSubmitButton = () => {
+    if (!checkoutSubmit) {
+      return;
+    }
+
+    checkoutSubmit.disabled = !canSubmitCheckout();
+  };
+
+  const hideLegalError = () => {
+    if (!legalError) {
+      return;
+    }
+
+    legalError.hidden = true;
+  };
+
+  const showLegalError = () => {
+    if (!legalError) {
+      return;
+    }
+
+    legalError.hidden = false;
+    legalError.focus?.();
+  };
+
   const updateShippingSummary = () => {
     const selectedOption = getSelectedShippingOption();
 
@@ -92,17 +161,24 @@ document.addEventListener("DOMContentLoaded", () => {
         shippingMethodInput.value = "";
       }
 
+      updateSubmitButton();
+
       return;
     }
 
     const shippingMethodId = selectedOption.value;
+
     const normalShippingPrice = Number(
       selectedOption.dataset.shippingPrice || 0
     );
 
-    const thresholdValue = selectedOption.dataset.freeThreshold;
+    const thresholdValue =
+      selectedOption.dataset.freeThreshold;
+
     const freeThreshold =
-      thresholdValue === "" ? null : Number(thresholdValue);
+      thresholdValue === ""
+        ? null
+        : Number(thresholdValue);
 
     let appliedShippingPrice = normalShippingPrice;
     let isFreeFromThreshold = false;
@@ -130,8 +206,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (shippingSavingElement) {
       if (isFreeFromThreshold) {
         shippingSavingElement.hidden = false;
+
         shippingSavingElement.textContent =
-          "Vous économisez " + formatPrice(normalShippingPrice);
+          "Vous économisez " +
+          formatPrice(normalShippingPrice);
       } else {
         shippingSavingElement.hidden = true;
         shippingSavingElement.textContent = "";
@@ -162,15 +240,14 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       if (displayedPrice) {
-        if (appliedShippingPrice === 0) {
-          displayedPrice.textContent = "Gratuit";
-        } else {
-          displayedPrice.textContent = formatPrice(
-            normalShippingPrice
-          );
-        }
+        displayedPrice.textContent =
+          appliedShippingPrice === 0
+            ? "Gratuit"
+            : formatPrice(normalShippingPrice);
       }
     }
+
+    updateSubmitButton();
   };
 
   if (checkoutItems) {
@@ -178,7 +255,11 @@ document.addEventListener("DOMContentLoaded", () => {
       checkoutItems.innerHTML = `
         <div class="cart-empty">
           <h2>Votre panier est vide</h2>
-          <p>Ajoutez un produit avant de finaliser votre commande.</p>
+
+          <p>
+            Ajoutez un produit avant de finaliser votre commande.
+          </p>
+
           <a href="shop.php" class="btn-primary">
             Retour à la boutique
           </a>
@@ -189,7 +270,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       cart.forEach((item) => {
         const price = Number(item.price);
-        const quantity = Number.parseInt(item.quantity, 10);
+        const quantity = Number.parseInt(
+          item.quantity,
+          10
+        );
 
         if (
           !Number.isFinite(price) ||
@@ -204,7 +288,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const image = escapeHtml(item.image || "");
         const name = escapeHtml(item.name || "Produit");
         const size = escapeHtml(item.size || "");
-        const availability = escapeHtml(item.availability || "");
+
+        const availability = escapeHtml(
+          item.availability || ""
+        );
 
         checkoutItems.insertAdjacentHTML(
           "beforeend",
@@ -220,10 +307,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 <h3>${name}</h3>
                 <p>Taille : ${size}</p>
                 <p>Quantité : ${quantity}</p>
-                ${availability ? `<p>${availability}</p>` : ""}
+
+                ${
+                  availability
+                    ? `<p>${availability}</p>`
+                    : ""
+                }
               </div>
 
-              <strong>${formatPrice(itemTotal)}</strong>
+              <strong>
+                ${formatPrice(itemTotal)}
+              </strong>
             </article>
           `
         );
@@ -234,38 +328,78 @@ document.addEventListener("DOMContentLoaded", () => {
   calculateSubtotal();
 
   if (subtotalElement) {
-    subtotalElement.textContent = formatPrice(subtotal);
+    subtotalElement.textContent =
+      formatPrice(subtotal);
   }
 
   shippingOptions.forEach((option) => {
-    option.addEventListener("change", updateShippingSummary);
+    option.addEventListener(
+      "change",
+      updateShippingSummary
+    );
+  });
+
+  [
+    acceptCgv,
+    acceptPrivacy,
+    acceptPaymentObligation,
+  ].forEach((checkbox) => {
+    checkbox?.addEventListener("change", () => {
+      hideLegalError();
+      updateSubmitButton();
+    });
   });
 
   updateShippingSummary();
+  updateSubmitButton();
 
   if (checkoutForm && checkoutCartInput) {
     checkoutForm.addEventListener("submit", (event) => {
       const currentCart = getCart();
-      const selectedShippingOption = getSelectedShippingOption();
+
+      const selectedShippingOption =
+        getSelectedShippingOption();
 
       if (currentCart.length === 0) {
         event.preventDefault();
+
         alert("Votre panier est vide.");
+
         window.location.href = "cart.php";
+
         return;
       }
 
       if (!selectedShippingOption) {
         event.preventDefault();
-        alert("Veuillez sélectionner un mode de livraison.");
+
+        alert(
+          "Veuillez sélectionner un mode de livraison."
+        );
+
         return;
       }
 
-      checkoutCartInput.value = JSON.stringify(currentCart);
+      if (!areLegalConditionsAccepted()) {
+        event.preventDefault();
+
+        showLegalError();
+        updateSubmitButton();
+
+        return;
+      }
+
+      checkoutCartInput.value =
+        JSON.stringify(currentCart);
 
       if (shippingMethodInput) {
-        shippingMethodInput.value = selectedShippingOption.value;
+        shippingMethodInput.value =
+          selectedShippingOption.value;
       }
+
+      checkoutSubmit.disabled = true;
+      checkoutSubmit.textContent =
+        "Redirection vers le paiement…";
     });
   }
 });
