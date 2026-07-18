@@ -172,14 +172,24 @@
   body.nav-open {
     overflow: hidden;
   }
-  /* ---------- Hero ---------- */
+
+  /* ---------- Hero vidéo ---------- */
+
+  .hero {
+    min-height: calc(100svh - 60px);
+    padding: 72px 24px;
+  }
+
+  .hero-content {
+    gap: 20px;
+  }
 
   .hero-logo {
-    width: 190px;
+    width: 210px;
   }
 
   .hero-text {
-    max-width: 320px;
+    max-width: 420px;
   }
 
   /* ---------- Sections (espacements) ---------- */
@@ -519,7 +529,40 @@
 
 @media (max-width: 640px) {
 
-    .btn-primary {
+  /* Hero vidéo petit mobile */
+
+  .hero {
+    min-height: calc(100svh - 60px);
+    padding: 64px 20px;
+  }
+
+  .hero-video-media {
+    object-position: center;
+    filter:
+      grayscale(100%)
+      contrast(1.12)
+      brightness(0.52);
+  }
+
+  .hero-content {
+    gap: 18px;
+  }
+
+  .hero-logo {
+    width: 180px;
+  }
+
+  .hero-text {
+    max-width: 310px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .hero-cta {
+    width: min(280px, 100%);
+  }
+
+  .btn-primary {
     padding: 16px 26px;
   }
 
@@ -856,4 +899,24 @@
         color: #000 !important;
         text-decoration: none !important;
     }
+}
+
+/* ==========================================================
+   ACCESSIBILITÉ — RÉDUCTION DES ANIMATIONS
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .hero-video-media {
+    animation: none;
+    transform: scale(1.05);
+  }
+
+  .hero-video-grain {
+    animation: none;
+  }
+
+  .hero-content {
+    animation: none;
+  }
 }
