@@ -701,6 +701,35 @@
     height: 46px;
   }
 
+/* ==========================================================
+   PAGES JURIDIQUES
+========================================================== */
+  .legal-hero {
+    padding: 75px 20px 45px;
+  }
+
+  .legal-content {
+    padding: 45px 20px 70px;
+  }
+
+  .legal-section {
+    padding: 26px 0;
+  }
+
+  .legal-update {
+    text-align: left;
+  }
+
+  .legal-section h3 {
+    font-size: 1rem;
+  }
+
+  .legal-table th,
+  .legal-table td {
+      padding: 14px;
+      font-size: .9rem;
+  }
+
   /* Footer : liens plus compacts */
   .footer-nav a {
     font-size: 13px;

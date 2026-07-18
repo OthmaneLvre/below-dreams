@@ -2804,6 +2804,48 @@ small,
     text-align: right;
 }
 
+/* ==========================================================
+   TABLEAUX DES PAGES JURIDIQUES
+========================================================== */
+
+.legal-section h3{
+    margin:28px 0 14px;
+    font-size:1.1rem;
+    color:#111;
+}
+
+.legal-table-wrapper{
+    width:100%;
+    overflow-x:auto;
+    margin:24px 0;
+    border:1px solid rgba(17,17,17,.12);
+    background:#fff;
+}
+
+.legal-table{
+    width:100%;
+    min-width:700px;
+    border-collapse:collapse;
+}
+
+.legal-table th,
+.legal-table td{
+    padding:16px 18px;
+    border-bottom:1px solid rgba(17,17,17,.1);
+    text-align:left;
+    vertical-align:top;
+    line-height:1.6;
+}
+
+.legal-table th{
+    background:#111;
+    color:#fff;
+}
+
+.legal-table tbody tr:last-child td{
+    border-bottom:none;
+}
+
 /* =========================================================
    COMPLÉMENTS CGV
 ========================================================= */
