@@ -6,7 +6,14 @@ use PHPMailer\PHPMailer\Exception;
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/email-template.php';
 
-function sendMail(string $toEmail, string $toName, string $subject, string $htmlBody): bool
+function sendMail(
+    string $toEmail,
+    string $toName,
+    string $subject,
+    string $htmlBody,
+    ?string $replyToEmail = null,
+    ?string $replyToName = null
+): bool
 {
     $config = require __DIR__ . '/../config/mail.php';
 
@@ -25,6 +32,26 @@ function sendMail(string $toEmail, string $toName, string $subject, string $html
 
         $mail->setFrom($config['from_email'], $config['from_name']);
         $mail->addAddress($toEmail, $toName);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Adresse de réponse facultative
+        |--------------------------------------------------------------------------
+        |
+        | L'expéditeur SMTP reste contact@belowdreams.com.
+        | Le Reply-To permet de répondre directement au visiteur.
+        |
+        */
+
+        if (
+            $replyToEmail !== null
+            && filter_var($replyToEmail, FILTER_VALIDATE_EMAIL)
+        ) {
+            $mail->addReplyTo(
+                $replyToEmail,
+                $replyToName ?? ''
+            );
+        }
 
         $mail->isHTML(true);
         $mail->Subject = $subject;

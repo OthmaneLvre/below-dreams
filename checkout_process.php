@@ -1,9 +1,9 @@
 <?php
 
-session_start();
-
-require_once 'config/database.php';
-require_once 'config/stripe.php';
+require_once __DIR__ . '/includes/session.php';
+require_once __DIR__ . '/includes/csrf.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/stripe.php';
 
 if (!isset($_SESSION['customer_id'])) {
     header('Location: account/login.php');
@@ -14,6 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: checkout.php');
     exit;
 }
+
+requireValidCsrfToken();
 
 /*
 |--------------------------------------------------------------------------
@@ -534,7 +536,8 @@ try {
     );
 
     $_SESSION['checkout_error'] =
-        $e->getMessage();
+        'Une erreur est survenue lors de la préparation du paiement. '
+        . 'Veuillez vérifier votre panier et réessayer.';
 
     header('Location: checkout.php');
     exit;
