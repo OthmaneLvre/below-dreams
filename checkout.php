@@ -353,6 +353,7 @@ require_once 'partials/header.php';
                         method="POST"
                         action="checkout_process.php"
                         id="checkout-form"
+                        class="checkout-form"
                     >
                         <input
                             type="hidden"
@@ -366,13 +367,89 @@ require_once 'partials/header.php';
                             id="checkout-shipping-method-input"
                         >
 
+                        <div
+                            class="checkout-legal-error"
+                            id="checkout-legal-error"
+                            role="alert"
+                            aria-live="polite"
+                            hidden
+                        >
+                            Vous devez accepter les conditions obligatoires avant de continuer.
+                        </div>
+
+                        <div class="checkout-legal">
+
+                            <label class="checkout-legal-option">
+                                <input
+                                    type="checkbox"
+                                    name="accept_cgv"
+                                    id="accept-cgv"
+                                    value="1"
+                                    required
+                                >
+
+                                <span>
+                                    J’accepte les
+                                    <a
+                                        href="cgv.php"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        Conditions Générales de Vente
+                                    </a>.
+                                </span>
+                            </label>
+
+                            <label class="checkout-legal-option">
+                                <input
+                                    type="checkbox"
+                                    name="accept_privacy"
+                                    id="accept-privacy"
+                                    value="1"
+                                    required
+                                >
+
+                                <span>
+                                    J’ai pris connaissance de la
+                                    <a
+                                        href="politique-confidentialite.php"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        politique de confidentialité
+                                    </a>.
+                                </span>
+                            </label>
+
+                            <label class="checkout-legal-option">
+                                <input
+                                    type="checkbox"
+                                    name="accept_payment_obligation"
+                                    id="accept-payment-obligation"
+                                    value="1"
+                                    required
+                                >
+
+                                <span>
+                                    Je reconnais que cette commande implique une
+                                    <strong>obligation de paiement</strong>.
+                                </span>
+                            </label>
+
+                        </div>
+
                         <button
                             class="btn-primary checkout-submit"
+                            id="checkout-submit"
                             type="submit"
-                            <?= empty($shippingMethods) ? 'disabled' : '' ?>
+                            disabled
                         >
-                            Continuer vers le paiement
+                            Commander et payer
                         </button>
+
+                        <p class="checkout-payment-note">
+                            Paiement sécurisé par Stripe.
+                        </p>
                     </form>
 
                 </aside>
