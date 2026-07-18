@@ -1,7 +1,7 @@
 <?php
-session_start();
-
-require_once 'includes/mailer.php';
+require_once __DIR__ . '/includes/session.php';
+require_once __DIR__ . '/includes/csrf.php';
+require_once __DIR__ . '/includes/mailer.php';
 
 $pageTitle = "Contact | Below Dreams";
 $pageDescription = "Contactez Below Dreams pour une question sur une commande, une livraison, un retour ou une demande d'information.";
@@ -14,6 +14,8 @@ $error = '';
 $mailConfig = require __DIR__ . '/config/mail.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireValidCsrfToken();
+
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $requestType = trim($_POST['request_type'] ?? '');
@@ -21,53 +23,103 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = trim($_POST['message'] ?? '');
     $website = trim($_POST['website'] ?? '');
 
-    if (!empty($website)) {
+    $types = [
+        'commande' => 'Question sur une commande',
+        'livraison' => 'Question sur une livraison',
+        'retour' => 'Retour / échange',
+        'information' => 'Demande d’information',
+        'autre' => 'Autre demande'
+    ];
+
+    if ($website !== '') {
         $error = "Une erreur est survenue. Veuillez réessayer.";
-    } elseif ($name === '' || $email === '' || $requestType === '' || $message === '') {
+    } elseif (
+        $name === ''
+        || $email === ''
+        || $requestType === ''
+        || $message === ''
+    ) {
         $error = "Veuillez remplir tous les champs obligatoires.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Veuillez saisir une adresse email valide.";
-    } elseif (strlen($message) < 10) {
+    } elseif (!array_key_exists($requestType, $types)) {
+        $error = "Le type de demande sélectionné n'est pas valide.";
+    } elseif (mb_strlen($name) > 150) {
+        $error = "Le nom renseigné est trop long.";
+    } elseif (mb_strlen($email) > 190) {
+        $error = "L'adresse email renseignée est trop longue.";
+    } elseif (mb_strlen($orderNumber) > 50) {
+        $error = "La référence de commande est trop longue.";
+    } elseif (mb_strlen($message) < 10) {
         $error = "Votre message doit contenir au moins 10 caractères.";
+    } elseif (mb_strlen($message) > 5000) {
+        $error = "Votre message ne peut pas dépasser 5 000 caractères.";
     } else {
-        $types = [
-            'commande' => 'Question sur une commande',
-            'livraison' => 'Question sur une livraison',
-            'retour' => 'Retour / échange',
-            'information' => 'Demande d’information',
-            'autre' => 'Autre demande'
-        ];
-
-        $requestLabel = $types[$requestType] ?? 'Demande de contact';
+        $requestLabel = $types[$requestType];
 
         $subject = "Contact Below Dreams - " . $requestLabel;
 
         $body = "
             <h1>Nouveau message de contact</h1>
 
-            <p><strong>Nom :</strong> " . htmlspecialchars($name) . "</p>
-            <p><strong>Email :</strong> " . htmlspecialchars($email) . "</p>
-            <p><strong>Type de demande :</strong> " . htmlspecialchars($requestLabel) . "</p>
-            <p><strong>Commande :</strong> " . htmlspecialchars($orderNumber ?: 'Non renseignée') . "</p>
+            <p><strong>Nom :</strong> "
+            . htmlspecialchars($name, ENT_QUOTES, 'UTF-8')
+            . "</p>
+
+            <p><strong>Email :</strong> "
+            . htmlspecialchars($email, ENT_QUOTES, 'UTF-8')
+            . "</p>
+
+            <p><strong>Type de demande :</strong> "
+            . htmlspecialchars($requestLabel, ENT_QUOTES, 'UTF-8')
+            . "</p>
+
+            <p><strong>Commande :</strong> "
+            . htmlspecialchars(
+                $orderNumber !== ''
+                    ? $orderNumber
+                    : 'Non renseignée',
+                ENT_QUOTES,
+                'UTF-8'
+            )
+            . "</p>
 
             <hr>
 
             <p><strong>Message :</strong></p>
-            <p>" . nl2br(htmlspecialchars($message)) . "</p>
+
+            <p>"
+            . nl2br(
+                htmlspecialchars(
+                    $message,
+                    ENT_QUOTES,
+                    'UTF-8'
+                )
+            )
+            . "</p>
         ";
 
         $sent = sendMail(
             $mailConfig['from_email'],
             $mailConfig['from_name'],
             $subject,
-            getEmailTemplate('Nouveau message de contact', $body)
+            getEmailTemplate(
+                'Nouveau message de contact',
+                $body
+            ),
+            $email,
+            $name
         );
 
         if ($sent) {
-            $success = "Votre message a bien été envoyé. Nous vous répondrons rapidement.";
+            $success =
+                "Votre message a bien été envoyé. "
+                . "Nous vous répondrons rapidement.";
+
             $_POST = [];
         } else {
-            $error = "Impossible d’envoyer votre message pour le moment.";
+            $error =
+                "Impossible d’envoyer votre message pour le moment.";
         }
     }
 }
@@ -123,27 +175,110 @@ require_once 'partials/header.php';
 
                 <form method="POST" class="contact-form">
 
+                    <?= csrfField() ?>
+
                     <label for="name">Nom complet *</label>
-                    <input type="text" id="name" name="name" value="<?= htmlspecialchars($_POST['name'] ?? '') ?>" required>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name" 
+                        value="<?= htmlspecialchars(
+                            $_POST['name'] ?? '',
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>" 
+                        maxlength="150"
+                        autocomplete="name"
+                        required
+                    >
 
                     <label for="email">Email *</label>
-                    <input type="email" id="email" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="<?= htmlspecialchars(
+                            $_POST['email'] ?? '',
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>" 
+                        maxlength="190"
+                        autocomplete="email"
+                        required
+                    >
 
                     <label for="request_type">Type de demande *</label>
                     <select id="request_type" name="request_type" required>
                         <option value="">Sélectionner</option>
-                        <option value="commande">Question sur une commande</option>
-                        <option value="livraison">Question sur une livraison</option>
-                        <option value="retour">Retour / échange</option>
-                        <option value="information">Demande d’information</option>
-                        <option value="autre">Autre demande</option>
+                        <option 
+                            value="commande"
+                            <?= ($_POST['request_type'] ?? '') === 'commande'
+                                ? 'selected'
+                                : '' ?>
+                        >
+                            Question sur une commande
+                        </option>
+                        <option 
+                            value="livraison"
+                            <?= ($_POST['request_type'] ?? '') === 'livraison'
+                                ? 'selected'
+                                : '' ?>
+                        >
+                                Question sur une livraison
+                            </option>
+                        <option 
+                            value="retour"
+                            <?= ($_POST['request_type'] ?? '') === 'retour' 
+                                ? 'selected' 
+                                : '' ?>
+                        >
+                                Retour / échange
+                        </option>
+                        <option 
+                            value="information"
+                            <?= ($_POST['request_type'] ?? '') === 'information' 
+                                ? 'selected' 
+                                : '' ?>
+                        >
+                                Demande d’information
+                        </option>
+                        <option 
+                            value="autre"
+                            <?= ($_POST['request_type'] ?? '') === 'autre' 
+                                ? 'selected' 
+                                : '' ?>
+                        >
+                                Autre demande
+                        </option>
                     </select>
 
                     <label for="order_number">Référence commande</label>
-                    <input type="text" id="order_number" name="order_number" value="<?= htmlspecialchars($_POST['order_number'] ?? '') ?>" placeholder="Ex : BD-2026-001">
+                    <input 
+                        type="text"
+                        id="order_number"
+                        name="order_number"
+                        value="<?= htmlspecialchars(
+                            $_POST['order_number'] ?? '',
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>" 
+                        maxlength="50"
+                        placeholder="Ex : BD-2026-001"
+                    >
 
                     <label for="message">Message *</label>
-                    <textarea id="message" name="message" rows="7" required><?= htmlspecialchars($_POST['message'] ?? '') ?></textarea>
+                    <textarea
+                        id="message"
+                        name="message"
+                        rows="7"
+                        minlength="10"
+                        maxlength="5000"
+                        required
+                    ><?= htmlspecialchars(
+                        $_POST['message'] ?? '',
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?></textarea>
 
                     <div class="contact-honeypot">
                         <label for="website">Site web</label>
