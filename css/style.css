@@ -2696,3 +2696,128 @@ small,
   color: var(--c-white);
   font-size: 22px;
 }
+
+/* =========================================================
+   PAGES JURIDIQUES
+========================================================= */
+
+.legal-page {
+    min-height: 70vh;
+    background: #f7f7f5;
+}
+
+.legal-hero {
+    padding: 100px 20px 60px;
+    background: #111;
+    color: #fff;
+    text-align: center;
+}
+
+.legal-hero .container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.legal-eyebrow {
+    margin: 0 0 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+
+.legal-hero h1 {
+    margin: 0 0 20px;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    line-height: 1.05;
+}
+
+.legal-intro {
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.legal-content {
+    padding: 70px 20px 100px;
+}
+
+.legal-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.legal-section {
+    padding: 32px 0;
+    border-bottom: 1px solid rgba(17, 17, 17, 0.12);
+}
+
+.legal-section:first-child {
+    padding-top: 0;
+}
+
+.legal-section h2 {
+    margin: 0 0 20px;
+    font-size: clamp(1.35rem, 3vw, 1.8rem);
+    color: #111;
+}
+
+.legal-section p,
+.legal-list {
+    margin: 0 0 16px;
+    font-size: 0.98rem;
+    line-height: 1.8;
+    color: #4d4d4d;
+}
+
+.legal-section p:last-child,
+.legal-list:last-child {
+    margin-bottom: 0;
+}
+
+.legal-list {
+    padding-left: 22px;
+}
+
+.legal-list li {
+    margin-bottom: 10px;
+}
+
+.legal-section a {
+    color: #111;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.legal-section a:hover {
+    opacity: 0.65;
+}
+
+.legal-update {
+    margin: 32px 0 0;
+    font-size: 0.85rem;
+    color: #777;
+    text-align: right;
+}
+
+@media (max-width: 768px) {
+    .legal-hero {
+        padding: 75px 20px 45px;
+    }
+
+    .legal-content {
+        padding: 45px 20px 70px;
+    }
+
+    .legal-section {
+        padding: 26px 0;
+    }
+
+    .legal-update {
+        text-align: left;
+    }
+}
