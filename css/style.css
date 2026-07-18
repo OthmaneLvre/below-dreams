@@ -2804,20 +2804,32 @@ small,
     text-align: right;
 }
 
-@media (max-width: 768px) {
-    .legal-hero {
-        padding: 75px 20px 45px;
-    }
+/* =========================================================
+   COMPLÉMENTS CGV
+========================================================= */
 
-    .legal-content {
-        padding: 45px 20px 70px;
-    }
-
-    .legal-section {
-        padding: 26px 0;
-    }
-
-    .legal-update {
-        text-align: left;
-    }
+.legal-address {
+    margin: 18px 0;
+    padding: 20px 24px;
+    border-left: 3px solid #111;
+    background: rgba(17, 17, 17, 0.04);
+    font-style: normal;
+    line-height: 1.8;
+    color: #4d4d4d;
 }
+
+.legal-notice {
+    margin: 22px 0;
+    padding: 22px 24px;
+    border: 1px solid rgba(17, 17, 17, 0.15);
+    background: #fff;
+}
+
+.legal-notice p:first-child {
+    color: #111;
+}
+
+.legal-notice .legal-list {
+    margin-bottom: 0;
+}
+
