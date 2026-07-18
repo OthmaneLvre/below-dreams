@@ -1415,6 +1415,27 @@ small,
   opacity: 0.7;
 }
 
+.footer-cookie-settings {
+  padding: 0;
+  border: none;
+  background: transparent;
+
+  font-family: inherit;
+  font-size: var(--fs-small);
+  color: rgba(255, 255, 255, 0.75);
+
+  cursor: pointer;
+  transition: opacity 200ms ease;
+}
+
+.footer-cookie-settings:hover {
+  opacity: 0.6;
+}
+
+.footer-cookie-settings:focus-visible {
+  border-radius: 4px;
+}
+
 /* ==========================================================
    ACCOUNT / AUTH
    ========================================================== */
