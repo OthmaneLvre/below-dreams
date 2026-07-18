@@ -2875,3 +2875,82 @@ small,
     margin-bottom: 0;
 }
 
+/* =========================================================
+   FORMULAIRE DE RÉTRACTATION
+========================================================= */
+
+.withdrawal-form {
+    margin: 28px 0;
+    padding: 30px;
+    border: 1px solid rgba(17, 17, 17, 0.16);
+    background: #fff;
+    color: #111;
+}
+
+.withdrawal-form-header {
+    margin-bottom: 30px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(17, 17, 17, 0.12);
+}
+
+.withdrawal-form-header h3 {
+    margin: 0 0 18px;
+    font-size: 1.5rem;
+}
+
+.withdrawal-form-content > p {
+    margin-bottom: 28px;
+}
+
+.withdrawal-field {
+    display: grid;
+    grid-template-columns: minmax(190px, 260px) 1fr;
+    gap: 18px;
+    align-items: end;
+
+    min-height: 46px;
+    padding: 10px 0;
+
+    color: #4d4d4d;
+}
+
+.withdrawal-field strong {
+    color: #111;
+}
+
+.withdrawal-field span {
+    display: block;
+    min-height: 30px;
+    border-bottom: 1px solid rgba(17, 17, 17, 0.45);
+}
+
+.withdrawal-signature {
+    min-height: 100px;
+    align-items: start;
+}
+
+.withdrawal-signature span {
+    min-height: 80px;
+    border: 1px solid rgba(17, 17, 17, 0.25);
+}
+
+.withdrawal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 24px;
+}
+
+.withdrawal-print {
+    border: none;
+    cursor: pointer;
+}
+
+.withdrawal-actions .btn-secondary {
+    border-color: rgba(17, 17, 17, 0.25);
+    color: #111;
+}
+
+.withdrawal-actions .btn-secondary:hover {
+    background: rgba(17, 17, 17, 0.06);
+}
