@@ -1,7 +1,13 @@
 <?php
 
-$pageTitle = "Politique de confidentialité | Below Dreams";
-$pageDescription = "Découvrez comment Below Dreams collecte, utilise et protège vos données personnelles.";
+$pageTitle =
+    "Politique de confidentialité | Below Dreams";
+$pageDescription = 
+    "Découvrez comment Below Dreams collecte, utilise et protège vos données personnelles.";
+
+$pageCanonical =
+    'https://belowdreams.com/politique-confidentialite.php';
+
 $basePath = '';
 
 require_once 'partials/header.php';

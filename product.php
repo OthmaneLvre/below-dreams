@@ -45,8 +45,30 @@ $mainImage = $productImages[0] ?? $product['image'];
 $isAvailable = $product['status'] === 'preorder'
     || (int) $product['stock'] > 0;
 
-$pageTitle = "Below Dreams | " . $product['name'];
-$pageDescription = substr(strip_tags($product['description']), 0, 160);
+$pageTitle = 
+    $product['name'] . ' | Below Dreams';
+
+$pageDescription = !empty($product['description'])
+    ? mb_substr(
+        strip_tags($product['description']),
+        0,
+        155
+    )
+    : 'Découvrez '
+        . $product['name']
+        . ', une pièce Below Dreams en édition limitée.';
+
+$pageCanonical =
+    'htpps://belowdreams.com/product.php?slug='
+    . rawurlencode($product['slug']);
+
+$ogType = 'product';
+
+$ogImage = !empty($product['image'])
+    ? 'https://belowdreams.com/'
+        . ltrim($product['image'], '/')
+    : 'https://belowdreams.com/assets/logos/below-dreams-social.jpg';
+    
 $basePath = '';
 
 require_once 'partials/header.php';

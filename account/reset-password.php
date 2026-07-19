@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../includes/session.php';
+require_once __DIR__ . '/../includes/security-headers.php';
 require_once __DIR__ . '/../includes/csrf.php';
 require_once __DIR__ . '/../config/database.php';
 
@@ -101,6 +102,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         name="viewport"
         content="width=device-width, initial-scale=1.0"
     >
+
+    <meta name="robots" content="noindex, nofollow">
 
     <title>Réinitialiser mon mot de passe | Below Dreams</title>
 

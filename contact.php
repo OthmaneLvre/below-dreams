@@ -4,7 +4,12 @@ require_once __DIR__ . '/includes/csrf.php';
 require_once __DIR__ . '/includes/mailer.php';
 
 $pageTitle = "Contact | Below Dreams";
-$pageDescription = "Contactez Below Dreams pour une question sur une commande, une livraison, un retour ou une demande d'information.";
+$pageDescription =
+    "Contactez Below Dreams pour une question concernant "
+    . "une commande, une livraison, un retour ou un produit.";
+
+$pageCanonical =
+    'https://belowdreams.com/contact.php';
 
 $basePath = '';
 

@@ -35,8 +35,18 @@ function normalizeProductStatus(string $status): string
     };
 }
 
-$pageTitle = "Below Dreams | Boutique";
-$pageDescription = "Découvrez toutes les pièces Below Dreams en édition limitée.";
+$pageTitle =
+    "Below Dreams | Vêtements Below Dreams";
+
+$pageDescription =
+    "Découvrez les vêtements Below Dreams en édition limitée. "
+    . "Toutes les pièces sont disponibles en précommande.";
+
+$pageCanonical =
+    'https///belowdreams.com/shop.php';
+
+$ogType = 'website';
+
 $basePath = '';
 
 require_once 'partials/header.php';

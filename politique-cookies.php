@@ -1,7 +1,12 @@
 <?php
 
 $pageTitle = "Politique relative aux cookies | Below Dreams";
+
 $pageDescription = "Découvrez comment Below Dreams utilise les cookies et autres traceurs.";
+
+$pageCanonical =
+    'https://belowdreams.com/politique-cookies.php';
+
 $basePath = '';
 
 require_once 'partials/header.php';

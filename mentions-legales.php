@@ -2,6 +2,10 @@
 
 $pageTitle = "Mentions légales | Below Dreams";
 $pageDescription = "Consultez les mentions légales du site Below Dreams.";
+
+$pageCanonical =
+    'https://belowdreams.com/mentions-legales.php';
+    
 $basePath = '';
 
 require_once 'partials/header.php';

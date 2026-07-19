@@ -12,8 +12,15 @@ $query = $pdo->query("
 
 $featuredProducts = $query->fetchAll(PDO::FETCH_ASSOC);
 
-$pageTitle = "Below Dreams | Accueil";
-$pageDescription = "Below Dreams — pièces fortes, éditions limitées, précommande.";
+$pageTitle = 
+    "Below Dreams | Vêtements en édition limitée";
+$pageDescription =
+    "Découvrez Below Dreams : des pièces fortes, "
+     . "des éditions limitées et une production en précommande.";
+
+$pageCanonical = 'https://belowdreams.com/';
+$ogType = 'website';
+
 $basePath = '';
 
 require_once 'partials/header.php';

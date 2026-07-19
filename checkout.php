@@ -42,8 +42,10 @@ $shippingQuery = $pdo->query("
 
 $shippingMethods = $shippingQuery->fetchAll(PDO::FETCH_ASSOC);
 
-$pageTitle = "Checkout | Below Dreams";
+$pageTitle = "Finaliser ma commande | Below Dreams";
 $pageDescription = "Finalisez votre commande Below Dreams.";
+$pageRobots = 'noindex, nofollow';
+$pageCanonical = 'https://belowdreams.com/checkout.php';
 $basePath = '';
 
 require_once 'partials/header.php';
