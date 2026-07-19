@@ -4,6 +4,7 @@ require_once 'auth.php';
 require_once '../config/database.php';
 
 $pageTitle = "Mes commandes | Below Dreams";
+$pageRobots = 'noindex, nofollow';
 $basePath = '../';
 
 $query = $pdo->prepare("

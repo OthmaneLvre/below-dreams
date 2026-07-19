@@ -4,6 +4,7 @@ require_once 'auth.php';
 require_once '../config/database.php';
 
 $pageTitle = "Détail de commande | Below Dreams";
+$pageRobots = 'noindex, nofollow';
 $basePath = '../';
 
 $orderId = $_GET['id'] ?? null;

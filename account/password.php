@@ -5,6 +5,7 @@ require_once '../config/database.php';
 require_once __DIR__ . '/../includes/csrf.php';
 
 $pageTitle = "Mot de passe | Below Dreams";
+$pageRobots = 'noindex, nofollow';
 $basePath = '../';
 
 $success = '';

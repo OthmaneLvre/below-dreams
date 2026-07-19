@@ -2,6 +2,10 @@
 
 $pageTitle = "Droit de rétractation | Below Dreams";
 $pageDescription = "Consultez les modalités de rétractation et le formulaire type de Below Dreams.";
+
+$pageCanonical =
+    'https://belowdreams.com/retractation.php';
+    
 $basePath = '';
 
 require_once 'partials/header.php';
