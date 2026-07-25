@@ -1,0 +1,968 @@
+/* ==========================================================
+   BELOW DREAMS — RESPONSIVE (tablet + mobile)
+   - Ce fichier contient UNIQUEMENT des media queries
+   ========================================================== */
+
+
+/* ==========================================================
+   TABLETTE (<= 1100px)
+   ========================================================== */
+
+@media (max-width: 1100px) {
+
+  /* Grille produits : 4 → 2 */
+  .products {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Précommande : un peu plus de respiration sur tablette */
+  .preorder-card {
+    width: min(760px, 100%);
+  }
+}
+
+
+/* ==========================================================
+   MOBILE (<= 900px)
+   ========================================================== */
+
+@media (max-width: 900px) {
+
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  /* ---------- Header ---------- */
+
+  /* Le header reste au-dessus du drawer */
+  .site-header {
+    z-index: 300;
+}
+
+  .header-inner {
+    min-height: 60px;
+  }
+
+  .brand-logo {
+    width: 96px;
+  }
+
+  /* ---------- Navigation : menu mobile (off-canvas) ---------- */
+
+  .nav {
+    gap: 16px;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width: 40px;
+    height: 40px;
+
+    border-radius: 12px;
+    border: 1px solid var(--ui-border-soft);
+    background: var(--ui-surface-2);
+
+    cursor: pointer;
+    padding: 0;
+
+    position: relative;
+    z-index: 350;
+  }
+
+  .nav-toggle-bar {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--c-white);
+    border-radius: 999px;
+
+    transition: transform 200ms ease, opacity 200ms ease;
+  }
+
+  .nav-toggle-bar + .nav-toggle-bar {
+    margin-top: 5px;
+  }
+
+/* Animation burger -> croix (robuste) */
+.nav-toggle.is-open .nav-toggle-bar:nth-of-type(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.nav-toggle.is-open .nav-toggle-bar:nth-of-type(2) {
+  opacity: 0;
+}
+
+.nav-toggle.is-open .nav-toggle-bar:nth-of-type(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+  /* On masque le menu "desktop" en flux */
+  .nav-menu {
+    position: fixed;
+    top: var(--header-h);
+    right: 0;
+
+    height: calc(100vh - var(--header-h));
+    width: min(320px, 86vw);
+
+    padding: 22px;
+
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(10px);
+
+    border-left: 1px solid var(--ui-border-soft);
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+
+    transform: translateX(100%);
+    transition: transform 220ms ease, opacity 220ms ease;  
+    z-index: 200;
+
+    opacity: 0;
+    pointer-events: none;
+
+  }
+
+  .nav-menu.is-open {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .nav-link {
+    font-size: 16px;
+    color: var(--c-white);
+  }
+
+    /* Overlay derrière le menu (sans HTML) */
+  .nav::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 220ms ease;
+    z-index: 150;
+  }
+
+  /* Quand le burger est ouvert, on affiche l’overlay */
+  .nav:has(.nav-toggle.is-open)::before {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Panier reste visible */
+  .nav-cart {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    z-index: 350;
+  }
+
+  body.nav-open {
+    overflow: hidden;
+  }
+
+  /* ---------- Hero vidéo ---------- */
+
+  .hero {
+    min-height: calc(100svh - 60px);
+    padding: 72px 24px;
+  }
+
+  .hero-content {
+    gap: 20px;
+  }
+
+  .hero-logo {
+    width: 210px;
+  }
+
+  .hero-text {
+    max-width: 420px;
+  }
+
+  /* ---------- Sections (espacements) ---------- */
+
+  .section-essentials,
+  .section-cta {
+    padding: 64px 0;
+  }
+
+  .section-preorder {
+    padding: 72px 0;
+  }
+
+  .section-title {
+    margin-bottom: 28px;
+  }
+
+  /*  ====================
+      BOUTIQUE MOBILE
+      ==================== */
+
+    .shop,
+    .shop-inner,
+    .shop-results,
+    .shop-grid,
+    .shop-toolbar,
+    .shop-filters {
+      max-width: 100%;
+    }
+
+    .shop-inner {
+      grid-template-columns: 1fr;
+    }
+
+    .shop-filters {
+      position: static;
+      width: 100%;
+    }
+
+    .shop-toolbar {
+      overflow: hidden;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .shop-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .shop-sort select,
+    .sort-btn,
+    .shop-reset {
+      max-width: 100%;
+    }
+
+/* ==========================================================
+   PAGE PRODUIT MOBILE
+   ========================================================== */
+
+  .product-detail-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .product-detail-title {
+    font-size: 32px;
+  }
+
+/* ==========================================================
+   PANIER MOBILE
+   ========================================================== */
+  .cart-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cart-item {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .cart-item-img {
+    margin: 0 auto;
+  }
+
+  .cart-item-quantity {
+    justify-content: center;
+  }
+
+  /* ==========================================================
+   CONTACT MOBILE
+   ========================================================== */
+
+  .contact-inner {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .contact-content h2 {
+    font-size: 32px;
+  }
+
+  .contact-card,
+  .contact-box {
+    padding: 22px;
+  }
+
+  /* ==========================================================
+   ACCOUNT MOBILE
+   ========================================================== */
+
+  .account-area {
+    display: block;
+    min-height: auto;
+  }
+
+  .account-sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+
+    padding: 24px;
+    border-right: none;
+    border-bottom: 1px solid var(--ui-border-soft);
+  }
+
+  .account-sidebar h2 {
+    font-size: 28px;
+    margin-bottom: 22px;
+  }
+
+  .account-nav {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .account-nav a {
+    padding: 12px 14px;
+    text-align: center;
+  }
+
+  .account-logout {
+    margin-top: 0;
+  }
+
+  .account-main {
+    padding: 24px;
+  }
+
+  .account-header {
+    padding: 28px 24px;
+  }
+
+  .account-header h1 {
+    font-size: 38px;
+  }
+
+  .account-section {
+    padding: 24px;
+  }
+
+  .account-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .account-box {
+    min-height: auto;
+    padding: 24px;
+  }
+
+  .account-box .btn-primary {
+    width: 100%;
+  }
+
+  /* Account forms mobile */
+
+  .account-form-large .form-grid,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .account-form-large button,
+  .account-submit {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .account-form input,
+  .account-form textarea,
+  .account-form select {
+    min-width: 0;
+  }
+
+  /* Account addresses mobile */
+
+  .address-grid {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .address-card {
+    min-width: 0;
+    padding: 24px;
+  }
+
+  .same-address-check {
+    grid-column: auto;
+    align-items: flex-start;
+  }
+
+  /* Account orders mobile */
+
+  .orders-table {
+    display: block;
+    width: 100%;
+  }
+
+  .orders-table thead {
+    display: none;
+  }
+
+  .orders-table tbody {
+    display: grid;
+    gap: 16px;
+  }
+
+  .orders-table tr {
+    display: grid;
+    gap: 12px;
+
+    padding: 20px;
+    border-radius: 16px;
+
+    background: var(--ui-surface-2);
+    border: 1px solid var(--ui-border-soft);
+  }
+
+  .orders-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+
+    padding: 0;
+    border-bottom: none;
+    color: var(--c-white);
+  }
+
+  .orders-table td::before {
+    font-weight: 700;
+    color: var(--ui-text-muted);
+  }
+
+  .orders-table td:nth-child(1)::before {
+    content: "Commande";
+  }
+
+  .orders-table td:nth-child(2)::before {
+    content: "Date";
+  }
+
+  .orders-table td:nth-child(3)::before {
+    content: "Statut";
+  }
+
+  .orders-table td:nth-child(4)::before {
+    content: "Total";
+  }
+
+  .orders-table td:nth-child(5)::before {
+    content: "";
+  }
+
+  .orders-table td:last-child {
+    justify-content: stretch;
+  }
+
+  .orders-table .btn-small {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  /* Account order detail mobile */
+
+  .order-detail-header {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .order-detail-header div {
+    padding: 22px;
+  }
+
+  .order-item {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .order-item-image img,
+  .order-item-placeholder {
+    margin: 0 auto;
+  }
+
+  .order-item-price {
+    align-items: center;
+  }
+
+  .order-total {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  /* ---------- Footer ---------- */
+
+  .footer-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+
+  .footer-nav {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+
+/* ==========================================================
+   PETIT MOBILE (<= 640px)
+   ========================================================== */
+
+@media (max-width: 640px) {
+
+  /* Hero vidéo petit mobile */
+
+  .hero {
+    min-height: calc(100svh - 60px);
+    padding: 64px 20px;
+  }
+
+  .hero-video-media {
+    object-position: center;
+    filter:
+      grayscale(100%)
+      contrast(1.12)
+      brightness(0.52);
+  }
+
+  .hero-content {
+    gap: 18px;
+  }
+
+  .hero-logo {
+    width: 180px;
+  }
+
+  .hero-text {
+    max-width: 310px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .hero-cta {
+    width: min(280px, 100%);
+  }
+
+  .btn-primary {
+    padding: 16px 26px;
+  }
+
+/* ==========================================================
+   ACCUEIL — CARTES PRODUITS
+========================================================== */
+
+  .section-essentials .products {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .section-essentials .product-card {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+
+    padding: 22px 18px;
+
+    align-items: stretch;
+  }
+
+  .section-essentials .product-card > a {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 12px;
+    text-align: center;
+  }
+
+  .section-essentials .product-image {
+    width: min(220px, 100%);
+    height: auto;
+    aspect-ratio: 1 / 1;
+
+    margin: 0 auto 8px;
+
+    object-fit: cover;
+  }
+
+  .section-essentials .product-title {
+    width: 100%;
+    margin: 0;
+
+    font-size: 26px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  .section-essentials .product-price {
+    margin: 0;
+
+    font-size: 16px;
+  }
+
+  .section-essentials .product-card .badge {
+    margin: 4px auto 0;
+  }
+
+  /* Précommande */
+  .preorder-card {
+    padding: 28px 18px;
+  }
+
+  /*  ====================
+      BOUTIQUE MOBILE
+      ==================== */
+  
+  .shop {
+    overflow-x: hidden;
+  } 
+
+  .shop-inner {
+    width: 100%;
+  }
+
+  .shop-filters {
+    padding: 20px 16px;
+  }
+
+  .filter-sizes {
+    max-width: 100%;
+  }
+
+  .shop-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shop-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .shop-sort, 
+  .sort-btn {
+    width: 100%;
+  }
+
+  .shop-sort select {
+    width: 100%;
+  }
+
+  /* Contact petit mobile */
+  .contact-hero {
+    padding: 56px 0;
+  }
+
+  .contact-section {
+    padding: 56px 0;
+  }
+
+  .contact-content h2 {
+    font-size: 28px;
+  }
+
+  .contact-form input,
+  .contact-form select,
+  .contact-form textarea {
+    font-size: 16px;
+  }
+
+  /* Account petit mobile */
+
+  .account-sidebar {
+    padding: 20px 16px;
+  }
+
+  .account-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .account-main {
+    padding: 18px;
+  }
+
+  .account-header {
+    padding: 24px 20px;
+  }
+
+  .account-header h1 {
+    font-size: 32px;
+  }
+
+  .account-section {
+    padding: 20px;
+  }
+
+  .account-box h2 {
+    font-size: 22px;
+  }
+
+  .account-form-large .form-grid,
+  .form-grid {
+    gap: 16px;
+  }
+
+  .account-form input,
+  .account-form textarea,
+  .account-form select {
+    width: 100%;
+  }
+
+  .address-card {
+    padding: 22px;
+  }
+
+  .address-card h2 {
+    font-size: 30px;
+  }
+
+  .same-address-check {
+    font-size: 14px;
+  }
+
+  .orders-table tr {
+    padding: 18px;
+  }
+
+  .orders-table td {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .orders-table td:last-child {
+    flex-direction: row;
+  }
+
+  .order-detail-header div {
+    padding: 20px;
+  }
+
+  .order-item {
+    padding: 20px;
+  }
+
+  .order-item-info h3 {
+    font-size: 22px;
+  }
+
+  .order-total strong {
+    font-size: 24px;
+  }
+
+  .account-header h1 {
+    overflow-wrap: anywhere;
+  }
+
+  .checkout-shipping-header {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .checkout-shipping-option {
+    grid-template-columns: auto 56px minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .checkout-shipping-logo {
+    width: 56px;
+    height: 46px;
+  }
+
+/* ==========================================================
+   PAGES JURIDIQUES
+========================================================== */
+  .legal-hero {
+    padding: 75px 20px 45px;
+  }
+
+  .legal-content {
+    padding: 45px 20px 70px;
+  }
+
+  .legal-section {
+    padding: 26px 0;
+  }
+
+  .legal-update {
+    text-align: left;
+  }
+
+  .legal-section h3 {
+    font-size: 1rem;
+  }
+
+  .legal-table th,
+  .legal-table td {
+      padding: 14px;
+      font-size: .9rem;
+  }
+
+  .withdrawal-form {
+    padding: 22px 18px;
+  }
+
+  .withdrawal-field {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      align-items: start;
+  }
+
+  .withdrawal-field span {
+      min-height: 36px;
+  }
+
+  .withdrawal-actions {
+      flex-direction: column;
+  }
+
+  .withdrawal-actions .btn-primary,
+  .withdrawal-actions .btn-secondary {
+      width: 100%;
+  }
+
+  /* Consentement cookies */
+
+  .cookie-consent {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .cookie-consent-panel {
+    width: 100%;
+    max-height: 92vh;
+
+    padding: 26px 20px;
+
+    border-right: none;
+    border-bottom: none;
+    border-left: none;
+    border-radius: 22px 22px 0 0;
+  }
+
+  .cookie-consent-panel h2 {
+    font-size: 28px;
+  }
+
+  .cookie-consent-actions {
+    flex-direction: column;
+  }
+
+  .cookie-consent-actions .btn-primary,
+  .cookie-consent-button {
+    width: 100%;
+  }
+
+  .cookie-preference {
+    align-items: flex-start;
+    gap: 16px;
+
+    padding: 17px;
+  }
+
+  .cookie-preference-required {
+    max-width: 90px;
+    text-align: center;
+  }
+
+  /* Footer : liens plus compacts */
+  .footer-nav a {
+    font-size: 13px;
+  }
+}
+
+/* ==========================================================
+   IMPRESSION — FORMULAIRE DE RÉTRACTATION
+========================================================== */
+
+@media print {
+
+    .site-header,
+    .site-footer,
+    .legal-hero,
+    .legal-section:not(:has(.withdrawal-form)),
+    .withdrawal-actions,
+    .legal-update {
+        display: none !important;
+    }
+
+    body,
+    .legal-page,
+    .legal-content {
+        background: #fff !important;
+        color: #000 !important;
+    }
+
+    .legal-content {
+        padding: 0 !important;
+    }
+
+    .legal-container {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    .legal-section:has(.withdrawal-form) {
+        display: block !important;
+        padding: 0 !important;
+        border: none !important;
+    }
+
+    .legal-section:has(.withdrawal-form) > h2,
+    .legal-section:has(.withdrawal-form) > p {
+        display: none !important;
+    }
+
+    .withdrawal-form {
+        margin: 0 !important;
+        padding: 20mm 15mm !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .withdrawal-form a {
+        color: #000 !important;
+        text-decoration: none !important;
+    }
+}
+
+/* ==========================================================
+   ACCESSIBILITÉ — RÉDUCTION DES ANIMATIONS
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .hero-video-media {
+    animation: none;
+    transform: scale(1.05);
+  }
+
+  .hero-video-grain {
+    animation: none;
+  }
+
+  .hero-content {
+    animation: none;
+  }
+}
