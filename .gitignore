@@ -9,3 +9,13 @@ Thumbs.db
 # Build (si plus tard)
 dist/
 node_modules/
+
+/vendor/
+
+.env
+
+config/stripe.php
+config/mail.php
+
+/assets/uploads/products/*
+!/assets/uploads/products/.gitkeep
