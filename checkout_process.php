@@ -1,9 +1,9 @@
 <?php
 
-session_start();
-
-require_once 'config/database.php';
-require_once 'config/stripe.php';
+require_once __DIR__ . '/includes/session.php';
+require_once __DIR__ . '/includes/csrf.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/stripe.php';
 
 if (!isset($_SESSION['customer_id'])) {
     header('Location: account/login.php');
@@ -14,6 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: checkout.php');
     exit;
 }
+
+requireValidCsrfToken();
 
 /*
 |--------------------------------------------------------------------------
@@ -347,6 +349,9 @@ try {
     |--------------------------------------------------------------------------
     */
 
+    $legalAcceptedAt = date('Y-m-d H:i:s');
+    $cgvVersion = '2026-07-18';
+
     $orderQuery = $pdo->prepare("
         INSERT INTO orders (
             customer_id,
@@ -359,7 +364,12 @@ try {
             shipping_address_snapshot,
             total,
             status,
-            payment_status
+            payment_status,
+
+            cgv_version,
+            cgv_accepted_at,
+            privacy_accepted_at,
+            payment_obligation_accepted_at
         )
         VALUES (
             ?,
@@ -372,7 +382,12 @@ try {
             ?,
             ?,
             'pending',
-            'unpaid'
+            'unpaid',
+
+            ?,
+            ?,
+            ?,
+            ?
         )
     ");
 
@@ -385,13 +400,19 @@ try {
         $shippingMethod['delivery_type'],
         $shippingPrice,
         $shippingAddressSnapshot,
-        $total
+        $total,
+
+        $cgvVersion,
+        $legalAcceptedAt,
+        $legalAcceptedAt,
+        $legalAcceptedAt
     ]);
 
     $orderId = (int) $pdo->lastInsertId();
 
     $orderNumber = 'BD-'
-        . date('Y')
+        . date('Ymd')
+        . '-'
         . str_pad(
             (string) $orderId,
             5,
@@ -448,7 +469,7 @@ try {
     */
 
     $domain = 'https://belowdreams.com';
-    $legalAcceptedAt = gmdate('c');
+    $legalAcceptedAtIso = gmdate('c');
 
     $checkoutSession =
         \Stripe\Checkout\Session::create([
@@ -497,7 +518,7 @@ try {
                     '1',
 
                 'legal_accepted_at' =>
-                    $legalAcceptedAt,
+                    $legalAcceptedAtIso,
 
                 'cgv_version' =>
                     '2026-07-18'
@@ -534,7 +555,8 @@ try {
     );
 
     $_SESSION['checkout_error'] =
-        $e->getMessage();
+        'Une erreur est survenue lors de la préparation du paiement. '
+        . 'Veuillez vérifier votre panier et réessayer.';
 
     header('Location: checkout.php');
     exit;

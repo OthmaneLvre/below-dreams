@@ -1,20 +1,278 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-?>
 
+require_once __DIR__ . '/../includes/session.php';
+require_once __DIR__ . '/../includes/security-headers.php';
+
+/*
+|--------------------------------------------------------------------------
+| SEO — valeurs par défaut
+|--------------------------------------------------------------------------
+*/
+
+$siteName = 'Below Dreams';
+$siteUrl = 'https://belowdreams.com';
+
+$defaultTitle = 'Below Dreams | Vêtements en édition limitée';
+$defaultDescription =
+    'Découvrez Below Dreams, une marque de vêtements proposant '
+    . 'des pièces fortes en édition limitée et en précommande.';
+
+$pageTitle = $pageTitle ?? $defaultTitle;
+$pageDescription = $pageDescription ?? $defaultDescription;
+
+$pageRobots = $pageRobots ?? 'index, follow';
+$pageCanonical = $pageCanonical ?? null;
+
+$ogType = $ogType ?? 'website';
+$ogImage = $ogImage
+    ?? $siteUrl . '/assets/logos/below-dreams-social.png';
+
+$currentPath = parse_url(
+    $_SERVER['REQUEST_URI'] ?? '/',
+    PHP_URL_PATH
+);
+
+$currentPath = is_string($currentPath)
+    ? $currentPath
+    : '/';
+
+/*
+|--------------------------------------------------------------------------
+| Nettoyage du chemin local
+|--------------------------------------------------------------------------
+|
+| En local :
+| /belowdreams/index.php
+|
+| En production :
+| /index.php
+|
+| Le canonical doit toujours utiliser l’URL publique.
+|
+*/
+
+$localBasePath = '/belowdreams';
+
+if (
+    str_starts_with(
+        mb_strtolower($currentPath),
+        $localBasePath
+    )
+) {
+    $currentPath = substr(
+        $currentPath,
+        strlen($localBasePath)
+    );
+
+    if ($currentPath === '') {
+        $currentPath = '/';
+    }
+}
+
+if ($pageCanonical === null) {
+    if (
+        $currentPath === '/'
+        || $currentPath === '/index.php'
+    ) {
+        $pageCanonical = $siteUrl . '/';
+    } else {
+        $pageCanonical = $siteUrl . $currentPath;
+    }
+}
+
+$escape = static function (?string $value): string {
+    return htmlspecialchars(
+        $value ?? '',
+        ENT_QUOTES,
+        'UTF-8'
+    );
+};
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $pageTitle ?? 'Below Dreams' ?></title>
-    <meta name="description" content="<?= $pageDescription ?? 'Below Dreams — pièces fortes, éditions limitées, précommande.' ?>">
 
-    <link rel="stylesheet" href="<?= $basePath ?? '' ?>css/style.css">
-    <link rel="stylesheet" href="<?= $basePath ?? '' ?>css/responsive.css">
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title><?= $escape($pageTitle) ?></title>
+
+    <meta
+        name="description"
+        content="<?= $escape($pageDescription) ?>"
+    >
+
+    <meta
+        name="robots"
+        content="<?= $escape($pageRobots) ?>"
+    >
+
+    <link
+        rel="canonical"
+        href="<?= $escape($pageCanonical) ?>"
+    >
+
+    <!-- Fonts -->
+    <link
+        rel="preload"
+        href="assets/fonts/oswald/Oswald-Bold.woff2"
+        as="font"
+        type="font/woff2"
+        crossorigin
+    >
+
+    <link
+        rel="preload"
+        href="assets/fonts/inter/Inter-Regular.woff2"
+        as="font"
+        type="font/woff2"
+        crossorigin
+    >
+
+    <!-- Open Graph -->
+
+    <meta
+        property="og:locale"
+        content="fr_FR"
+    >
+
+    <meta
+        property="og:type"
+        content="<?= $escape($ogType) ?>"
+    >
+
+    <meta
+        property="og:site_name"
+        content="<?= $escape($siteName) ?>"
+    >
+
+    <meta
+        property="og:title"
+        content="<?= $escape($pageTitle) ?>"
+    >
+
+    <meta
+        property="og:description"
+        content="<?= $escape($pageDescription) ?>"
+    >
+
+    <meta
+        property="og:url"
+        content="<?= $escape($pageCanonical) ?>"
+    >
+
+    <meta
+        property="og:image"
+        content="<?= $escape($ogImage) ?>"
+    >
+
+    <meta
+        property="og:image:alt"
+        content="<?= $escape($pageTitle) ?>"
+    >
+
+    <!-- X / Twitter -->
+
+    <meta
+        name="twitter:card"
+        content="summary_large_image"
+    >
+
+    <meta
+        name="twitter:title"
+        content="<?= $escape($pageTitle) ?>"
+    >
+
+    <meta
+        name="twitter:description"
+        content="<?= $escape($pageDescription) ?>"
+    >
+
+    <meta
+        name="twitter:image"
+        content="<?= $escape($ogImage) ?>"
+    >
+
+    <!-- Apparence navigateur -->
+
+    <meta
+        name="theme-color"
+        content="#0A0A0A"
+    >
+
+    <!-- Favicons -->
+
+    <link
+        rel="icon"
+        type="image/x-icon"
+        href="<?= $basePath ?? '' ?>assets/logos/favicon-belowDreams.ico"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        sizes="32x32"
+        href="<?= $basePath ?? '' ?>assets/logos/favicon-32x32.png"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        sizes="16x16"
+        href="<?= $basePath ?? '' ?>assets/logos/favicon-16x16.png"
+    >
+
+    <link
+        rel="apple-touch-icon"
+        sizes="180x180"
+        href="<?= $basePath ?? '' ?>assets/logos/apple-touch-icon.png"
+    >
+
+    <link
+        rel="manifest"
+        href="<?= $basePath ?? '' ?>assets/logos/site.webmanifest"
+    >
+
+    <!-- CSS -->
+
+    <link
+        rel="stylesheet"
+        href="<?= $basePath ?? '' ?>css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="<?= $basePath ?? '' ?>css/responsive.css"
+    >
+
+    <!-- Balise HTML -->
+    <meta
+        name="google-site-verification"
+        content="E9arOm42bGCDUtWqja0gg4hKNiXwB-0Ain2pmKmgOD8"
+    />
+
+    <script type="application/ld+json">
+        <?= json_encode(
+            [
+                '@context' => 'https://schema.org',
+                '@type' => 'Organization',
+                'name' => 'Below Dreams',
+                'url' => 'https://belowdreams.com',
+                'logo' =>
+                    'https://belowdreams.com/assets/logos/'
+                    . 'below-dreams-black.svg',
+                'email' => 'contact@belowdreams.com'
+            ],
+            JSON_UNESCAPED_SLASHES
+            | JSON_UNESCAPED_UNICODE
+            | JSON_PRETTY_PRINT
+        ) ?>
+    </script>
 
 </head>
 

@@ -1,9 +1,16 @@
 <?php
 
-require_once 'auth.php';
+require_once __DIR__ . '/../includes/session.php';
+require_once __DIR__ . '/../includes/security-headers.php';
 require_once '../config/database.php';
 
+if (!isset($_SESSION['customer_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
 $pageTitle = "Mon compte | Below Dreams";
+$pageRobots = 'noindex, nofollow';
 
 $query = $pdo->prepare("
     SELECT *

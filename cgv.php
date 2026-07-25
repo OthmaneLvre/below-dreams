@@ -1,7 +1,15 @@
 <?php
 
-$pageTitle = "Conditions Générales de Vente | Below Dreams";
-$pageDescription = "Consultez les Conditions Générales de Vente de la boutique Below Dreams.";
+$pageTitle = 
+    "Conditions Générales de Vente | Below Dreams";
+
+$pageDescription = 
+    "Consultez les Conditions Générales de Vente "
+    . "de la boutique Below Dreams.";
+
+$pageCanonical =
+    'https://belowdreams.com/cgv.php';
+    
 $basePath = '';
 
 require_once 'partials/header.php';

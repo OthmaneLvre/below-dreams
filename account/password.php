@@ -2,8 +2,10 @@
 
 require_once 'auth.php';
 require_once '../config/database.php';
+require_once __DIR__ . '/../includes/csrf.php';
 
 $pageTitle = "Mot de passe | Below Dreams";
+$pageRobots = 'noindex, nofollow';
 $basePath = '../';
 
 $success = '';
@@ -13,39 +15,81 @@ $query = $pdo->prepare("
     SELECT password
     FROM customers
     WHERE id = ?
+    LIMIT 1
 ");
 
-$query->execute([$_SESSION['customer_id']]);
+$query->execute([
+    $_SESSION['customer_id']
+]);
+
 $customer = $query->fetch(PDO::FETCH_ASSOC);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $currentPassword = $_POST['current_password'];
-    $newPassword = $_POST['new_password'];
-    $passwordConfirm = $_POST['password_confirm'];
+if (!$customer) {
+    session_destroy();
 
-    if (!$currentPassword || !$newPassword || !$passwordConfirm) {
+    header('Location: login.php');
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireValidCsrfToken();
+
+    $currentPassword = $_POST['current_password'] ?? '';
+    $newPassword = $_POST['new_password'] ?? '';
+    $passwordConfirm = $_POST['password_confirm'] ?? '';
+
+    if (
+        $currentPassword === ''
+        || $newPassword === ''
+        || $passwordConfirm === ''
+    ) {
         $error = "Merci de remplir tous les champs.";
-    } elseif (!password_verify($currentPassword, $customer['password'])) {
+    } elseif (
+        !password_verify(
+            $currentPassword,
+            $customer['password']
+        )
+    ) {
         $error = "Le mot de passe actuel est incorrect.";
     } elseif ($newPassword !== $passwordConfirm) {
         $error = "Les nouveaux mots de passe ne correspondent pas.";
-    } elseif (strlen($newPassword) < 8) {
-        $error = "Le nouveau mot de passe doit contenir au moins 8 caractères.";
+    } elseif (strlen($newPassword) < 12) {
+        $error =
+            "Le nouveau mot de passe doit contenir au moins 12 caractères.";
+    } elseif (
+        password_verify(
+            $newPassword,
+            $customer['password']
+        )
+    ) {
+        $error =
+            "Le nouveau mot de passe doit être différent de l’ancien.";
     } else {
-        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $hashedPassword = password_hash(
+            $newPassword,
+            PASSWORD_DEFAULT
+        );
 
         $update = $pdo->prepare("
             UPDATE customers
-            SET password = ?
+            SET
+                password = ?,
+                password_reset_token_hash = NULL,
+                password_reset_expires_at = NULL
             WHERE id = ?
         ");
 
         $update->execute([
             $hashedPassword,
-            $_SESSION['customer_id']
+            (int) $_SESSION['customer_id']
         ]);
 
-        $success = "Votre mot de passe a bien été modifié.";
+        regenerateSession();
+
+        $customer['password'] = $hashedPassword;
+
+        $success =
+            "Votre mot de passe a bien été modifié.";
     }
 }
 
@@ -60,41 +104,93 @@ require_once '../partials/header.php';
 
     <header class="account-header">
         <h1>Mot de passe</h1>
-        <p>Modifiez le mot de passe de votre compte.</p>
+
+        <p>
+            Modifiez le mot de passe de votre compte.
+        </p>
     </header>
 
     <section class="account-section">
 
-        <?php if (!empty($success)) : ?>
-            <p class="account-success"><?= htmlspecialchars($success) ?></p>
+        <?php if ($success !== '') : ?>
+            <p class="account-success">
+                <?= htmlspecialchars(
+                    $success,
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>
+            </p>
         <?php endif; ?>
 
-        <?php if (!empty($error)) : ?>
-            <p class="account-error"><?= htmlspecialchars($error) ?></p>
+        <?php if ($error !== '') : ?>
+            <p class="account-error">
+                <?= htmlspecialchars(
+                    $error,
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>
+            </p>
         <?php endif; ?>
 
-        <form method="POST" class="account-form account-form-large">
+        <form
+            method="POST"
+            class="account-form account-form-large"
+        >
+
+            <?= csrfField() ?>
 
             <div class="form-grid">
 
                 <div>
-                    <label>Mot de passe actuel *</label>
-                    <input type="password" name="current_password" required>
+                    <label for="current_password">
+                        Mot de passe actuel *
+                    </label>
+
+                    <input
+                        type="password"
+                        id="current_password"
+                        name="current_password"
+                        autocomplete="current-password"
+                        required
+                    >
                 </div>
 
                 <div>
-                    <label>Nouveau mot de passe *</label>
-                    <input type="password" name="new_password" required>
+                    <label for="new_password">
+                        Nouveau mot de passe *
+                    </label>
+
+                    <input
+                        type="password"
+                        id="new_password"
+                        name="new_password"
+                        minlength="12"
+                        autocomplete="new-password"
+                        required
+                    >
                 </div>
 
                 <div>
-                    <label>Confirmer le nouveau mot de passe *</label>
-                    <input type="password" name="password_confirm" required>
+                    <label for="password_confirm">
+                        Confirmer le nouveau mot de passe *
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password_confirm"
+                        name="password_confirm"
+                        minlength="12"
+                        autocomplete="new-password"
+                        required
+                    >
                 </div>
 
             </div>
 
-            <button type="submit" class="btn-primary account-submit">
+            <button
+                type="submit"
+                class="btn-primary account-submit"
+            >
                 Modifier mon mot de passe
             </button>
 

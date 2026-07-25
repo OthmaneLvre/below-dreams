@@ -55,6 +55,7 @@ if (!$order) {
 
 $pageTitle = "Commande confirmée | Below Dreams";
 $pageDescription = "Votre commande Below Dreams a bien été enregistrée.";
+$pageRobots = 'noindex, nofollow';
 $basePath = '';
 
 require_once 'partials/header.php';

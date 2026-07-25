@@ -4,20 +4,28 @@
    BELOW DREAMS — CONNEXION BASE DE DONNÉES
    ========================================================== */
 
-$host = "localhost";
-$dbname = "belowdreams";
-$username = "root";
-$password = "";
+$host = "belowdqbaudourd.mysql.db";
+$dbname = "belowdqbaudourd";
+$username = "belowdqbaudourd";
+$password = "Belowdreams2026";
 
 try {
     $pdo = new PDO(
-        "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
+        "mysql:host={$host};dbname={$dbname};charset=utf8mb4",
         $username,
-        $password
+        $password,
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ]
+    );
+} catch (PDOException $e) {
+    error_log(
+        'Below Dreams - erreur MySQL : '
+        . $e->getMessage()
     );
 
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-} catch (PDOException $e) {
-    die("Erreur de connexion à la base de données.");
+    http_response_code(500);
+    exit('Erreur de connexion à la base de données.');
 }

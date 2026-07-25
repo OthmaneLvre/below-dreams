@@ -1,5 +1,6 @@
 <?php
 require_once 'config/database.php';
+require_once __DIR__ . '/includes/image-upload.php';
 
 if (!isset($_GET['slug']) || empty($_GET['slug'])) {
     header('Location: shop.php');
@@ -45,8 +46,32 @@ $mainImage = $productImages[0] ?? $product['image'];
 $isAvailable = $product['status'] === 'preorder'
     || (int) $product['stock'] > 0;
 
-$pageTitle = "Below Dreams | " . $product['name'];
-$pageDescription = substr(strip_tags($product['description']), 0, 160);
+$pageTitle = 
+    $product['name'] . ' | Below Dreams';
+
+$pageDescription = !empty($product['description'])
+    ? mb_substr(
+        strip_tags($product['description']),
+        0,
+        155
+    )
+    : 'Découvrez '
+        . $product['name']
+        . ', une pièce Below Dreams en édition limitée.';
+
+$pageCanonical =
+    'https://belowdreams.com/product.php?slug='
+    . rawurlencode($product['slug']);
+
+$ogType = 'product';
+
+$ogImage = !empty($product['image'])
+    ? 'https://belowdreams.com/'
+        . ltrim($product['image'], '/')
+    : 'https://belowdreams.com/assets/logos/below-dreams-social.png';
+
+$productPrice = (float) $product['price'];
+    
 $basePath = '';
 
 require_once 'partials/header.php';
@@ -58,27 +83,67 @@ require_once 'partials/header.php';
 
                 <div class="product-detail-media">
                     <img
-                            src="<?= htmlspecialchars($mainImage) ?>"
-                            alt="<?= htmlspecialchars($product['name']) ?>"
-                            class="product-detail-img"
-                            id="main-product-image"
+                        src="<?= htmlspecialchars(
+                            $mainImage,
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>"
+                        alt="<?= htmlspecialchars(
+                            $product['name'],
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>"
+                        class="product-detail-img"
+                        id="main-product-image"
+                        loading="eager"
+                        decoding="async"
+                        fetchpriority="high"
+                        width="1400"
+                        height="1400"
                     >
 
                         <?php if (count($productImages) > 1) : ?>
                             <div class="product-gallery-thumbs">
 
                                 <?php foreach ($productImages as $index => $imagePath) : ?>
+
+                                    <?php
+                                    $thumbnailPath = productImageVariantPath(
+                                        $imagePath,
+                                        'thumbnail'
+                                    );
+                                    ?>
+
                                     <button
                                         type="button"
-                                        class="product-gallery-thumb <?= $index === 0 ? 'active' : '' ?>"
-                                        data-image="<?= htmlspecialchars($imagePath) ?>"
+                                        class="product-gallery-thumb <?= $index === 0
+                                            ? 'active'
+                                            : '' ?>"
+                                        data-image="<?= htmlspecialchars(
+                                            $imagePath,
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>"
                                         aria-label="Voir l'image <?= $index + 1 ?>"
                                     >
                                         <img
-                                            src="<?= htmlspecialchars($imagePath) ?>"
-                                            alt="<?= htmlspecialchars($product['name']) ?> image <?= $index + 1 ?>"
+                                            src="<?= htmlspecialchars(
+                                                $thumbnailPath ?? $imagePath,
+                                                ENT_QUOTES,
+                                                'UTF-8'
+                                            ) ?>"
+                                            alt="<?= htmlspecialchars(
+                                                $product['name'],
+                                                ENT_QUOTES,
+                                                'UTF-8'
+                                            ) ?> — image <?= $index + 1 ?>"
+                                            loading="lazy"
+                                            decoding="async"
+                                            width="400"
+                                            height="400"
                                         >
                                     </button>
+
                                 <?php endforeach; ?>
 
                             </div>
