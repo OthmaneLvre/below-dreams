@@ -52,7 +52,6 @@ $staticPages = [
 $productQuery = $pdo->query("
     SELECT
         slug,
-        updated_at,
         created_at
     FROM products
     WHERE is_active = 1
@@ -84,9 +83,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
 
 <?php foreach ($products as $product) : ?>
     <?php
-    $lastModified = $product['updated_at']
-        ?? $product['created_at']
-        ?? null;
+    $lastModified = $product['created_at'] ?? null;
     ?>
 
     <url>

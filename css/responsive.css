@@ -566,18 +566,64 @@
     padding: 16px 26px;
   }
 
-  /* Grille produits : 2 → 1 */
-  .products {
+/* ==========================================================
+   ACCUEIL — CARTES PRODUITS
+========================================================== */
+
+  .section-essentials .products {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
 
-  /* Cards : padding légèrement réduit */
-  .product-card {
+  .section-essentials .product-card {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+
     padding: 22px 18px;
+
+    align-items: stretch;
   }
 
-  .product-image {
-    width: 84px;
+  .section-essentials .product-card > a {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 12px;
+    text-align: center;
+  }
+
+  .section-essentials .product-image {
+    width: min(220px, 100%);
+    height: auto;
+    aspect-ratio: 1 / 1;
+
+    margin: 0 auto 8px;
+
+    object-fit: cover;
+  }
+
+  .section-essentials .product-title {
+    width: 100%;
+    margin: 0;
+
+    font-size: 26px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  .section-essentials .product-price {
+    margin: 0;
+
+    font-size: 16px;
+  }
+
+  .section-essentials .product-card .badge {
+    margin: 4px auto 0;
   }
 
   /* Précommande */

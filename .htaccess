@@ -16,9 +16,9 @@ RewriteRule ^sitemap\.xml$ sitemap.php [L]
 # HTTPS et domaine canonique — production uniquement
 # ----------------------------------------------------------
 
-# RewriteCond %{HTTP_HOST} !^belowdreams\.com$ [NC,OR]
-# RewriteCond %{HTTPS} !=on
-# RewriteRule ^ https://belowdreams.com%{REQUEST_URI} [R=301,L]
+RewriteCond %{HTTP_HOST} !^belowdreams\.com$ [NC,OR]
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://belowdreams.com%{REQUEST_URI} [R=301,L]
 
 # ----------------------------------------------------------
 # Protection des fichiers sensibles
