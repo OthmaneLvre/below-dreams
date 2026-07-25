@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /account/
+Disallow: /config/
+Disallow: /includes/
+Disallow: /vendor/
+Disallow: /api/
+Disallow: /checkout_process.php
+Disallow: /stripe_webhook.php
+
+Sitemap: https://belowdreams.com/sitemap.xml

@@ -1,6 +1,7 @@
 <?php
 
 require_once 'config/database.php';
+require_once __DIR__ . '/includes/image-upload.php';
 
 $query = $pdo->query("
     SELECT *
@@ -35,8 +36,18 @@ function normalizeProductStatus(string $status): string
     };
 }
 
-$pageTitle = "Below Dreams | Boutique";
-$pageDescription = "Découvrez toutes les pièces Below Dreams en édition limitée.";
+$pageTitle =
+    "Below Dreams | Vêtements Below Dreams";
+
+$pageDescription =
+    "Découvrez les vêtements Below Dreams en édition limitée. "
+    . "Toutes les pièces sont disponibles en précommande.";
+
+$pageCanonical =
+    'https://belowdreams.com/shop.php';
+
+$ogType = 'website';
+
 $basePath = '';
 
 require_once 'partials/header.php';
@@ -122,43 +133,97 @@ require_once 'partials/header.php';
 
                     <?php foreach ($products as $product) : ?>
 
+                        <?php
+                        $productMediumImage = productImageVariantPath(
+                            $product['image'] ?? null,
+                            'medium'
+                        );
+                        ?>
+
                         <article
                             class="product-card"
-                            data-featured="<?= (int) $product['is_featured'] === 1 ? 'true' : 'false' ?>"
-                            data-price="<?= htmlspecialchars((string) $product['price']) ?>"
-                            data-category="<?= htmlspecialchars(normalizeProductCategory($product['category'])) ?>"
-                            data-availability="<?= htmlspecialchars(normalizeProductStatus($product['status'])) ?>"
-                            data-sizes="<?= htmlspecialchars(strtolower($product['sizes'])) ?>"
+                            data-featured="<?= (int) $product['is_featured'] === 1
+                                ? 'true'
+                                : 'false' ?>"
+                            data-price="<?= htmlspecialchars(
+                                (string) $product['price'],
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>"
+                            data-category="<?= htmlspecialchars(
+                                normalizeProductCategory($product['category']),
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>"
+                            data-availability="<?= htmlspecialchars(
+                                normalizeProductStatus($product['status']),
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>"
+                            data-sizes="<?= htmlspecialchars(
+                                strtolower($product['sizes'] ?? ''),
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>"
                         >
 
                             <a
                                 class="product-card__link"
                                 href="product.php?slug=<?= urlencode($product['slug']) ?>"
-                                aria-label="Voir le produit : <?= htmlspecialchars($product['name']) ?>"
+                                aria-label="Voir le produit : <?= htmlspecialchars(
+                                    $product['name'],
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                ) ?>"
                             >
 
                                 <div class="product-card__media">
 
                                     <img
-                                        src="<?= htmlspecialchars($product['image']) ?>"
-                                        alt="<?= htmlspecialchars($product['name']) ?>"
+                                        src="<?= htmlspecialchars(
+                                            $productMediumImage ?? '',
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>"
+                                        alt="<?= htmlspecialchars(
+                                            $product['name'],
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>"
                                         class="product-card__img"
+                                        loading="lazy"
+                                        decoding="async"
+                                        width="800"
+                                        height="800"
                                     >
 
                                     <span class="badge badge--preorder">
-                                        <?= htmlspecialchars($product['status']) ?>
+                                        <?= normalizeProductStatus($product['status']) === 'preorder'
+                                            ? 'Précommande'
+                                            : 'Stock' ?>
                                     </span>
 
                                 </div>
 
                                 <div class="product-card__body">
+
                                     <h3 class="product-card__title">
-                                        <?= htmlspecialchars($product['name']) ?>
+                                        <?= htmlspecialchars(
+                                            $product['name'],
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>
                                     </h3>
 
                                     <p class="product-card__price">
-                                        <?= number_format((float) $product['price'], 2, ',', ' ') ?> €
+                                        <?= number_format(
+                                            (float) $product['price'],
+                                            2,
+                                            ',',
+                                            ' '
+                                        ) ?> €
                                     </p>
+
                                 </div>
 
                             </a>

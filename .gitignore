@@ -16,3 +16,6 @@ node_modules/
 
 config/stripe.php
 config/mail.php
+
+/assets/uploads/products/*
+!/assets/uploads/products/.gitkeep

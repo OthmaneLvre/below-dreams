@@ -32,6 +32,7 @@ $hasAlwaysFreeShipping = (int) $freeShippingQuery->fetchColumn() > 0;
 
 $pageTitle = "Below Dreams | Panier";
 $pageDescription = "Consultez votre panier Below Dreams avant de finaliser votre commande.";
+$pageRobots = 'noindex, nofollow';
 $basePath = '';
 
 require_once 'partials/header.php';

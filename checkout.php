@@ -1,7 +1,7 @@
 <?php
-session_start();
-
-require_once 'config/database.php';
+require_once __DIR__ . '/includes/session.php';
+require_once __DIR__ . '/includes/csrf.php';
+require_once __DIR__ . '/config/database.php';
 
 if (!isset($_SESSION['customer_id'])) {
     header('Location: account/login.php');
@@ -42,8 +42,10 @@ $shippingQuery = $pdo->query("
 
 $shippingMethods = $shippingQuery->fetchAll(PDO::FETCH_ASSOC);
 
-$pageTitle = "Checkout | Below Dreams";
+$pageTitle = "Finaliser ma commande | Below Dreams";
 $pageDescription = "Finalisez votre commande Below Dreams.";
+$pageRobots = 'noindex, nofollow';
+$pageCanonical = 'https://belowdreams.com/checkout.php';
 $basePath = '';
 
 require_once 'partials/header.php';
@@ -355,6 +357,8 @@ require_once 'partials/header.php';
                         id="checkout-form"
                         class="checkout-form"
                     >
+                        <?=  csrfField() ?>
+
                         <input
                             type="hidden"
                             name="cart"

@@ -1,114 +1,287 @@
 <?php
-session_start();
 
-require_once '../config/database.php';
+require_once __DIR__ . '/../includes/session.php';
+require_once __DIR__ . '/../includes/security-headers.php';
+require_once __DIR__ . '/../includes/csrf.php';
+require_once __DIR__ . '/../includes/image-upload.php';
+require_once __DIR__ . '/../config/database.php';
 
 if (!isset($_SESSION['admin_id'])) {
     header('Location: login.php');
     exit;
 }
 
+$pageTitle = 'Ajouter un produit | Below Dreams';
+
 $error = '';
 
+$formValues = [
+    'name' => '',
+    'slug' => '',
+    'category' => '',
+    'price' => '',
+    'stock' => '0',
+    'description' => '',
+    'status' => 'preorder',
+    'sizes' => '',
+];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name']);
-    $slug = trim($_POST['slug']);
-    $category = trim($_POST['category']);
-    $price = trim($_POST['price']);
-    $stock = (int) $_POST['stock'];
-    $description = trim($_POST['description']);
-    $status = $_POST['status'];
-    $sizes = trim($_POST['sizes']);
-    $image = '';
-    $productImages = [];
+    requireValidCsrfToken();
 
-    if (!empty($_FILES['images']['name'][0])) {
-        $uploadDir = '../assets/images/product/';
-        $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+    $name = trim($_POST['name'] ?? '');
+    $slug = sanitizeImageFilename(
+        trim($_POST['slug'] ?? '')
+    );
 
-        foreach ($_FILES['images']['name'] as $index => $originalName) {
-            if (empty($originalName)) {
-                continue;
-            }
+    $category = trim($_POST['category'] ?? '');
+    $priceValue = str_replace(
+        ',',
+        '.',
+        trim($_POST['price'] ?? '')
+    );
 
-            $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+    $stock = filter_var(
+        $_POST['stock'] ?? null,
+        FILTER_VALIDATE_INT,
+        [
+            'options' => [
+                'min_range' => 0,
+            ],
+        ]
+    );
 
-            if (!in_array($extension, $allowedExtensions, true)) {
-                $error = "Format d'image non autorisé.";
-                break;
-            }
+    $description = trim(
+        $_POST['description'] ?? ''
+    );
 
-            $safeName = uniqid('product-', true) . '.' . $extension;
-            $targetPath = $uploadDir . $safeName;
+    $status = trim($_POST['status'] ?? '');
+    $sizes = trim($_POST['sizes'] ?? '');
 
-            if (move_uploaded_file($_FILES['images']['tmp_name'][$index], $targetPath)) {
-                $imagePath = 'assets/images/product/' . $safeName;
+    $isFeatured = isset($_POST['is_featured'])
+        ? 1
+        : 0;
 
-                $productImages[] = $imagePath;
+    $allowedCategories = [
+        'pantalon',
+        'tshirt',
+        'hoodie',
+        'short',
+    ];
 
-                if ($index === 0) {
-                    $image = $imagePath;
-                }
-            }
-        }
-    }
+    $allowedStatuses = [
+        'preorder',
+        'stock',
+    ];
 
-    $isFeatured = isset($_POST['is_featured']) ? 1 : 0;
+    $formValues = [
+        'name' => $name,
+        'slug' => $slug,
+        'category' => $category,
+        'price' => $priceValue,
+        'stock' => $stock === false ? '0' : (string) $stock,
+        'description' => $description,
+        'status' => $status,
+        'sizes' => $sizes,
+    ];
 
-    if ($name && $slug && $category && $price) {
-        $query = $pdo->prepare("
-            INSERT INTO products (
-                name, slug, category, price, stock, description,
-                status, sizes, image, is_featured
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    if (
+        $name === ''
+        || $slug === ''
+        || $category === ''
+        || $priceValue === ''
+    ) {
+        $error =
+            'Merci de remplir les champs obligatoires.';
+    } elseif (mb_strlen($name) > 190) {
+        $error = 'Le nom du produit est trop long.';
+    } elseif (mb_strlen($slug) > 190) {
+        $error = 'Le slug du produit est trop long.';
+    } elseif (
+        !in_array(
+            $category,
+            $allowedCategories,
+            true
+        )
+    ) {
+        $error = 'La catégorie sélectionnée est invalide.';
+    } elseif (
+        !in_array(
+            $status,
+            $allowedStatuses,
+            true
+        )
+    ) {
+        $error = 'Le statut sélectionné est invalide.';
+    } elseif (
+        !is_numeric($priceValue)
+        || (float) $priceValue < 0
+    ) {
+        $error = 'Le prix renseigné est invalide.';
+    } elseif ($stock === false) {
+        $error = 'Le stock renseigné est invalide.';
+    } elseif (mb_strlen($description) > 10000) {
+        $error = 'La description est trop longue.';
+    } else {
+        $slugCheck = $pdo->prepare("
+            SELECT id
+            FROM products
+            WHERE slug = ?
+            LIMIT 1
         ");
 
-        $query->execute([
-            $name,
-            $slug,
-            $category,
-            $price,
-            $stock,
-            $description,
-            $status,
-            $sizes,
-            $image,
-            $isFeatured
-        ]);
+        $slugCheck->execute([$slug]);
 
-        $productId = $pdo->lastInsertId();
-
-        if (!empty($productImages)) {
-            $imageQuery = $pdo->prepare("
-                INSERT INTO product_images (
-                    product_id,
-                    image_path,
-                    is_main,
-                    sort_order
-                )
-                VALUES (?, ?, ?, ?)
-            ");
-
-            foreach ($productImages as $index => $imagePath) {
-                $imageQuery->execute([
-                    $productId,
-                    $imagePath,
-                    $index === 0 ? 1 : 0,
-                    $index
-                ]);
-            }
+        if ($slugCheck->fetch()) {
+            $error =
+                'Un produit utilise déjà ce slug.';
         }
-
-        header('Location: products.php');
-        exit;
     }
 
-    $error = "Merci de remplir les champs obligatoires.";
+    $processedImages = [];
+
+    if (
+        $error === ''
+        && !empty($_FILES['images']['name'][0])
+    ) {
+        $fileCount = count(
+            $_FILES['images']['name']
+        );
+
+        if ($fileCount > 8) {
+            $error =
+                'Vous ne pouvez pas envoyer plus de 8 images.';
+        } else {
+            try {
+                foreach (
+                    $_FILES['images']['name']
+                    as $index => $originalName
+                ) {
+                    if ($originalName === '') {
+                        continue;
+                    }
+
+                    $uploadedFile = normalizeUploadedFile(
+                        $_FILES['images'],
+                        $index
+                    );
+
+                    $processedImages[] =
+                        processProductImage(
+                            $uploadedFile,
+                            $slug
+                        );
+                }
+            } catch (Throwable $exception) {
+                foreach ($processedImages as $processedImage) {
+                    deleteProductImageSet(
+                        $processedImage['image']
+                    );
+                }
+
+                $processedImages = [];
+
+                error_log(
+                    'Erreur upload produit Below Dreams : '
+                    . $exception->getMessage()
+                );
+
+                $error = $exception->getMessage();
+            }
+        }
+    }
+
+    if ($error === '') {
+        try {
+            $pdo->beginTransaction();
+
+            $mainImage = !empty($processedImages)
+                ? $processedImages[0]['image']
+                : '';
+
+            $query = $pdo->prepare("
+                INSERT INTO products (
+                    name,
+                    slug,
+                    category,
+                    price,
+                    stock,
+                    description,
+                    status,
+                    sizes,
+                    image,
+                    is_featured
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ");
+
+            $query->execute([
+                $name,
+                $slug,
+                $category,
+                (float) $priceValue,
+                (int) $stock,
+                $description,
+                $status,
+                $sizes,
+                $mainImage,
+                $isFeatured,
+            ]);
+
+            $productId = (int) $pdo->lastInsertId();
+
+            if (!empty($processedImages)) {
+                $imageQuery = $pdo->prepare("
+                    INSERT INTO product_images (
+                        product_id,
+                        image_path,
+                        is_main,
+                        sort_order
+                    )
+                    VALUES (?, ?, ?, ?)
+                ");
+
+                foreach (
+                    $processedImages
+                    as $index => $processedImage
+                ) {
+                    $imageQuery->execute([
+                        $productId,
+                        $processedImage['image'],
+                        $index === 0 ? 1 : 0,
+                        $index,
+                    ]);
+                }
+            }
+
+            $pdo->commit();
+
+            header('Location: products.php');
+            exit;
+        } catch (Throwable $exception) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+
+            foreach ($processedImages as $processedImage) {
+                deleteProductImageSet(
+                    $processedImage['image']
+                );
+            }
+
+            error_log(
+                'Erreur création produit Below Dreams : '
+                . $exception->getMessage()
+            );
+
+            $error =
+                'Impossible d’ajouter le produit pour le moment.';
+        }
+    }
 }
 
-require_once 'partials/header.php';
-require_once 'partials/sidebar.php';
+require_once __DIR__ . '/partials/header.php';
+require_once __DIR__ . '/partials/sidebar.php';
 ?>
 
 <main class="admin-main">
@@ -116,83 +289,242 @@ require_once 'partials/sidebar.php';
     <header class="admin-header admin-header-between">
         <div>
             <h1>Ajouter un produit</h1>
-            <p>Ajoute un nouveau produit à la boutique Below Dreams.</p>
+
+            <p>
+                Ajoutez un nouveau produit à la boutique Below Dreams.
+            </p>
         </div>
 
-        <a href="products.php" class="admin-btn-secondary">
+        <a
+            href="products.php"
+            class="admin-btn-secondary"
+        >
             Retour aux produits
         </a>
     </header>
 
     <section class="admin-section">
 
-        <?php if (!empty($error)) : ?>
+        <?php if ($error !== '') : ?>
             <p class="admin-alert">
-                <?= htmlspecialchars($error) ?>
+                <?= htmlspecialchars(
+                    $error,
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?>
             </p>
         <?php endif; ?>
 
-        <form method="POST" enctype="multipart/form-data" class="admin-form">
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            class="admin-form"
+        >
+
+            <?= csrfField() ?>
 
             <div class="form-grid">
+
                 <div class="form-group">
-                    <label>Nom du produit *</label>
-                    <input type="text" name="name" required>
+                    <label for="name">
+                        Nom du produit *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value="<?= htmlspecialchars(
+                            $formValues['name'],
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>"
+                        maxlength="190"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
-                    <label>Slug *</label>
-                    <input type="text" name="slug" placeholder="ex: tshirt-oversize-unisexe" required>
+                    <label for="slug">Slug *</label>
+
+                    <input
+                        type="text"
+                        id="slug"
+                        name="slug"
+                        value="<?= htmlspecialchars(
+                            $formValues['slug'],
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>"
+                        maxlength="190"
+                        placeholder="ex : tshirt-oversize-unisexe"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
-                    <label>Catégorie *</label>
-                    <select name="category" required>
+                    <label for="category">
+                        Catégorie *
+                    </label>
+
+                    <select
+                        id="category"
+                        name="category"
+                        required
+                    >
                         <option value="">Choisir</option>
-                        <option value="pantalon">Pantalon</option>
-                        <option value="tshirt">T-shirt</option>
-                        <option value="hoodie">Hoodie</option>
-                        <option value="short">Short</option>
+
+                        <?php
+                        $categories = [
+                            'pantalon' => 'Pantalon',
+                            'tshirt' => 'T-shirt',
+                            'hoodie' => 'Hoodie',
+                            'short' => 'Short',
+                        ];
+                        ?>
+
+                        <?php foreach (
+                            $categories
+                            as $value => $label
+                        ) : ?>
+                            <option
+                                value="<?= $value ?>"
+                                <?= $formValues['category'] === $value
+                                    ? 'selected'
+                                    : '' ?>
+                            >
+                                <?= $label ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label>Prix *</label>
-                    <input type="number" name="price" step="0.01" required>
+                    <label for="price">Prix *</label>
+
+                    <input
+                        type="number"
+                        id="price"
+                        name="price"
+                        value="<?= htmlspecialchars(
+                            $formValues['price'],
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
-                    <label>Stock *</label>
-                    <input type="number" name="stock" min="0" value="0" required>
+                    <label for="stock">Stock *</label>
+
+                    <input
+                        type="number"
+                        id="stock"
+                        name="stock"
+                        value="<?= htmlspecialchars(
+                            $formValues['stock'],
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>"
+                        min="0"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
-                    <label>Statut</label>
-                    <select name="status">
-                        <option value="preorder">Précommande</option>
-                        <option value="stock">Stock</option>
+                    <label for="status">Statut</label>
+
+                    <select id="status" name="status">
+                        <option
+                            value="preorder"
+                            <?= $formValues['status'] === 'preorder'
+                                ? 'selected'
+                                : '' ?>
+                        >
+                            Précommande
+                        </option>
+
+                        <option
+                            value="stock"
+                            <?= $formValues['status'] === 'stock'
+                                ? 'selected'
+                                : '' ?>
+                        >
+                            Stock
+                        </option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label>Tailles disponibles</label>
-                    <input type="text" name="sizes" placeholder="ex: S,M,L,XL">
+                    <label for="sizes">
+                        Tailles disponibles
+                    </label>
+
+                    <input
+                        type="text"
+                        id="sizes"
+                        name="sizes"
+                        value="<?= htmlspecialchars(
+                            $formValues['sizes'],
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>"
+                        maxlength="255"
+                        placeholder="ex : S,M,L,XL"
+                    >
                 </div>
+
             </div>
 
             <div class="form-group">
-                <label>Description</label>
-                <textarea name="description" rows="6"></textarea>
+                <label for="description">
+                    Description
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                    rows="6"
+                    maxlength="10000"
+                ><?= htmlspecialchars(
+                    $formValues['description'],
+                    ENT_QUOTES,
+                    'UTF-8'
+                ) ?></textarea>
             </div>
 
             <div class="form-group">
-                <label>Image du produit</label>
-                <input type="file" name="images[]" accept="image/*" multiple>
-                <small>La première image sera utilisée comme image principale.</small>
+                <label for="images">
+                    Images du produit
+                </label>
+
+                <input
+                    type="file"
+                    id="images"
+                    name="images[]"
+                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                    multiple
+                >
+
+                <small>
+                    Maximum 8 images et 10 Mo par fichier.
+                    La première sera l’image principale.
+                    Les images seront automatiquement converties en WebP.
+                </small>
             </div>
 
             <label class="checkbox-group">
-                <input type="checkbox" name="is_featured">
+                <input
+                    type="checkbox"
+                    name="is_featured"
+                    <?= isset($_POST['is_featured'])
+                        ? 'checked'
+                        : '' ?>
+                >
+
                 <span>Mettre en avant</span>
             </label>
 
@@ -208,4 +540,4 @@ require_once 'partials/sidebar.php';
 
 </main>
 
-<?php require_once 'partials/footer.php'; ?>
+<?php require_once __DIR__ . '/partials/footer.php'; ?>
