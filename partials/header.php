@@ -117,6 +117,23 @@ $escape = static function (?string $value): string {
         href="<?= $escape($pageCanonical) ?>"
     >
 
+    <!-- Fonts -->
+    <link
+        rel="preload"
+        href="assets/fonts/oswald/Oswald-Bold.woff2"
+        as="font"
+        type="font/woff2"
+        crossorigin
+    >
+
+    <link
+        rel="preload"
+        href="assets/fonts/inter/Inter-Regular.woff2"
+        as="font"
+        type="font/woff2"
+        crossorigin
+    >
+
     <!-- Open Graph -->
 
     <meta
@@ -232,6 +249,12 @@ $escape = static function (?string $value): string {
         rel="stylesheet"
         href="<?= $basePath ?? '' ?>css/responsive.css"
     >
+
+    <!-- Balise HTML -->
+    <meta
+        name="google-site-verification"
+        content="E9arOm42bGCDUtWqja0gg4hKNiXwB-0Ain2pmKmgOD8"
+    />
 
     <script type="application/ld+json">
         <?= json_encode(
