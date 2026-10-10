@@ -25,7 +25,12 @@ if (!$product) {
     exit;
 }
 
-$sizes = array_filter(array_map('trim', explode(',', $product['sizes'])));
+$sizes = array_filter(
+    array_map(
+        'trim',
+        explode(',', $product['sizes'] ?? '')
+    )
+);
 
 $imagesQuery = $pdo->prepare("
     SELECT image_path
@@ -43,8 +48,7 @@ if (empty($productImages) && !empty($product['image'])) {
 
 $mainImage = $productImages[0] ?? $product['image'];
 
-$isAvailable = $product['status'] === 'preorder'
-    || (int) $product['stock'] > 0;
+$isAvailable = (int) $product['stock'] > 0;
 
 $pageTitle = 
     $product['name'] . ' | Below Dreams';
@@ -152,10 +156,6 @@ require_once 'partials/header.php';
                 </div>
 
                 <div class="product-detail-content">
-                    <span class="badge badge--preorder">
-                        <?= htmlspecialchars($product['status']) === 'preorder' ? 'Précommande' : 'Stock' ?>
-                    </span>
-
                     <h1 class="product-detail-title">
                         <?= htmlspecialchars($product['name']) ?>
                     </h1>
@@ -168,39 +168,55 @@ require_once 'partials/header.php';
                         <?= nl2br(htmlspecialchars($product['description'])) ?>
                     </p>
 
-                    <div class="product-option">
-                        <h2>Taille</h2>
-                        <div class="product-sizes">
-                            <?php foreach ($sizes as $size) : ?>
-                                <label>
-                                    <input type="radio" name="size" value="<?= htmlspecialchars($size) ?>">
-                                    <?= htmlspecialchars($size) ?>
-                                </label>
-                            <?php endforeach; ?>
+                    <?php if (!empty($sizes)) : ?>
+                        <div class="product-option">
+                            <h2>Taille</h2>
+
+                            <div class="product-sizes">
+                                <?php foreach ($sizes as $size) : ?>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            name="size"
+                                            value="<?= htmlspecialchars(
+                                                $size,
+                                                ENT_QUOTES,
+                                                'UTF-8'
+                                            ) ?>"
+                                        >
+                                        <?= htmlspecialchars(
+                                            $size,
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
-                    </div>
+                    <?php endif; ?>
 
                     <div class="product-option">
                         <h2>Quantité</h2>
-                        <input class="product-quantity" type="number" value="1" min="1">
+                            <input
+                                class="product-quantity"
+                                type="number"
+                                value="<?= $isAvailable ? 1 : 0 ?>"
+                                min="<?= $isAvailable ? 1 : 0 ?>"
+                                max="<?= (int) $product['stock'] ?>"
+                                <?= !$isAvailable ? 'disabled' : '' ?>
+                            >
                     </div>
 
-                    <?php if ($product['status'] === 'preorder') : ?>
-
-                        <p class="product-stock product-stock-preorder">
-                            📦 Disponible en précommande
-                        </p>
-
-                    <?php elseif ((int) $product['stock'] > 0) : ?>
+                    <?php if ($isAvailable) : ?>
 
                         <p class="product-stock product-stock-ok">
-                            ✅ En stock (<?= (int) $product['stock'] ?>)
+                            En stock (<?= (int) $product['stock'] ?> disponibles)
                         </p>
 
                     <?php else : ?>
 
                         <p class="product-stock product-stock-ko">
-                            ❌ Rupture de stock
+                            Rupture de stock
                         </p>
 
                     <?php endif; ?>
@@ -214,7 +230,6 @@ require_once 'partials/header.php';
                         data-name="<?= htmlspecialchars($product['name']) ?>"
                         data-price="<?= htmlspecialchars($product['price']) ?>"
                         data-image="<?= htmlspecialchars($mainImage) ?>"
-                        data-status="<?= htmlspecialchars($product['status']) ?>"
                     >
                         <?= $isAvailable ? 'Ajouter au panier' : 'Rupture de stock' ?>
                     </button>

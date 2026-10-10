@@ -1,5 +1,3 @@
-console.log("shop.js loaded");
-
 document.addEventListener("DOMContentLoaded", () => {
     const shopGrid = document.querySelector(".shop-grid");
     const countValue = document.querySelector(".shop-count span");

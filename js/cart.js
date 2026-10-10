@@ -1,5 +1,3 @@
-console.log("cart.js loaded");
-
 document.addEventListener("DOMContentLoaded", () => {
   const CART_KEY = "belowdreams_cart";
 
@@ -10,7 +8,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const totalElement = document.getElementById("cart-total");
 
   const getCart = () => {
-    return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    try {
+      const storedCart = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
+
+      if (!Array.isArray(storedCart)) {
+        return [];
+      }
+
+      return storedCart.filter((item) => {
+        return (
+          item !== null &&
+          typeof item === "object" &&
+          typeof item.id === "string" &&
+          Number.isInteger(Number(item.product_id)) &&
+          Number(item.product_id) > 0 &&
+          Number.isInteger(Number(item.quantity)) &&
+          Number(item.quantity) > 0 &&
+          Number.isFinite(Number(item.price)) &&
+          Number(item.price) >= 0
+        );
+      }).map((item) => ({
+        ...item,
+        product_id: Number(item.product_id),
+        quantity: Number(item.quantity),
+        price: Number(item.price),
+        size: String(item.size || ""),
+      }));
+    } catch {
+      return [];
+    }
   };
 
   const saveCart = (cart) => {
@@ -22,8 +48,10 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const updateCartCount = () => {
-    const cart = getCart();
-    const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const totalQuantity = getCart().reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    );
 
     document.querySelectorAll(".cart-count").forEach((count) => {
       count.textContent = String(totalQuantity);
@@ -32,69 +60,174 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const updateSummary = () => {
-    const cart = getCart();
-    const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const total = getCart().reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
 
-    if (subtotalElement) subtotalElement.textContent = formatPrice(total);
-    if (totalElement) totalElement.textContent = formatPrice(total);
+    if (subtotalElement) {
+      subtotalElement.textContent = formatPrice(total);
+    }
+
+    if (totalElement) {
+      totalElement.textContent = formatPrice(total);
+    }
+  };
+
+  const createElement = (tag, className = "", text = null) => {
+    const element = document.createElement(tag);
+
+    if (className) {
+      element.className = className;
+    }
+
+    if (text !== null) {
+      element.textContent = String(text);
+    }
+
+    return element;
+  };
+
+  const renderEmptyCart = () => {
+    if (!cartItemsContainer) return;
+
+    const wrapper = createElement("div", "cart-empty");
+    const icon = createElement("div", "cart-empty-icon", "🛒");
+    const title = createElement("h2", "", "Votre panier est vide");
+    const description = createElement(
+      "p",
+      "",
+      "Découvrez les vêtements et accessoires Below Dreams."
+    );
+
+    const link = createElement(
+      "a",
+      "btn-primary",
+      "Retour à la boutique"
+    );
+
+    link.href = "shop.php";
+
+    wrapper.append(icon, title, description, link);
+    cartItemsContainer.appendChild(wrapper);
+  };
+
+  const renderCartItem = (item) => {
+    const article = createElement("article", "cart-item");
+    article.dataset.id = item.id;
+
+    const image = createElement("img", "cart-item-img");
+    const imagePath = String(item.image || "");
+
+    // Seuls les chemins d'images locaux sont acceptés.
+    if (
+      imagePath &&
+      !imagePath.startsWith("/") &&
+      !imagePath.startsWith("//") &&
+      !imagePath.includes("..") &&
+      /^[a-zA-Z0-9_./-]+$/.test(imagePath)
+    ) {
+      image.src = imagePath;
+    }
+
+    image.alt = String(item.name || "Produit Below Dreams");
+
+    const info = createElement("div", "cart-item-info");
+
+    const name = createElement(
+      "h2",
+      "",
+      item.name || "Produit Below Dreams"
+    );
+
+    info.appendChild(name);
+
+    if (item.size) {
+      info.appendChild(
+        createElement("p", "", `Taille : ${item.size}`)
+      );
+    }
+
+    const quantityWrapper = createElement(
+      "div",
+      "cart-item-quantity"
+    );
+
+    const decreaseButton = createElement(
+      "button",
+      "cart-decrease",
+      "−"
+    );
+    decreaseButton.type = "button";
+    decreaseButton.setAttribute("aria-label", "Diminuer la quantité");
+
+    const quantity = createElement("span", "", item.quantity);
+
+    const increaseButton = createElement(
+      "button",
+      "cart-increase",
+      "+"
+    );
+    increaseButton.type = "button";
+    increaseButton.setAttribute("aria-label", "Augmenter la quantité");
+
+    quantityWrapper.append(
+      decreaseButton,
+      quantity,
+      increaseButton
+    );
+
+    const price = createElement(
+      "p",
+      "cart-item-price",
+      formatPrice(item.price * item.quantity)
+    );
+
+    const removeButton = createElement(
+      "button",
+      "cart-remove",
+      "Supprimer"
+    );
+    removeButton.type = "button";
+
+    article.append(
+      image,
+      info,
+      quantityWrapper,
+      price,
+      removeButton
+    );
+
+    return article;
   };
 
   const renderCart = () => {
     if (!cartItemsContainer) return;
 
     const cart = getCart();
-
-    cartItemsContainer.innerHTML = "";
+    cartItemsContainer.replaceChildren();
 
     if (cart.length === 0) {
-      if (cartSummary) cartSummary.style.display = "none";
+      if (cartSummary) {
+        cartSummary.style.display = "none";
+      }
 
-      cartItemsContainer.innerHTML = `
-        <div class="cart-empty">
-          <div class="cart-empty-icon">🛒</div>
-          <h2>Votre panier est vide</h2>
-          <p>Découvrez les pièces Below Dreams disponibles en précommande.</p>
-          <a href="shop.php" class="btn-primary">Retour à la boutique</a>
-        </div>
-      `;
-
+      renderEmptyCart();
       updateCartCount();
       return;
     }
 
-    if (cartSummary) cartSummary.style.display = "flex";
+    if (cartSummary) {
+      cartSummary.style.display = "flex";
+    }
+
+    const fragment = document.createDocumentFragment();
 
     cart.forEach((item) => {
-      const itemTotal = item.price * item.quantity;
-
-      cartItemsContainer.innerHTML += `
-        <article class="cart-item" data-id="${item.id}">
-          <img
-            src="${item.image}"
-            alt="${item.name}"
-            class="cart-item-img"
-          >
-
-          <div class="cart-item-info">
-            <h2>${item.name}</h2>
-            <p>Taille : ${item.size}</p>
-            <p>${item.availability}</p>
-          </div>
-
-          <div class="cart-item-quantity">
-            <button type="button" class="cart-decrease">-</button>
-            <span>${item.quantity}</span>
-            <button type="button" class="cart-increase">+</button>
-          </div>
-
-          <p class="cart-item-price">${formatPrice(itemTotal)}</p>
-
-          <button class="cart-remove" type="button">
-            Supprimer
-          </button>
-        </article>
-      `;
+      fragment.appendChild(renderCartItem(item));
     });
+
+    cartItemsContainer.appendChild(fragment);
 
     updateSummary();
     updateCartCount();
@@ -105,7 +238,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     saveCart(cart);
     renderCart();
-    updateCartCount();
+  };
+
+  const getTotalProductQuantity = (cart, productId) => {
+    return cart
+      .filter((item) => item.product_id === productId)
+      .reduce((total, item) => total + item.quantity, 0);
   };
 
   const updateQuantity = (productId, action) => {
@@ -115,63 +253,119 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!item) return;
 
     if (action === "increase") {
-      item.quantity += 1;
-    }
+      const maxStock = Number(item.maxStock);
 
-    if (action === "decrease") {
+      const totalQuantity = getTotalProductQuantity(
+        cart,
+        item.product_id
+      );
+
+      if (
+        !Number.isInteger(maxStock) ||
+        maxStock < 1 ||
+        totalQuantity >= maxStock
+      ) {
+        alert(
+          "Vous avez atteint la quantité maximale disponible pour ce produit."
+        );
+        return;
+      }
+
+      item.quantity += 1;
+    } else if (action === "decrease") {
       item.quantity -= 1;
 
       if (item.quantity <= 0) {
         removeProduct(productId);
         return;
       }
+    } else {
+      return;
     }
 
     saveCart(cart);
     renderCart();
-    updateCartCount();
   };
 
   const addProductToCart = () => {
-    const productButton = document.querySelector(".add-to-cart");
     const quantityInput = document.querySelector(".product-quantity");
-    const selectedSize = document.querySelector('input[name="size"]:checked');
+    const selectedSize = document.querySelector(
+      'input[name="size"]:checked'
+    );
+    const sizeOptions = document.querySelectorAll(
+      'input[name="size"]'
+    );
 
-    if (!productButton || !quantityInput) {
+    if (!addToCartBtn || !quantityInput || addToCartBtn.disabled) {
       return;
     }
 
-    if (!selectedSize) {
-      alert("Choisis une taille avant d'ajouter au panier.");
+    if (sizeOptions.length > 0 && !selectedSize) {
+      alert("Choisissez une taille avant d'ajouter au panier.");
       return;
     }
 
-    const quantity = Number(quantityInput.value) || 1;
+    const size = selectedSize ? selectedSize.value : "";
+    const quantity = Number(quantityInput.value);
+    const maxStock = Number(quantityInput.max);
+    const productId = Number(addToCartBtn.dataset.id);
+    const price = Number(addToCartBtn.dataset.price);
 
-    if (quantity < 1) {
-      alert("La quantité doit être au minimum de 1.");
+    if (
+      !Number.isInteger(quantity) ||
+      quantity < 1 ||
+      !Number.isInteger(maxStock) ||
+      maxStock < 1 ||
+      quantity > maxStock
+    ) {
+      alert("La quantité demandée dépasse le stock disponible.");
       return;
     }
 
-    const product = {
-      id: `${productButton.dataset.id}-${selectedSize.value}`,
-      product_id: Number(productButton.dataset.id),
-      slug: productButton.dataset.slug,
-      name: productButton.dataset.name,
-      price: Number(productButton.dataset.price),
-      image: productButton.dataset.image,
-      size: selectedSize.value,
-      quantity: quantity,
-      availability: productButton.dataset.status === "preorder" ? "Précommande" : "Stock",
-    };
+    if (
+      !Number.isInteger(productId) ||
+      productId < 1 ||
+      !Number.isFinite(price) ||
+      price < 0
+    ) {
+      alert("Ce produit ne peut pas être ajouté au panier.");
+      return;
+    }
 
     const cart = getCart();
-    const existingProduct = cart.find((item) => item.id === product.id);
+    const existingQuantity = getTotalProductQuantity(
+      cart,
+      productId
+    );
+
+    if (existingQuantity + quantity > maxStock) {
+      alert(
+        "Vous avez déjà atteint la quantité disponible pour ce produit."
+      );
+      return;
+    }
+
+    const productKey = `${productId}-${size}`;
+
+    const existingProduct = cart.find(
+      (item) => item.id === productKey
+    );
 
     if (existingProduct) {
-      existingProduct.quantity += product.quantity;
+      existingProduct.quantity += quantity;
+      existingProduct.maxStock = maxStock;
     } else {
-      cart.push(product);
+      cart.push({
+        id: productKey,
+        product_id: productId,
+        slug: addToCartBtn.dataset.slug || "",
+        name: addToCartBtn.dataset.name || "",
+        price,
+        image: addToCartBtn.dataset.image || "",
+        size,
+        quantity,
+        maxStock,
+      });
     }
 
     saveCart(cart);
@@ -186,20 +380,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (cartItemsContainer) {
     cartItemsContainer.addEventListener("click", (event) => {
-      const cartItem = event.target.closest(".cart-item");
+      const button = event.target.closest("button");
+      if (!button) return;
+
+      const cartItem = button.closest(".cart-item");
       if (!cartItem) return;
 
       const productId = cartItem.dataset.id;
 
-      if (event.target.classList.contains("cart-increase")) {
+      if (button.classList.contains("cart-increase")) {
         updateQuantity(productId, "increase");
-      }
-
-      if (event.target.classList.contains("cart-decrease")) {
+      } else if (button.classList.contains("cart-decrease")) {
         updateQuantity(productId, "decrease");
-      }
-
-      if (event.target.classList.contains("cart-remove")) {
+      } else if (button.classList.contains("cart-remove")) {
         removeProduct(productId);
       }
     });

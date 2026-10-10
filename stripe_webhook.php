@@ -1,8 +1,10 @@
+
 <?php
 
-require_once 'config/database.php';
-require_once 'config/stripe.php';
-require_once 'includes/mailer.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/config/stripe.php';
+require_once __DIR__ . '/includes/mailer.php';
+require_once __DIR__ . '/includes/stock-reservation.php';
 
 $payload = file_get_contents('php://input');
 $sigHeader = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
@@ -21,164 +23,223 @@ try {
     exit('Invalid signature');
 }
 
-/*
-|--------------------------------------------------------------------------
-| Paiement validé
-|--------------------------------------------------------------------------
-*/
+$handledEvents = [
+    'checkout.session.completed',
+    'checkout.session.expired'
+];
 
-if ($event->type === 'checkout.session.completed') {
-    $session = $event->data->object;
+if (!in_array($event->type, $handledEvents, true)) {
+    http_response_code(200);
+    exit('Event ignored');
+}
 
-    $orderId = $session->metadata->order_id ?? null;
-    $paymentIntentId = $session->payment_intent ?? null;
-    $paymentStatus = $session->payment_status ?? null;
+$session = $event->data->object;
 
-    if ($orderId && $paymentStatus === 'paid') {
-        try {
-            $pdo->beginTransaction();
+$orderId = filter_var(
+    $session->metadata->order_id ?? null,
+    FILTER_VALIDATE_INT
+);
 
-            $checkOrder = $pdo->prepare("
-                SELECT
-                    payment_status,
-                    confirmation_email_sent_at
-                FROM orders
-                WHERE id = ?
-                LIMIT 1
-                FOR UPDATE
-            ");
+$sessionId = $session->id ?? null;
 
-            $checkOrder->execute([(int) $orderId]);
-            $currentOrder = $checkOrder->fetch(PDO::FETCH_ASSOC);
+if (!$orderId || !is_string($sessionId) || $sessionId === '') {
+    http_response_code(400);
+    exit('Invalid order metadata');
+}
 
-            if (!$currentOrder) {
-                $pdo->rollBack();
+$sendConfirmation = false;
 
-                http_response_code(200);
-                exit('Order not found');
-            }
+try {
+    $pdo->beginTransaction();
 
-            $alreadyPaid = $currentOrder['payment_status'] === 'paid';
+    /*
+    |--------------------------------------------------------------------------
+    | Verrouillage de la commande
+    |--------------------------------------------------------------------------
+    */
 
-            $emailAlreadySent = !empty(
-                $currentOrder['confirmation_email_sent_at']
-            );
+    $orderQuery = $pdo->prepare("
+        SELECT
+            id,
+            status,
+            payment_status,
+            stock_reservation_status,
+            stripe_session_id,
+            confirmation_email_sent_at
+        FROM orders
+        WHERE id = ?
+        LIMIT 1
+        FOR UPDATE
+    ");
 
-            if (!$alreadyPaid) {
-                $updateOrder = $pdo->prepare("
-                    UPDATE orders
-                    SET
-                        status = 'paid',
-                        payment_status = 'paid',
-                        stripe_payment_intent_id = ?,
-                        paid_at = NOW(),
-                        updated_at = NOW()
-                    WHERE id = ?
-                ");
+    $orderQuery->execute([$orderId]);
 
-                $updateOrder->execute([
-                    $paymentIntentId,
-                    (int) $orderId
-                ]);
+    $order = $orderQuery->fetch(PDO::FETCH_ASSOC);
 
-                $itemsQuery = $pdo->prepare("
-                    SELECT
-                        order_items.product_id,
-                        order_items.quantity,
-                        products.status
-                    FROM order_items
-                    INNER JOIN products
-                        ON order_items.product_id = products.id
-                    WHERE order_items.order_id = ?
-                ");
+    if (!$order) {
+        throw new RuntimeException(
+            'Commande introuvable pour le webhook Stripe.'
+        );
+    }
 
-                $itemsQuery->execute([(int) $orderId]);
-                $orderItems = $itemsQuery->fetchAll(PDO::FETCH_ASSOC);
+    /*
+    |--------------------------------------------------------------------------
+    | Vérification de la session Stripe
+    |--------------------------------------------------------------------------
+    |
+    | Si la session n'est pas encore enregistrée localement,
+    | on renvoie une erreur pour permettre à Stripe de réessayer.
+    |
+    */
 
-                $stockQuery = $pdo->prepare("
-                    UPDATE products
-                    SET stock = GREATEST(stock - ?, 0)
-                    WHERE id = ?
-                    AND status = 'stock'
-                ");
+    if (empty($order['stripe_session_id'])) {
+        throw new RuntimeException(
+            'Session Stripe non encore associée à la commande.'
+        );
+    }
 
-                foreach ($orderItems as $item) {
-                    if ($item['status'] === 'stock') {
-                        $stockQuery->execute([
-                            (int) $item['quantity'],
-                            (int) $item['product_id']
-                        ]);
-                    }
-                }
-            }
+    if (!hash_equals(
+        (string) $order['stripe_session_id'],
+        $sessionId
+    )) {
+        throw new RuntimeException(
+            'Session Stripe différente de celle de la commande.'
+        );
+    }
 
-            if (!$emailAlreadySent) {
-                $emailSent = sendOrderConfirmationEmail(
-                    $pdo,
-                    (int) $orderId
-                );
+    /*
+    |--------------------------------------------------------------------------
+    | Paiement confirmé
+    |--------------------------------------------------------------------------
+    */
 
-                if ($emailSent) {
-                    $markEmailSent = $pdo->prepare("
-                        UPDATE orders
-                        SET confirmation_email_sent_at = NOW()
-                        WHERE id = ?
-                        AND confirmation_email_sent_at IS NULL
-                    ");
+    if ($event->type === 'checkout.session.completed') {
 
-                    $markEmailSent->execute([
-                        (int) $orderId
-                    ]);
-                }
-            }
-
+        if (($session->payment_status ?? null) !== 'paid') {
             $pdo->commit();
 
-        } catch (Throwable $e) {
-            if ($pdo->inTransaction()) {
-                $pdo->rollBack();
+            http_response_code(200);
+            exit('Payment not yet confirmed');
+        }
+
+        if ($order['stock_reservation_status'] === 'reserved') {
+
+            $paymentIntentId = $session->payment_intent ?? null;
+
+            $updateOrder = $pdo->prepare("
+                UPDATE orders
+                SET
+                    status = 'paid',
+                    payment_status = 'paid',
+                    stock_reservation_status = 'confirmed',
+                    stripe_payment_intent_id = ?,
+                    paid_at = NOW(),
+                    updated_at = NOW()
+                WHERE id = ?
+                  AND stock_reservation_status = 'reserved'
+                  AND payment_status <> 'paid'
+            ");
+
+            $updateOrder->execute([
+                $paymentIntentId,
+                $orderId
+            ]);
+
+            if ($updateOrder->rowCount() !== 1) {
+                throw new RuntimeException(
+                    'Impossible de confirmer la commande.'
+                );
             }
 
-            http_response_code(500);
-            exit('Webhook processing error');
+            $sendConfirmation = true;
+
+        } elseif (
+            $order['stock_reservation_status'] === 'confirmed'
+            && $order['payment_status'] === 'paid'
+        ) {
+            // Événement déjà traité : aucune modification du stock.
+            $sendConfirmation = empty(
+                $order['confirmation_email_sent_at']
+            );
+
+        } else {
+            throw new RuntimeException(
+                'Paiement reçu pour une réservation non valide.'
+            );
         }
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Session expirée
+    |--------------------------------------------------------------------------
+    */
+
+    if ($event->type === 'checkout.session.expired') {
+
+        if (
+            $order['stock_reservation_status'] === 'reserved'
+            && $order['payment_status'] !== 'paid'
+        ) {
+            releaseOrderStockReservation(
+                $pdo,
+                $orderId,
+                $order
+            );
+        }
+    }
+
+    $pdo->commit();
+
+} catch (Throwable $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+
+    error_log(
+        '[STRIPE WEBHOOK] '
+        . $event->type
+        . ' | Order '
+        . $orderId
+        . ' | '
+        . $e->getMessage()
+    );
+
+    http_response_code(500);
+    exit('Webhook processing error');
 }
 
 /*
 |--------------------------------------------------------------------------
-| Session Stripe expirée
+| Confirmation par e-mail hors transaction
 |--------------------------------------------------------------------------
-|
-| Une commande est créée avant la redirection vers Stripe.
-| Si la session expire sans paiement, elle passe en annulée.
-|
 */
 
-if ($event->type === 'checkout.session.expired') {
-    $session = $event->data->object;
+if ($sendConfirmation) {
+    try {
+        $emailSent = sendOrderConfirmationEmail(
+            $pdo,
+            $orderId
+        );
 
-    $orderId = $session->metadata->order_id ?? null;
-
-    if ($orderId) {
-        try {
-            $cancelOrder = $pdo->prepare("
+        if ($emailSent) {
+            $markEmailSent = $pdo->prepare("
                 UPDATE orders
-                SET
-                    status = 'cancelled',
-                    payment_status = 'unpaid',
-                    updated_at = NOW()
+                SET confirmation_email_sent_at = NOW()
                 WHERE id = ?
-                AND payment_status != 'paid'
-                AND status = 'pending'
+                  AND payment_status = 'paid'
+                  AND confirmation_email_sent_at IS NULL
             ");
 
-            $cancelOrder->execute([(int) $orderId]);
-
-        } catch (Throwable $e) {
-            http_response_code(500);
-            exit('Webhook expiration processing error');
+            $markEmailSent->execute([$orderId]);
         }
+    } catch (Throwable $e) {
+        error_log(
+            '[ORDER EMAIL] Order '
+            . $orderId
+            . ' | '
+            . $e->getMessage()
+        );
     }
 }
 
