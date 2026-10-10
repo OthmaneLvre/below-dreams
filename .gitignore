@@ -12,10 +12,18 @@ node_modules/
 
 /vendor/
 
-.env
+# Configurations privées
+/config/database.local.php
+/config/database.production.php
+/config/stripe.php
+/config/stripe.local.php
+/config/stripe.production.php
+/config/mail.php
 
-config/stripe.php
-config/mail.php
+# Variables d'environnement
+.env
+.env.*
+!.env.example
 
 /assets/uploads/products/*
 !/assets/uploads/products/.gitkeep

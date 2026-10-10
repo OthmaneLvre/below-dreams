@@ -1,13 +1,32 @@
 <?php
 
-/* ==========================================================
-   BELOW DREAMS — CONNEXION BASE DE DONNÉES
-   ========================================================== */
+/*
+|--------------------------------------------------------------------------
+| BELOW DREAMS — CONNEXION BASE DE DONNÉES
+|--------------------------------------------------------------------------
+|
+| Aucun identifiant sensible dans ce fichier.
+|
+*/
 
-$host = "belowdqbaudourd.mysql.db";
-$dbname = "belowdqbaudourd";
-$username = "belowdqbaudourd";
-$password = "REMOVED_MYSQL_PASSWORD";
+$localConfigPath = __DIR__ . '/database.local.php';
+$productionConfigPath = __DIR__ . '/database.production.php';
+
+if (is_file($localConfigPath)) {
+    $databaseConfig = require $localConfigPath;
+} elseif (is_file($productionConfigPath)) {
+    $databaseConfig = require $productionConfigPath;
+} else {
+    error_log('Below Dreams : configuration MySQL absente.');
+
+    http_response_code(500);
+    exit('Configuration de la base de données indisponible.');
+}
+
+$host = $databaseConfig['host'];
+$dbname = $databaseConfig['dbname'];
+$username = $databaseConfig['username'];
+$password = $databaseConfig['password'];
 
 try {
     $pdo = new PDO(
