@@ -158,7 +158,7 @@ if ($stats['blocked'] > 0) {
     orderEmailCronLog(
         'ALERTE : '
         . $stats['blocked']
-        . ' e-mail(s) bloqué(s) à sending.'
+        . ' e-mail(s) bloques au statut sending.'
     );
 }
 
