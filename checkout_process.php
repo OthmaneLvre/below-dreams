@@ -206,6 +206,7 @@ try {
         if (
             !$product
             || (int) $product['is_active'] !== 1
+            || $product['status'] !== 'stock'
         ) {
             throw new Exception(
                 'Un produit de votre panier n’est plus disponible.'
