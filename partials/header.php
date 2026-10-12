@@ -12,10 +12,11 @@ require_once __DIR__ . '/../includes/security-headers.php';
 $siteName = 'Below Dreams';
 $siteUrl = 'https://belowdreams.com';
 
-$defaultTitle = 'Below Dreams | Vêtements en édition limitée';
+$defaultTitle = 'Below Dreams | Marque de vêtements streetwear';
+
 $defaultDescription =
-    'Découvrez Below Dreams, une marque de vêtements proposant '
-    . 'des pièces fortes en édition limitée et en précommande.';
+    'Découvrez Below Dreams, une marque de vêtements streetwear. '
+    . 'Des pièces fortes, un style affirmé et une identité sans compromis.';
 
 $pageTitle = $pageTitle ?? $defaultTitle;
 $pageDescription = $pageDescription ?? $defaultDescription;

@@ -61,7 +61,7 @@ $pageDescription = !empty($product['description'])
     )
     : 'Découvrez '
         . $product['name']
-        . ', une pièce Below Dreams en édition limitée.';
+        . ', une pièce de la collection Below Dreams.';
 
 $pageCanonical =
     'https://belowdreams.com/product.php?slug='

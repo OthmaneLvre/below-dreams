@@ -63,9 +63,9 @@ require_once 'partials/header.php';
                 <h2>2. Produits concernés</h2>
 
                 <p>
-                    Le droit de rétractation s’applique aux vêtements et
-                    accessoires non personnalisés vendus par Below Dreams,
-                    y compris lorsqu’ils sont commercialisés en précommande.
+                    Le droit de rétractation s'applique aux vêtements et accessoires
+                    non personnalisés vendus par Below Dreams, conformément aux
+                    dispositions légales applicables.
                 </p>
 
                 <p>
@@ -267,9 +267,10 @@ require_once 'partials/header.php';
                 </p>
 
                 <p>
-                    Compte tenu du fonctionnement en précommande et des quantités
-                    limitées, Below Dreams ne peut garantir la disponibilité d’une
-                    autre taille ou d’un autre modèle.
+                    Toute demande de remplacement par une autre taille ou un autre
+                    modèle dépend de la disponibilité du produit en stock. À défaut,
+                    le Client peut exercer son droit de rétractation dans les conditions
+                    prévues par la présente politique.
                 </p>
             </article>
 

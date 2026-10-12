@@ -31,9 +31,9 @@ $pageTitle =
     "Below Dreams | Vêtements Below Dreams";
 
 $pageDescription =
-    "Découvrez les vêtements et accessoires Below Dreams "
-    . "en édition limitée : T-shirts, hoodies, pantalons, "
-    . "shorts, casquettes et bonnets.";
+    "Découvrez les vêtements et accessoires Below Dreams : "
+    . "T-shirts, hoodies, pantalons, shorts, casquettes et bonnets. "
+    . "Affirmez votre style avec notre collection streetwear.";
 
 $pageCanonical =
     'https://belowdreams.com/shop.php';
@@ -51,7 +51,7 @@ require_once 'partials/header.php';
         <div class="container shop-hero-inner">
             <h1 class="shop-title">Boutique</h1>
             <p class="shop-subtitle">
-                Éditions limitées. Expédition sous une semaine.
+                Découvrez la collection Below Dreams. Affirmez votre style.
             </p>
         </div>
     </section>
@@ -201,7 +201,7 @@ require_once 'partials/header.php';
                                     >
 
                                     <?php if ((int) $product['stock'] <= 0) : ?>
-                                        <span class="badge badge--preorder">
+                                        <span class="badge">
                                             Rupture de stock
                                         </span>
                                     <?php endif; ?>

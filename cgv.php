@@ -1,9 +1,9 @@
 <?php
 
-$pageTitle = 
+$pageTitle =
     "Conditions Générales de Vente | Below Dreams";
 
-$pageDescription = 
+$pageDescription =
     "Consultez les Conditions Générales de Vente "
     . "de la boutique Below Dreams.";
 
@@ -118,7 +118,8 @@ require_once 'partials/header.php';
 
                 <p>
                     Below Dreams propose principalement des vêtements et accessoires
-                    de mode commercialisés en éditions limitées et en précommande.
+                    de mode. Les produits sont proposés à la vente selon leur
+                    disponibilité en stock, indiquée sur le site.
                 </p>
 
                 <p>
@@ -149,47 +150,30 @@ require_once 'partials/header.php';
             </article>
 
             <article class="legal-section">
-                <h2>Article 4 — Précommandes</h2>
+                <h2>Article 4 — Préparation et expédition</h2>
 
                 <p>
-                    Tous les produits proposés sur le site Below Dreams sont
-                    commercialisés en précommande.
+                    Les produits proposés à la vente sont disponibles dans la
+                    limite des stocks indiqués sur le site au moment de la commande.
                 </p>
 
                 <p>
-                    Une précommande permet au Client de commander et de payer un
-                    produit avant que celui-ci soit disponible pour une expédition
-                    immédiate.
-                </p>
-
-                <p>
-                    Les produits sont préparés ou fabriqués après la clôture ou la
-                    validation de la phase de précommande. Le délai annoncé sur le
-                    site correspond au délai auquel Below Dreams s’engage pour
-                    préparer ou expédier la commande.
-                </p>
-
-                <p>
-                    Sauf indication différente portée à la connaissance du Client
-                    avant la commande, l’expédition intervient dans un délai de
-                    <strong>deux à trois semaines</strong> à compter de la
+                    Sauf indication contraire communiquée au Client avant la
+                    validation de la commande, Below Dreams prévoit l'expédition
+                    de la commande dans un délai d'une semaine à compter de la
                     confirmation du paiement.
                 </p>
 
                 <p>
-                    Ce délai de préparation s’ajoute au délai d’acheminement du
-                    transporteur.
+                    Ce délai correspond à la préparation et à l'expédition de la
+                    commande. Il est distinct du délai d'acheminement du transporteur.
                 </p>
 
                 <p>
-                    La qualification d’un produit en précommande ne supprime pas le
-                    droit légal de rétractation du Client, les produits proposés
-                    n’étant pas personnalisés selon ses spécifications.
-                </p>
-
-                <p>
-                    En cas de retard prévisible, Below Dreams informe le Client dans
-                    les meilleurs délais par courrier électronique.
+                    En cas de retard prévisible ou d'impossibilité définitive
+                    d'honorer une commande, Below Dreams informe le Client dans
+                    les meilleurs délais et procède, si nécessaire, au remboursement
+                    des sommes dues conformément aux dispositions applicables.
                 </p>
             </article>
 
@@ -197,14 +181,13 @@ require_once 'partials/header.php';
                 <h2>Article 5 — Disponibilité</h2>
 
                 <p>
-                    Les produits sont proposés dans la limite des quantités ou des
-                    périodes de précommande annoncées sur le site.
+                    Les produits sont proposés dans la limite des stocks disponibles.
+                    La disponibilité est indiquée sur le site au moment de la commande.
                 </p>
 
                 <p>
-                    Below Dreams se réserve le droit de limiter les quantités
-                    commandées par Client lorsqu’une collection est proposée en
-                    édition limitée.
+                    Below Dreams se réserve le droit de limiter les quantités commandées
+                    lorsque cela est nécessaire à la bonne gestion des stocks.
                 </p>
 
                 <p>
@@ -329,8 +312,7 @@ require_once 'partials/header.php';
                 <h2>Article 9 — Paiement</h2>
 
                 <p>
-                    Le paiement est exigible en totalité lors de la commande, y
-                    compris lorsqu’il s’agit d’une précommande.
+                    Le paiement est exigible en totalité lors de la commande.
                 </p>
 
                 <p>
@@ -387,8 +369,7 @@ require_once 'partials/header.php';
 
                 <ul class="legal-list">
                     <li>
-                        le délai de préparation ou de fabrication lié à la
-                        précommande ;
+                        le délai de préparation et d'expédition de la commande ;
                     </li>
 
                     <li>
@@ -494,11 +475,6 @@ require_once 'partials/header.php';
                     En cas de commande portant sur plusieurs produits livrés
                     séparément, le délai court à compter de la réception du dernier
                     produit.
-                </p>
-
-                <p>
-                    La vente en précommande ne supprime ni ne réduit ce droit de
-                    rétractation.
                 </p>
 
                 <p>
