@@ -545,7 +545,15 @@ try {
     |--------------------------------------------------------------------------
     */
 
-    $domain = 'https://belowdreams.com';
+    $isLocal = in_array(
+        $_SERVER['HTTP_HOST'] ?? '',
+        ['localhost', '127.0.0.1'],
+        true
+    );
+
+    $domain = $isLocal
+        ? 'http://localhost/belowDreams'
+        : 'https://belowdreams.com';
     $legalAcceptedAtIso = gmdate('c');
     $stripeIdempotencyKey = 'below-dreams-checkout-' . $orderId;
 

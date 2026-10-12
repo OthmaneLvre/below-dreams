@@ -381,6 +381,8 @@ require_once __DIR__ . '/partials/sidebar.php';
                             'tshirt' => 'T-shirt',
                             'hoodie' => 'Hoodie',
                             'short' => 'Short',
+                            'casquette' => 'Casquette',
+                            'bonnet' => 'Bonnet',
                         ];
                         ?>
 

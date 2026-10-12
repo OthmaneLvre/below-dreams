@@ -15,6 +15,8 @@ if (PHP_SAPI !== 'cli') {
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/stripe.php';
 require_once __DIR__ . '/../includes/stock-reservation.php';
+require_once __DIR__ . '/../includes/order-payment.php';
+require_once __DIR__ . '/../includes/order-email.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -82,7 +84,8 @@ try {
             stripe_session_id,
             stock_reservation_status,
             payment_status,
-            stock_reserved_at
+            stock_reserved_at,
+            total
         FROM orders
         WHERE stock_reservation_status = 'reserved'
           AND stock_reserved_at <= DATE_SUB(
@@ -197,14 +200,172 @@ foreach ($orders as $order) {
     |--------------------------------------------------------------------------
     */
 
+
     if ($stripePaymentStatus === 'paid') {
         $stats['paid']++;
 
-        cronLog(
-            '  ALERTE : paiement confirmé chez Stripe, '
-            . 'mais réservation encore active. '
-            . 'Réconciliation du paiement nécessaire.'
+        /*
+        |--------------------------------------------------------------------------
+        | Vérification du montant et de la devise Stripe
+        |--------------------------------------------------------------------------
+        */
+
+        $expectedAmount = (int) round(
+            ((float) $order['total']) * 100
         );
+
+        $stripeAmount = $session->amount_total ?? null;
+        $stripeCurrency = $session->currency ?? null;
+
+        if (
+            !is_int($stripeAmount)
+            || $stripeAmount !== $expectedAmount
+            || $stripeCurrency !== 'eur'
+        ) {
+            $stats['errors']++;
+
+            cronLog(
+                '  ALERTE : montant ou devise Stripe incompatible. '
+                . 'Aucune modification.'
+            );
+
+            continue;
+        }
+
+        if (!$execute) {
+            cronLog(
+                '  DRY-RUN : paiement confirmé chez Stripe. '
+                . 'Commande à synchroniser.'
+            );
+
+            continue;
+        }
+
+        try {
+            $pdo->beginTransaction();
+
+            $lockQuery = $pdo->prepare("
+                SELECT
+                    id,
+                    payment_status,
+                    stock_reservation_status,
+                    stripe_session_id,
+                    total
+                FROM orders
+                WHERE id = ?
+                LIMIT 1
+                FOR UPDATE
+            ");
+
+            $lockQuery->execute([$orderId]);
+
+            $lockedOrder = $lockQuery->fetch(
+                PDO::FETCH_ASSOC
+            );
+
+            if (!$lockedOrder) {
+                throw new RuntimeException(
+                    'Commande introuvable.'
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Vérification transactionnelle du montant et de la devise
+            |--------------------------------------------------------------------------
+            */
+
+            $lockedExpectedAmount = (int) round(
+                ((float) $lockedOrder['total']) * 100
+            );
+
+            if (
+                !is_int($stripeAmount)
+                || $stripeAmount !== $lockedExpectedAmount
+                || $stripeCurrency !== 'eur'
+            ) {
+                throw new RuntimeException(
+                    'Montant ou devise Stripe incompatible avec la commande verrouillée.'
+                );
+            }
+
+            $paymentIntentId = $session->payment_intent ?? null;
+
+            if (
+                $paymentIntentId !== null
+                && !is_string($paymentIntentId)
+            ) {
+                throw new RuntimeException(
+                    'Identifiant de paiement Stripe invalide.'
+                );
+            }
+
+            $confirmed = confirmOrderPayment(
+                $pdo,
+                $orderId,
+                $lockedOrder,
+                $sessionId,
+                $paymentIntentId
+            );
+
+
+            $pdo->commit();
+
+            cronLog(
+                $confirmed
+                    ? '  OK : paiement synchronisé.'
+                    : '  Commande déjà confirmée.'
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | Confirmation par e-mail après commit
+            |--------------------------------------------------------------------------
+            */
+
+            try {
+                $emailSent = processOrderConfirmationEmail(
+                    $pdo,
+                    $orderId
+                );
+
+                if ($emailSent) {
+                    cronLog(
+                        '  OK : e-mail de confirmation envoyé.'
+                    );
+                } else {
+                    cronLog(
+                        '  INFO : e-mail non envoyé, déjà traité '
+                        . 'ou en attente de reprise.'
+                    );
+                }
+
+            } catch (Throwable $emailError) {
+                cronLog(
+                    '  ERREUR e-mail : '
+                    . $emailError->getMessage()
+                );
+
+                error_log(
+                    '[CRON ORDER EMAIL] Order '
+                    . $orderId
+                    . ' | '
+                    . $emailError->getMessage()
+                );
+            }
+
+        } catch (Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+
+            $stats['errors']++;
+
+            cronLog(
+                '  ERREUR confirmation : '
+                . $e->getMessage()
+            );
+        }
 
         continue;
     }
