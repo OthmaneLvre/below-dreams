@@ -22,7 +22,7 @@ $formValues = [
     'price' => '',
     'stock' => '0',
     'description' => '',
-    'status' => 'preorder',
+    'status' => 'stock',
     'sizes' => '',
 ];
 
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_POST['description'] ?? ''
     );
 
-    $status = trim($_POST['status'] ?? '');
+    $status = 'stock';
     $sizes = trim($_POST['sizes'] ?? '');
 
     $isFeatured = isset($_POST['is_featured'])
@@ -67,10 +67,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'tshirt',
         'hoodie',
         'short',
+        'casquette',
+        'bonnet',
     ];
 
     $allowedStatuses = [
-        'preorder',
         'stock',
     ];
 
@@ -380,6 +381,8 @@ require_once __DIR__ . '/partials/sidebar.php';
                             'tshirt' => 'T-shirt',
                             'hoodie' => 'Hoodie',
                             'short' => 'Short',
+                            'casquette' => 'Casquette',
+                            'bonnet' => 'Bonnet',
                         ];
                         ?>
 
@@ -432,30 +435,6 @@ require_once __DIR__ . '/partials/sidebar.php';
                         min="0"
                         required
                     >
-                </div>
-
-                <div class="form-group">
-                    <label for="status">Statut</label>
-
-                    <select id="status" name="status">
-                        <option
-                            value="preorder"
-                            <?= $formValues['status'] === 'preorder'
-                                ? 'selected'
-                                : '' ?>
-                        >
-                            Précommande
-                        </option>
-
-                        <option
-                            value="stock"
-                            <?= $formValues['status'] === 'stock'
-                                ? 'selected'
-                                : '' ?>
-                        >
-                            Stock
-                        </option>
-                    </select>
                 </div>
 
                 <div class="form-group">

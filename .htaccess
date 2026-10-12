@@ -13,11 +13,16 @@ RewriteEngine On
 RewriteRule ^sitemap\.xml$ sitemap.php [L]
 
 # ----------------------------------------------------------
-# HTTPS et domaine canonique — production uniquement
+# HTTPS et domaine canonique - production uniquement
 # ----------------------------------------------------------
 
+# Ne jamais rediriger les environnements locaux
+RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1)(:[0-9]+)?$ [NC]
+
+# Redirection vers le domaine de production
 RewriteCond %{HTTP_HOST} !^belowdreams\.com$ [NC,OR]
 RewriteCond %{HTTPS} !=on
+
 RewriteRule ^ https://belowdreams.com%{REQUEST_URI} [R=301,L]
 
 # ----------------------------------------------------------

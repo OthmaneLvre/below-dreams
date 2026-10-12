@@ -21,18 +21,9 @@ function normalizeProductCategory(string $category): string
         'short', 'shorts' => 'shorts',
         'hoodie', 'hoodies', 'sweat', 'sweats' => 'hoodies',
         'tshirt', 't-shirt', 'tshirts', 'tee-shirt', 'tee-shirts' => 'tshirts',
+        'casquette', 'casquettes' => 'casquettes',
+        'bonnet', 'bonnets' => 'bonnets',
         default => $category,
-    };
-}
-
-function normalizeProductStatus(string $status): string
-{
-    $status = strtolower(trim($status));
-
-    return match ($status) {
-        'preoder', 'preorder', 'précommande', 'precommande' => 'preorder',
-        'stock' => 'stock',
-        default => $status,
     };
 }
 
@@ -40,8 +31,9 @@ $pageTitle =
     "Below Dreams | Vêtements Below Dreams";
 
 $pageDescription =
-    "Découvrez les vêtements Below Dreams en édition limitée. "
-    . "Toutes les pièces sont disponibles en précommande.";
+    "Découvrez les vêtements et accessoires Below Dreams : "
+    . "T-shirts, hoodies, pantalons, shorts, casquettes et bonnets. "
+    . "Affirmez votre style avec notre collection streetwear.";
 
 $pageCanonical =
     'https://belowdreams.com/shop.php';
@@ -59,7 +51,7 @@ require_once 'partials/header.php';
         <div class="container shop-hero-inner">
             <h1 class="shop-title">Boutique</h1>
             <p class="shop-subtitle">
-                Éditions limitées, précommande. Expédition sous 2 à 3 semaines.
+                Découvrez la collection Below Dreams. Affirmez votre style.
             </p>
         </div>
     </section>
@@ -77,14 +69,26 @@ require_once 'partials/header.php';
                         <li><label class="filter-item"><input type="checkbox" name="category" value="shorts"> Shorts</label></li>
                         <li><label class="filter-item"><input type="checkbox" name="category" value="hoodies"> Hoodies</label></li>
                         <li><label class="filter-item"><input type="checkbox" name="category" value="tshirts"> T-shirts</label></li>
+                        <li><label class="filter-item"><input type="checkbox" name="category" value="casquettes"> Casquettes</label></li>
+                        <li><label class="filter-item"><input type="checkbox" name="category" value="bonnets"> Bonnets</label></li>
                     </ul>
                 </div>
 
                 <div class="filter-block">
                     <h3 class="filter-title">Disponibilité</h3>
                     <ul class="filter-list">
-                        <li><label class="filter-item"><input type="checkbox" name="availability" value="preorder"> Précommande</label></li>
-                        <li><label class="filter-item"><input type="checkbox" name="availability" value="stock"> Stock</label></li>
+                        <li>
+                            <label class="filter-item">
+                                <input type="checkbox" name="availability" value="stock">
+                                En stock
+                            </label>
+                        </li>
+                        <li>
+                            <label class="filter-item">
+                                <input type="checkbox" name="availability" value="out-of-stock">
+                                Rupture de stock
+                            </label>
+                        </li>
                     </ul>
                 </div>
 
@@ -155,11 +159,10 @@ require_once 'partials/header.php';
                                 ENT_QUOTES,
                                 'UTF-8'
                             ) ?>"
-                            data-availability="<?= htmlspecialchars(
-                                normalizeProductStatus($product['status']),
-                                ENT_QUOTES,
-                                'UTF-8'
-                            ) ?>"
+                            data-availability="<?= (int) $product['stock'] > 0
+                                ? 'stock'
+                                : 'out-of-stock'
+                            ?>"
                             data-sizes="<?= htmlspecialchars(
                                 strtolower($product['sizes'] ?? ''),
                                 ENT_QUOTES,
@@ -197,11 +200,11 @@ require_once 'partials/header.php';
                                         height="800"
                                     >
 
-                                    <span class="badge badge--preorder">
-                                        <?= normalizeProductStatus($product['status']) === 'preorder'
-                                            ? 'Précommande'
-                                            : 'Stock' ?>
-                                    </span>
+                                    <?php if ((int) $product['stock'] <= 0) : ?>
+                                        <span class="badge">
+                                            Rupture de stock
+                                        </span>
+                                    <?php endif; ?>
 
                                 </div>
 

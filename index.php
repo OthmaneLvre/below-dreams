@@ -14,10 +14,10 @@ $query = $pdo->query("
 $featuredProducts = $query->fetchAll(PDO::FETCH_ASSOC);
 
 $pageTitle = 
-    "Below Dreams | Vêtements en édition limitée";
+    "Below Dreams | Marque de vêtements streetwear";
 $pageDescription =
-    "Découvrez Below Dreams : des pièces fortes, "
-     . "des éditions limitées et une production en précommande.";
+    "Découvrez Below Dreams, une marque de vêtements streetwear. "
+     . "Des pièces fortes, un style affirmé et une identité sans compromis.";
 
 $pageCanonical = 'https://belowdreams.com/';
 $ogType = 'website';
@@ -61,7 +61,7 @@ require_once 'partials/header.php';
             <div class="hero-content">
 
                 <h1 class="sr-only">
-                    Below Dreams — Marque de vêtements en édition limitée
+                    Below Dreams — Marque de vêtements streetwear
                 </h1>
 
                 <img
@@ -75,7 +75,7 @@ require_once 'partials/header.php';
 
                 <p class="hero-text">
                     Des pièces fortes. Sans compromis.<br>
-                    Éditions limitées. Précommande.
+                    Affirme ton style. Trace ta voie.
                 </p>
 
                 <a href="shop.php" class="btn-primary hero-cta">
@@ -137,12 +137,6 @@ require_once 'partials/header.php';
                                     ) ?> €
                                 </p>
 
-                                <span class="badge">
-                                    <?= $product['status'] === 'preorder'
-                                        ? 'Précommande'
-                                        : 'Stock' ?>
-                                </span>
-
                             </a>
                         </article>
 
@@ -153,21 +147,6 @@ require_once 'partials/header.php';
             </div>
         
         </section>
-
-        <!-- PRECOMMANDE -->
-        <section aria-label="Précommande" class="section-preorder">
-            <div class="container preorder-inner">
-
-                <div class="preorder-card">
-                    <h2 class="section-title">Fonctionnement en précommande</h2>
-                    <p>
-                        Les articles Below Dreams sont proposés en précommande. <br>
-                        Expédition sous 2 à 3 semaines après validation de la commande.
-                    </p>
-                </div>
-            </div>
-        </section>
-
 
         <!-- CTA -->
         <section aria-label="Accéder à la boutique" class="section-cta">

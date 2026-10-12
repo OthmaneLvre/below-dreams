@@ -145,8 +145,6 @@ try {
         );
     }
 
-    $pdo->beginTransaction();
-
     $subtotal = 0.0;
     $lineItems = [];
     $validatedItems = [];
@@ -163,6 +161,7 @@ try {
             name,
             price,
             image,
+            sizes,
             stock,
             status,
             is_active
@@ -170,6 +169,8 @@ try {
         WHERE id = ?
         LIMIT 1
     ");
+
+    $productQuantities = [];
 
     foreach ($cart as $item) {
         $productId = filter_var(
@@ -190,7 +191,6 @@ try {
             !$productId
             || !$quantity
             || $quantity < 1
-            || $size === ''
         ) {
             throw new Exception(
                 'Un article du panier est invalide.'
@@ -212,10 +212,44 @@ try {
             );
         }
 
-        if (
-            $product['status'] === 'stock'
-            && (int) $product['stock'] < $quantity
-        ) {
+        /*
+        |--------------------------------------------------------------------------
+        | Validation des tailles
+        |--------------------------------------------------------------------------
+        */
+
+        $availableSizes = array_values(array_filter(
+            array_map(
+                'trim',
+                explode(',', (string) ($product['sizes'] ?? ''))
+            ),
+            static fn ($value) => $value !== ''
+        ));
+
+        if (!empty($availableSizes)) {
+            if (!in_array($size, $availableSizes, true)) {
+                throw new Exception(
+                    'La taille sélectionnée est invalide pour '
+                    . $product['name']
+                    . '.'
+                );
+            }
+        } elseif ($size !== '') {
+            throw new Exception(
+                'Ce produit ne nécessite pas de taille.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Contrôle du stock cumulé par produit
+        |--------------------------------------------------------------------------
+        */
+
+        $productQuantities[$productId] =
+            ($productQuantities[$productId] ?? 0) + $quantity;
+
+        if ($productQuantities[$productId] > (int) $product['stock']) {
             throw new Exception(
                 'Le stock disponible est insuffisant pour '
                 . $product['name']
@@ -243,8 +277,7 @@ try {
 
                 'product_data' => [
                     'name' => $product['name']
-                        . ' - Taille '
-                        . $size,
+                        . ($size !== '' ? ' - Taille ' . $size : ''),
                 ],
 
                 'unit_amount' => (int) round(
@@ -348,6 +381,8 @@ try {
     | Création de la commande
     |--------------------------------------------------------------------------
     */
+
+    $pdo->beginTransaction();
 
     $legalAcceptedAt = date('Y-m-d H:i:s');
     $cgvVersion = '2026-07-18';
@@ -464,12 +499,63 @@ try {
 
     /*
     |--------------------------------------------------------------------------
+    | Réservation atomique des stocks
+    |--------------------------------------------------------------------------
+    */
+
+    $reserveStockQuery = $pdo->prepare("
+        UPDATE products
+        SET stock = stock - ?
+        WHERE id = ?
+        AND stock >= ?
+        AND is_active = 1
+        AND status = 'stock'
+    ");
+
+    foreach ($productQuantities as $productId => $quantity) {
+        $reserveStockQuery->execute([
+            $quantity,
+            $productId,
+            $quantity
+        ]);
+
+        if ($reserveStockQuery->rowCount() !== 1) {
+            throw new Exception(
+                'Stock insuffisant pour un produit du panier.'
+            );
+        }
+    }
+
+    $markReservation = $pdo->prepare("
+        UPDATE orders
+        SET
+            stock_reservation_status = 'reserved',
+            stock_reserved_at = NOW(),
+            updated_at = NOW()
+        WHERE id = ?
+    ");
+
+    $markReservation->execute([$orderId]);
+
+    $pdo->commit();
+
+    /*
+    |--------------------------------------------------------------------------
     | Session Stripe
     |--------------------------------------------------------------------------
     */
 
-    $domain = 'https://belowdreams.com';
+    $isLocal = in_array(
+        $_SERVER['HTTP_HOST'] ?? '',
+        ['localhost', '127.0.0.1'],
+        true
+    );
+
+    $domain = $isLocal
+        ? 'http://localhost/belowDreams'
+        : 'https://belowdreams.com';
     $legalAcceptedAtIso = gmdate('c');
+    $stripeIdempotencyKey = 'below-dreams-checkout-' . $orderId;
 
     $checkoutSession =
         \Stripe\Checkout\Session::create([
@@ -523,20 +609,31 @@ try {
                 'cgv_version' =>
                     '2026-07-18'
             ],
+        ], [
+            'idempotency_key' => $stripeIdempotencyKey
         ]);
 
-    $updateStripeSession = $pdo->prepare("
-        UPDATE orders
-        SET stripe_session_id = ?
-        WHERE id = ?
-    ");
+        $updateStripeSession = $pdo->prepare("
+            UPDATE orders
+            SET
+                stripe_session_id = ?,
+                updated_at = NOW()
+            WHERE id = ?
+            AND stock_reservation_status = 'reserved'
+            AND payment_status = 'unpaid'
+            AND stripe_session_id IS NULL
+        ");
 
-    $updateStripeSession->execute([
-        $checkoutSession->id,
-        $orderId
-    ]);
+        $updateStripeSession->execute([
+            $checkoutSession->id,
+            $orderId
+        ]);
 
-    $pdo->commit();
+        if ($updateStripeSession->rowCount() !== 1) {
+            throw new RuntimeException(
+                'Impossible d’associer la session Stripe à la commande.'
+            );
+        }
 
     header(
         'Location: ' . $checkoutSession->url
@@ -555,8 +652,10 @@ try {
     );
 
     $_SESSION['checkout_error'] =
-        'Une erreur est survenue lors de la préparation du paiement. '
-        . 'Veuillez vérifier votre panier et réessayer.';
+        'Le paiement n’a pas pu être ouvert. '
+        . 'Aucun nouveau paiement ne doit être tenté '
+        . 'avant vérification de cette commande. '
+        . 'Veuillez contacter la boutique.';
 
     header('Location: checkout.php');
     exit;

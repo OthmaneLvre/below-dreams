@@ -113,8 +113,14 @@ require_once 'partials/header.php';
                         <strong id="cart-total">0,00 €</strong>
                     </div>
 
-                    <a href="checkout.php" class="btn-primary cart-checkout">
-                        Commander
+                    <a
+                        href="checkout.php"
+                        class="btn-primary cart-checkout"
+                        aria-disabled="true"
+                        tabindex="-1"
+                        style="pointer-events: none; opacity: 0.5;"
+                    >
+                        Vérification des stocks...
                     </a>
                 </aside>
 

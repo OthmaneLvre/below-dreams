@@ -14,13 +14,7 @@
   .products {
     grid-template-columns: repeat(2, 1fr);
   }
-
-  /* Précommande : un peu plus de respiration sur tablette */
-  .preorder-card {
-    width: min(760px, 100%);
-  }
 }
-
 
 /* ==========================================================
    MOBILE (<= 900px)
@@ -197,10 +191,6 @@
   .section-essentials,
   .section-cta {
     padding: 64px 0;
-  }
-
-  .section-preorder {
-    padding: 72px 0;
   }
 
   .section-title {
@@ -624,11 +614,6 @@
 
   .section-essentials .product-card .badge {
     margin: 4px auto 0;
-  }
-
-  /* Précommande */
-  .preorder-card {
-    padding: 28px 18px;
   }
 
   /*  ====================
